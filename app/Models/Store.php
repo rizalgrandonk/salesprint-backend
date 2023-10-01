@@ -17,6 +17,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $name
  * @property string $slug
  * @property string $address
+ * @property string $city
+ * @property string $city_id
+ * @property string $province
+ * @property string $province_id
+ * @property string $postal_code
  * @property string $status
  * @property string|null $image
  * @property int $user_id
@@ -42,6 +47,11 @@ class Store extends Model
 		'name',
 		'slug',
 		'address',
+		'city',
+		'city_id',
+		'province',
+		'province_id',
+		'postal_code',
 		'status',
 		'image',
 		'user_id'

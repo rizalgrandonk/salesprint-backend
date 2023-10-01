@@ -16,7 +16,12 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug')->unique();
             $table->string('address');
-            $table->string('status');
+            $table->string('city');
+            $table->string('city_id');
+            $table->string('province');
+            $table->string('province_id');
+            $table->string('postal_code');
+            $table->enum('status', ['on_review', 'approved', 'rejected']);
             $table->string('image')->nullable();
             $table->unsignedBigInteger('user_id');
 

@@ -20,6 +20,11 @@ return new class extends Migration
             $table->string('password');
             $table->string('phone_number');
             $table->string('address');
+            $table->string('city');
+            $table->string('city_id');
+            $table->string('province');
+            $table->string('province_id');
+            $table->string('postal_code');
             $table->string('image')->nullable();
             $table->rememberToken();
             $table->timestamps();
