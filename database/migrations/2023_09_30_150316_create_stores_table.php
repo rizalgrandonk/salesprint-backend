@@ -18,8 +18,10 @@ return new class extends Migration
             $table->string('address');
             $table->string('status');
             $table->string('image')->nullable();
+            $table->unsignedBigInteger('user_id');
 
-            $table->foreignId('user_id')->constarined()->nullOnDelete();
+            $table->foreign('user_id')->references('id')->on('users');
+
             $table->timestamps();
         });
     }

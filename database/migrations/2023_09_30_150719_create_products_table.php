@@ -19,13 +19,15 @@ return new class extends Migration
             $table->float('price');
             $table->integer('stok');
             $table->float('average_rating');
+            $table->unsignedBigInteger('category_id');
+            $table->unsignedBigInteger('store_id');
+            $table->unsignedBigInteger('store_category_id')->nullable();
 
-            $table->foreignId('category_id')->constarined()->nullOnDelete();
-            $table->foreignId('store_id')->constarined()->nullOnDelete();
-            $table->foreignId('store_category_id')
-                ->nullable()
-                ->constarined()
-                ->nullOnDelete();
+            $table->foreign('category_id')->references('id')->on('categories');
+            $table->foreign('store_id')->references('id')->on('stores');
+            $table->foreign('store_category_id')->nullable()
+            ->references('id')->on('store_categories');
+
             $table->timestamps();
         });
     }

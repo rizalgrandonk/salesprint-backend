@@ -15,9 +15,12 @@ return new class extends Migration
             $table->id();
             $table->integer('rating');
             $table->string('coment');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('product_id');
 
-            $table->foreignId('user_id')->constarined()->nullOnDelete();
-            $table->foreignId('product_id')->constarined()->nullOnDelete();
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('product_id')->references('id')->on('products');
+
             $table->timestamps();
         });
     }

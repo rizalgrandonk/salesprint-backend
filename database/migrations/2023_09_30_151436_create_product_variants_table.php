@@ -15,8 +15,10 @@ return new class extends Migration
             $table->id();
             $table->float('price');
             $table->integer('stok');
+            $table->unsignedBigInteger('product_id');
 
-            $table->foreignId('product_id')->constarined()->nullOnDelete();
+            $table->foreign('product_id')->references('id')->on('products');
+
             $table->timestamps();
         });
     }

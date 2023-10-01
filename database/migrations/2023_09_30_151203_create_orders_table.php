@@ -25,8 +25,10 @@ return new class extends Migration
             $table->string('delivery_service');
             $table->float('delivery_cost');
             $table->string('receipt_number')->nullable();
+            $table->unsignedBigInteger('user_id');
 
-            $table->foreignId('user_id')->constarined()->nullOnDelete();
+            $table->foreign('user_id')->references('id')->on('users');
+
             $table->timestamps();
         });
     }

@@ -14,11 +14,12 @@ return new class extends Migration
         Schema::create('variant_options', function (Blueprint $table) {
             $table->id();
             $table->string('value');
+            $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('variant_type_id');
 
-            $table->foreignId('product_id')->constarined()->nullOnDelete();
-            $table->foreignId('variant_type_id')
-                ->constarined()
-                ->nullOnDelete();
+            $table->foreign('product_id')->references('id')->on('products');
+            $table->foreign('variant_type_id')->references('id')->on('variant_types');
+
             $table->timestamps();
         });
     }

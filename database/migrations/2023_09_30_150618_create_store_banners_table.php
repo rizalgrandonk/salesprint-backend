@@ -15,8 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('description')->nullable();
             $table->string('image');
+            $table->unsignedBigInteger('store_id');
 
-            $table->foreignId('store_id')->constarined()->nullOnDelete();
+            $table->foreign('store_id')->references('id')->on('stores');
+
             $table->timestamps();
         });
     }

@@ -16,8 +16,10 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug')->unique();
             $table->string('image')->nullable();
+            $table->unsignedBigInteger('store_id');
 
-            $table->foreignId('store_id')->constarined()->nullOnDelete();
+            $table->foreign('store_id')->references('id')->on('stores');
+            
             $table->timestamps();
         });
     }

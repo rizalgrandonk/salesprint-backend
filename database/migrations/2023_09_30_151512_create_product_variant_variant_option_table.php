@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('product_variant_variant_option', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_variant_id')
-                ->constarined()
-                ->nullOnDelete();
-            $table->foreignId('variant_option_id')
-                ->constarined()
-                ->nullOnDelete();
+            $table->unsignedBigInteger('product_variant_id');
+            $table->unsignedBigInteger('variant_option_id');
+
+            $table->foreign('product_variant_id')->references('id')->on('product_variants');
+            $table->foreign('variant_option_id')->references('id')->on('variant_options');
+
             $table->timestamps();
         });
     }
