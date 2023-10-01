@@ -16,7 +16,7 @@ return new class extends Migration
             $table->float('price');
             $table->integer('stok');
 
-            $table->foreign('product_id')->references('id')->on('products');
+            $table->foreignId('product_id')->constarined()->nullOnDelete();
             $table->timestamps();
         });
     }

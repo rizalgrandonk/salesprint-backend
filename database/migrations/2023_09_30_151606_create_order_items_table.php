@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->integer('quantity');
 
-            $table->foreign('product_id')->references('id')->on('products');
-            $table->foreign('product_variant_id')
-                ->references('id')
-                ->on('product_variants');
-            $table->foreign('order_id')->references('id')->on('orders');
+            $table->foreignId('product_id')->constarined()->nullOnDelete();
+            $table->foreignId('product_variant_id')
+                ->constarined()
+                ->nullOnDelete();
+            $table->foreignId('order_id')->constarined()->nullOnDelete();
             $table->timestamps();
         });
     }

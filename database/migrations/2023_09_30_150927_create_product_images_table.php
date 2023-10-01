@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('image_url');
 
-            $table->foreign('product_id')->references('id')->on('products');
+            $table->foreignId('product_id')->constarined()->nullOnDelete();
             $table->timestamps();
         });
     }

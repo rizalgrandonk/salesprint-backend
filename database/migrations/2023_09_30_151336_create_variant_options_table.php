@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('value');
 
-            $table->foreign('product_id')->references('id')->on('products');
-            $table->foreign('variant_type_id')
-                ->references('id')
-                ->on('variant_types');
+            $table->foreignId('product_id')->constarined()->nullOnDelete();
+            $table->foreignId('variant_type_id')
+                ->constarined()
+                ->nullOnDelete();
             $table->timestamps();
         });
     }

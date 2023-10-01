@@ -26,7 +26,7 @@ return new class extends Migration
             $table->float('delivery_cost');
             $table->string('receipt_number')->nullable();
 
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreignId('user_id')->constarined()->nullOnDelete();
             $table->timestamps();
         });
     }

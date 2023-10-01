@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('image')->nullable();
 
-            $table->foreign('store_id')->references('id')->on('stores');
+            $table->foreignId('store_id')->constarined()->nullOnDelete();
             $table->timestamps();
         });
     }

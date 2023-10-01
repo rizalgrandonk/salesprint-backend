@@ -16,8 +16,8 @@ return new class extends Migration
             $table->integer('rating');
             $table->string('coment');
 
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('product_id')->references('id')->on('products');
+            $table->foreignId('user_id')->constarined()->nullOnDelete();
+            $table->foreignId('product_id')->constarined()->nullOnDelete();
             $table->timestamps();
         });
     }

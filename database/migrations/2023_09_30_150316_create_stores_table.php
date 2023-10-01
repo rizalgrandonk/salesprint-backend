@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('status');
             $table->string('image')->nullable();
 
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreignId('user_id')->constarined()->nullOnDelete();
             $table->timestamps();
         });
     }
