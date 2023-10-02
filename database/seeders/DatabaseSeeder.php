@@ -100,25 +100,52 @@ class DatabaseSeeder extends Seeder {
 
     function createCategories(): array {
         $category_names = [
-            'Electronics',
-            'Clothing',
-            'Home Decor',
-            'Books',
-            'Toys',
-            'Furniture',
-            'Jewelry',
-            'Sports',
-            'Beauty'
+            'Electronics' => [
+                'High-End Smartphone',
+                'Notebook Budget'
+            ],
+            'Clothing' => [
+                'T-Shirt',
+                'Long Pants'
+            ],
+            'Home Decor' => [
+                'Table Lamp',
+                'Band Poster'
+            ],
+            'Books' => [
+                'Science Fiction Book',
+                'Computer Science Book'
+            ],
+            'Toys' => [
+                'Gaming Console',
+                'Car Diecast'
+            ],
+            'Furniture' => [
+                'Wooden Desk',
+                'Designer Sofa'
+            ],
+            'Sports' => [
+                'Soccer Ball',
+                'Football Jersey'
+            ],
+            'Beauty' => [
+                'Perfume Set',
+                'Diamond Necklace'
+            ],
+            'Shoes' => [
+                'Sneakers',
+                'Football Shoes'
+            ],
         ];
         $createdIds = [];
-        foreach ($category_names as $name) {
+        foreach ($category_names as $name => $val) {
             $createdCategory = \App\Models\Category::create([
                 'name' => implode(" ", array_map(fn ($val) => Str::ucfirst($val), explode(" ", $name))),
                 'slug' => Str::slug($name),
                 'image' => 'https://source.unsplash.com/random/?' . $name
             ]);
 
-            array_push($createdIds, $createdCategory->id);
+            array_push($createdIds, ['id' => $createdCategory->id, 'prodNames' => $val]);
         }
         return $createdIds;
     }
@@ -202,39 +229,17 @@ class DatabaseSeeder extends Seeder {
         return $createdIds;
     }
 
-    function createProducts($categoryIds, $storeIds): array {
-        $prodNames = [
-            'High-End Smartphone',
-            'Powerful Laptop',
-            'Stylish Table Lamp',
-            'Cotton T-shirt',
-            'High-Quality Headphones',
-            'Science Fiction Book',
-            'Designer Sofa',
-            'Diamond Necklace',
-            'Soccer Ball',
-            'Perfume Set',
-            'Coffee Maker',
-            'Sneakers',
-            'Laptop Bag',
-            'Digital Camera',
-            'Wooden Desk',
-            'Gaming Console',
-            'Wristwatch',
-            'Yoga Mat',
-            'Dining Table',
-            'Earrings'
-        ];
+    function createProducts($prodNames, $categoryId, $storeIds): array {
         $createdProducts = [];
         foreach ($prodNames as $name) {
-            $seledctedCatId = fake()->randomElement($categoryIds);
+            $seledctedCatId = $categoryId;
             $seledctedStoreId = fake()->randomElement($storeIds);
 
             $createdProduct = \App\Models\Product::create([
                 'name' => $name,
                 'slug' => Str::slug($name),
                 'description' => fake()->paragraph(random_int(3, 5)),
-                'price' => random_int(100000, 3000000),
+                'price' => random_int(100, 3000) * 1000,
                 'stok' => random_int(20, 150),
                 'average_rating' => fake()->randomFloat(1, 1, 5),
                 'category_id' => $seledctedCatId,
@@ -286,7 +291,12 @@ class DatabaseSeeder extends Seeder {
         $createdStoreIds = $this->createStores();
         $createdVarTypeMap = $this->createVariantTypes();
 
-        $createdProducts = $this->createProducts($createdCategoryIds, $createdStoreIds);
+        $createdProducts = [];
+        foreach ($createdCategoryIds as $catsAndName) {
+            $newProds = $this->createProducts($catsAndName['prodNames'], $catsAndName['id'], $createdStoreIds);
+
+            array_push($createdProducts, ...$newProds);
+        }
 
         foreach ($createdProducts as $newProduct) {
             $prodOpts = [];
