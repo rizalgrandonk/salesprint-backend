@@ -9,10 +9,6 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Tymon\JWTAuth\Contracts\JWTSubject;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 /**
  * Class User
@@ -41,10 +37,8 @@ use Laravel\Sanctum\HasApiTokens;
  *
  * @package App\Models
  */
-class User extends Authenticatable implements JWTSubject
+class User extends Model
 {
-	use HasApiTokens, Notifiable;
-
 	protected $table = 'users';
 
 	protected $casts = [
@@ -86,15 +80,5 @@ class User extends Authenticatable implements JWTSubject
 	public function stores()
 	{
 		return $this->hasMany(Store::class);
-	}
-
-	public function getJWTIdentifier()
-	{
-		return $this->getKey();
-	}
-
-	public function getJWTCustomClaims()
-	{
-		return [];
 	}
 }

@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * 
  * @property int $id
  * @property string $image_url
+ * @property bool $main_image
  * @property int $product_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -27,11 +28,13 @@ class ProductImage extends Model
 	protected $table = 'product_images';
 
 	protected $casts = [
+		'main_image' => 'bool',
 		'product_id' => 'int'
 	];
 
 	protected $fillable = [
 		'image_url',
+		'main_image',
 		'product_id'
 	];
 

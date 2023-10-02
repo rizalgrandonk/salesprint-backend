@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
-            $table->string('description');
-            $table->float('price');
+            $table->longText('description');
+            $table->float('price', 10, 2);
             $table->integer('stok');
             $table->float('average_rating');
             $table->unsignedBigInteger('category_id');
@@ -26,7 +26,7 @@ return new class extends Migration
             $table->foreign('category_id')->references('id')->on('categories');
             $table->foreign('store_id')->references('id')->on('stores');
             $table->foreign('store_category_id')->nullable()
-            ->references('id')->on('store_categories');
+                ->references('id')->on('store_categories');
 
             $table->timestamps();
         });

@@ -9,15 +9,13 @@ use Illuminate\Database\Seeder;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Str;
 
-class DatabaseSeeder extends Seeder
-{
+class DatabaseSeeder extends Seeder {
     /**
      * Seed the application's database.
      */
 
-    function createUsers(): void
-    {
-        \App\Models\User::create([
+    function createUsers(): array {
+        $user1 = \App\Models\User::create([
             'name' => 'User',
             'email' => 'user@gmail.com',
             'role' => 'user',
@@ -32,7 +30,7 @@ class DatabaseSeeder extends Seeder
             'postal_code' => '66666',
             'image' => 'https://source.unsplash.com/random/?person user',
         ]);
-        \App\Models\User::create([
+        $user2 = \App\Models\User::create([
             'name' => 'Grandonk User',
             'email' => 'grandonkuser@gmail.com',
             'role' => 'user',
@@ -47,7 +45,7 @@ class DatabaseSeeder extends Seeder
             'postal_code' => '66666',
             'image' => 'https://source.unsplash.com/random/?musician',
         ]);
-        \App\Models\User::create([
+        $user3 = \App\Models\User::create([
             'name' => 'Seller',
             'email' => 'seller@gmail.com',
             'role' => 'seller',
@@ -62,7 +60,7 @@ class DatabaseSeeder extends Seeder
             'postal_code' => '66666',
             'image' => 'https://source.unsplash.com/random/?seller person',
         ]);
-        \App\Models\User::create([
+        $user4 = \App\Models\User::create([
             'name' => 'Grandonk Seller',
             'email' => 'grandonkseller@gmail.com',
             'role' => 'seller',
@@ -77,7 +75,7 @@ class DatabaseSeeder extends Seeder
             'postal_code' => '66666',
             'image' => 'https://source.unsplash.com/random/?metal fans',
         ]);
-        \App\Models\User::create([
+        $user5 = \App\Models\User::create([
             'name' => 'Admin',
             'email' => 'admin@gmail.com',
             'role' => 'admin',
@@ -92,10 +90,15 @@ class DatabaseSeeder extends Seeder
             'postal_code' => '66666',
             'image' => 'https://source.unsplash.com/random/?admin person',
         ]);
+
+        return [
+            'admin' => [$user5->id],
+            'seller' => [$user3->id, $user4->id],
+            'user' => [$user1->id, $user2->id],
+        ];
     }
 
-    function createCategories(): void
-    {
+    function createCategories(): array {
         $category_names = [
             'Electronics',
             'Clothing',
@@ -107,17 +110,20 @@ class DatabaseSeeder extends Seeder
             'Sports',
             'Beauty'
         ];
+        $createdIds = [];
         foreach ($category_names as $name) {
-            \App\Models\Category::create([
+            $createdCategory = \App\Models\Category::create([
                 'name' => implode(" ", array_map(fn ($val) => Str::ucfirst($val), explode(" ", $name))),
                 'slug' => Str::slug($name),
                 'image' => 'https://source.unsplash.com/random/?' . $name
             ]);
+
+            array_push($createdIds, $createdCategory->id);
         }
+        return $createdIds;
     }
 
-    function createStores(): array
-    {
+    function createStores(): array {
         $store_categories = [
             [
                 'name' => 'New Product',
@@ -174,10 +180,148 @@ class DatabaseSeeder extends Seeder
         return [$store_1->id, $store_2->id];
     }
 
-    public function run(): void
-    {
-        $this->createUsers();
-        $this->createCategories();
+    function createVariantTypes(): array {
+        $optionMap = [
+            'Size' => ['S', 'M', 'L', 'XL'],
+            'Color' => ['Black', 'White', 'Gray'],
+            'Material' => ['Canvas', 'Leather']
+        ];
+        $types = [
+            'Size',
+            'Color',
+            'Material'
+        ];
+        $createdIds = [];
+        foreach ($types as $name) {
+            $created = \App\Models\VariantType::create([
+                'name' => $name
+            ]);
+
+            array_push($createdIds, ['id' => $created->id, 'options' => $optionMap[$name]]);
+        }
+        return $createdIds;
+    }
+
+    function createProducts($categoryIds, $storeIds): array {
+        $prodNames = [
+            'High-End Smartphone',
+            'Powerful Laptop',
+            'Stylish Table Lamp',
+            'Cotton T-shirt',
+            'High-Quality Headphones',
+            'Science Fiction Book',
+            'Designer Sofa',
+            'Diamond Necklace',
+            'Soccer Ball',
+            'Perfume Set',
+            'Coffee Maker',
+            'Sneakers',
+            'Laptop Bag',
+            'Digital Camera',
+            'Wooden Desk',
+            'Gaming Console',
+            'Wristwatch',
+            'Yoga Mat',
+            'Dining Table',
+            'Earrings'
+        ];
+        $createdProducts = [];
+        foreach ($prodNames as $name) {
+            $seledctedCatId = fake()->randomElement($categoryIds);
+            $seledctedStoreId = fake()->randomElement($storeIds);
+
+            $createdProduct = \App\Models\Product::create([
+                'name' => $name,
+                'slug' => Str::slug($name),
+                'description' => fake()->paragraph(random_int(3, 5)),
+                'price' => random_int(100000, 3000000),
+                'stok' => random_int(20, 150),
+                'average_rating' => fake()->randomFloat(1, 1, 5),
+                'category_id' => $seledctedCatId,
+                'store_id' => $seledctedStoreId,
+                'store_category_id' => \App\Models\StoreCategory::where('store_id', $seledctedStoreId)->inRandomOrder()->first()->id
+            ]);
+
+            $productImages = [];
+            for ($i = 0; $i < random_int(3, 4); $i++) {
+                array_push(
+                    $productImages,
+                    [
+                        'image_url' => 'https://source.unsplash.com/random/?' . $name . ' ' . fake()->word(),
+                        'main_image' => $i === 0
+                    ]
+                );
+            }
+
+            $createdProduct->product_images()->createMany($productImages);
+
+            array_push($createdProducts, $createdProduct);
+        }
+        return $createdProducts;
+    }
+
+    function cartesianProduct($inputArray, $currentIndex = 0, $currentCombination = []) {
+        if ($currentIndex == count($inputArray)) {
+            return [$currentCombination];
+        }
+
+        $result = [];
+
+        foreach ($inputArray[$currentIndex] as $item) {
+            $newCombination = $currentCombination;
+            $newCombination[] = $item;
+
+            $result = array_merge(
+                $result,
+                $this->cartesianProduct($inputArray, $currentIndex + 1, $newCombination)
+            );
+        }
+
+        return $result;
+    }
+
+    public function run(): void {
+        $createdUserIdByRole = $this->createUsers();
+        $createdCategoryIds = $this->createCategories();
         $createdStoreIds = $this->createStores();
+        $createdVarTypeMap = $this->createVariantTypes();
+
+        $createdProducts = $this->createProducts($createdCategoryIds, $createdStoreIds);
+
+        foreach ($createdProducts as $newProduct) {
+            $prodOpts = [];
+            foreach (array_slice($createdVarTypeMap, random_int(0, 2)) as $val) {
+                $prodTypeOpts = $newProduct->variant_options()->createMany(
+                    array_map(fn ($option) => [
+                        'value' => $option, 'variant_type_id' => $val['id']
+                    ], $val['options'])
+                );
+
+                $prodTypeOptIds = [];
+                foreach ($prodTypeOpts as $opt) {
+                    array_push($prodTypeOptIds, ($opt->id));
+                }
+                array_push($prodOpts, $prodTypeOptIds);
+            }
+
+            $optCombination = $this->cartesianProduct($prodOpts);
+
+            $prodVars = [];
+            foreach ($optCombination as $optIds) {
+                $prodVar = \App\Models\ProductVariant::create([
+                    'price' => $newProduct->price,
+                    'stok' => random_int(10, 60),
+                    'product_id' => $newProduct->id
+                ]);
+                $prodVar->variant_options()->attach($optIds);
+                array_push($prodVars, $prodVar);
+            }
+
+            $resultStok = 0;
+            foreach ($prodVars as $prodVar) {
+                $resultStok += $prodVar->stok;
+            }
+            $newProduct->update(['stok' => $resultStok]);
+        }
     }
 }
