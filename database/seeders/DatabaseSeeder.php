@@ -22,12 +22,6 @@ class DatabaseSeeder extends Seeder {
             'password' => bcrypt('66666666'),
             'remember_token' => Str::random(10),
             'phone_number' => '08123123123123',
-            'address' => 'Surabaya',
-            'province_id' => '11',
-            'province' => 'Jawa Timur',
-            'city_id' => '444',
-            'city' => 'Kota Surabaya',
-            'postal_code' => '66666',
             'image' => 'https://source.unsplash.com/random/?person user',
         ]);
         $user2 = \App\Models\User::create([
@@ -37,12 +31,6 @@ class DatabaseSeeder extends Seeder {
             'password' => bcrypt('66666666'),
             'remember_token' => Str::random(10),
             'phone_number' => '08123123123123',
-            'address' => 'Sleman',
-            'province_id' => '5',
-            'province' => 'DI Yogyakarta',
-            'city_id' => '419',
-            'city' => 'Sleman',
-            'postal_code' => '66666',
             'image' => 'https://source.unsplash.com/random/?musician',
         ]);
         $user3 = \App\Models\User::create([
@@ -52,12 +40,6 @@ class DatabaseSeeder extends Seeder {
             'password' => bcrypt('66666666'),
             'remember_token' => Str::random(10),
             'phone_number' => '08123123123123',
-            'address' => 'Jakarta Selatan',
-            'province_id' => '6',
-            'province' => 'DKI Jakarta',
-            'city_id' => '153',
-            'city' => 'Jakarta Selatan',
-            'postal_code' => '66666',
             'image' => 'https://source.unsplash.com/random/?seller person',
         ]);
         $user4 = \App\Models\User::create([
@@ -67,12 +49,6 @@ class DatabaseSeeder extends Seeder {
             'password' => bcrypt('66666666'),
             'remember_token' => Str::random(10),
             'phone_number' => '08123123123123',
-            'address' => 'Jakarta Pusat',
-            'province_id' => '6',
-            'province' => 'DKI Jakarta',
-            'city_id' => '152',
-            'city' => 'Jakarta Pusat',
-            'postal_code' => '66666',
             'image' => 'https://source.unsplash.com/random/?metal fans',
         ]);
         $user5 = \App\Models\User::create([
@@ -82,12 +58,6 @@ class DatabaseSeeder extends Seeder {
             'password' => bcrypt('66666666'),
             'remember_token' => Str::random(10),
             'phone_number' => '08123123123123',
-            'address' => 'Surabaya',
-            'province_id' => '11',
-            'province' => 'Jawa Timur',
-            'city_id' => '444',
-            'city' => 'Kota Surabaya',
-            'postal_code' => '66666',
             'image' => 'https://source.unsplash.com/random/?admin person',
         ]);
 

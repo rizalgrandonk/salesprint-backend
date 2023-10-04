@@ -23,12 +23,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property string $phone_number
- * @property string $address
- * @property string $city
- * @property string $city_id
- * @property string $province
- * @property string $province_id
- * @property string $postal_code
  * @property string|null $image
  * @property string|null $remember_token
  * @property Carbon|null $created_at
@@ -61,12 +55,6 @@ class User extends Authenticatable implements JWTSubject {
 		'email_verified_at',
 		'password',
 		'phone_number',
-		'address',
-		'city',
-		'city_id',
-		'province',
-		'province_id',
-		'postal_code',
 		'image',
 		'remember_token'
 	];
