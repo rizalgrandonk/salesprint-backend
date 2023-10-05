@@ -12,11 +12,11 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class Review
  * 
- * @property int $id
+ * @property string $id
  * @property int $rating
  * @property string $coment
- * @property int $user_id
- * @property int $product_id
+ * @property string $user_id
+ * @property string $product_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * 
@@ -25,14 +25,14 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class Review extends Model
-{
+class Review extends Model {
 	protected $table = 'reviews';
 
 	protected $casts = [
+		'id' => 'string',
 		'rating' => 'int',
-		'user_id' => 'int',
-		'product_id' => 'int'
+		'user_id' => 'string',
+		'product_id' => 'string'
 	];
 
 	protected $fillable = [
@@ -42,13 +42,11 @@ class Review extends Model
 		'product_id'
 	];
 
-	public function product()
-	{
+	public function product() {
 		return $this->belongsTo(Product::class);
 	}
 
-	public function user()
-	{
+	public function user() {
 		return $this->belongsTo(User::class);
 	}
 }

@@ -40,6 +40,7 @@ class User extends Authenticatable implements JWTSubject {
 	protected $table = 'users';
 
 	protected $casts = [
+		'id' => 'string',
 		'email_verified_at' => 'datetime'
 	];
 

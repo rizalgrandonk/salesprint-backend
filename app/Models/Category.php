@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class Category
  * 
- * @property int $id
+ * @property string $id
  * @property string $name
  * @property string $slug
  * @property string|null $image
@@ -24,9 +24,12 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class Category extends Model
-{
+class Category extends Model {
 	protected $table = 'categories';
+
+	protected $casts = [
+		'id' => 'string',
+	];
 
 	protected $fillable = [
 		'name',
@@ -34,8 +37,7 @@ class Category extends Model
 		'image'
 	];
 
-	public function products()
-	{
+	public function products() {
 		return $this->hasMany(Product::class);
 	}
 }

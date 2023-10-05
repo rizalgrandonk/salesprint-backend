@@ -13,16 +13,16 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class Product
  * 
- * @property int $id
+ * @property string $id
  * @property string $name
  * @property string $slug
  * @property string $description
  * @property float $price
  * @property int $stok
  * @property float $average_rating
- * @property int $category_id
- * @property int $store_id
- * @property int|null $store_category_id
+ * @property string $category_id
+ * @property string $store_id
+ * @property string|null $store_category_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * 
@@ -37,17 +37,17 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class Product extends Model
-{
+class Product extends Model {
 	protected $table = 'products';
 
 	protected $casts = [
+		'id' => 'string',
 		'price' => 'float',
 		'stok' => 'int',
 		'average_rating' => 'float',
-		'category_id' => 'int',
-		'store_id' => 'int',
-		'store_category_id' => 'int'
+		'category_id' => 'string',
+		'store_id' => 'string',
+		'store_category_id' => 'string'
 	];
 
 	protected $fillable = [
@@ -62,43 +62,35 @@ class Product extends Model
 		'store_category_id'
 	];
 
-	public function category()
-	{
+	public function category() {
 		return $this->belongsTo(Category::class);
 	}
 
-	public function store_category()
-	{
+	public function store_category() {
 		return $this->belongsTo(StoreCategory::class);
 	}
 
-	public function store()
-	{
+	public function store() {
 		return $this->belongsTo(Store::class);
 	}
 
-	public function order_items()
-	{
+	public function order_items() {
 		return $this->hasMany(OrderItem::class);
 	}
 
-	public function product_images()
-	{
+	public function product_images() {
 		return $this->hasMany(ProductImage::class);
 	}
 
-	public function product_variants()
-	{
+	public function product_variants() {
 		return $this->hasMany(ProductVariant::class);
 	}
 
-	public function reviews()
-	{
+	public function reviews() {
 		return $this->hasMany(Review::class);
 	}
 
-	public function variant_options()
-	{
+	public function variant_options() {
 		return $this->hasMany(VariantOption::class);
 	}
 }

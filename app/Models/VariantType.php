@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class VariantType
  * 
- * @property int $id
+ * @property string $id
  * @property string $name
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -22,16 +22,18 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class VariantType extends Model
-{
+class VariantType extends Model {
 	protected $table = 'variant_types';
+
+	protected $casts = [
+		'id' => 'string',
+	];
 
 	protected $fillable = [
 		'name'
 	];
 
-	public function variant_options()
-	{
+	public function variant_options() {
 		return $this->hasMany(VariantOption::class);
 	}
 }

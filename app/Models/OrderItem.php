@@ -12,11 +12,11 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class OrderItem
  * 
- * @property int $id
+ * @property string $id
  * @property int $quantity
- * @property int $product_id
- * @property int $product_variant_id
- * @property int $order_id
+ * @property string $product_id
+ * @property string $product_variant_id
+ * @property string $order_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * 
@@ -26,15 +26,15 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class OrderItem extends Model
-{
+class OrderItem extends Model {
 	protected $table = 'order_items';
 
 	protected $casts = [
+		'id' => 'string',
 		'quantity' => 'int',
-		'product_id' => 'int',
-		'product_variant_id' => 'int',
-		'order_id' => 'int'
+		'product_id' => 'string',
+		'product_variant_id' => 'string',
+		'order_id' => 'string'
 	];
 
 	protected $fillable = [
@@ -44,18 +44,15 @@ class OrderItem extends Model
 		'order_id'
 	];
 
-	public function order()
-	{
+	public function order() {
 		return $this->belongsTo(Order::class);
 	}
 
-	public function product()
-	{
+	public function product() {
 		return $this->belongsTo(Product::class);
 	}
 
-	public function product_variant()
-	{
+	public function product_variant() {
 		return $this->belongsTo(ProductVariant::class);
 	}
 }

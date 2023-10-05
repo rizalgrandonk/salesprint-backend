@@ -12,10 +12,10 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class StoreBanner
  * 
- * @property int $id
+ * @property string $id
  * @property string|null $description
  * @property string $image
- * @property int $store_id
+ * @property string $store_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * 
@@ -23,12 +23,12 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class StoreBanner extends Model
-{
+class StoreBanner extends Model {
 	protected $table = 'store_banners';
 
 	protected $casts = [
-		'store_id' => 'int'
+		'id' => 'string',
+		'store_id' => 'string'
 	];
 
 	protected $fillable = [
@@ -37,8 +37,7 @@ class StoreBanner extends Model
 		'store_id'
 	];
 
-	public function store()
-	{
+	public function store() {
 		return $this->belongsTo(Store::class);
 	}
 }

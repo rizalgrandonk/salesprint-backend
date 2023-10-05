@@ -13,10 +13,10 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class ProductVariant
  * 
- * @property int $id
+ * @property string $id
  * @property float $price
  * @property int $stok
- * @property int $product_id
+ * @property string $product_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * 
@@ -26,14 +26,14 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class ProductVariant extends Model
-{
+class ProductVariant extends Model {
 	protected $table = 'product_variants';
 
 	protected $casts = [
+		'id' => 'string',
 		'price' => 'float',
 		'stok' => 'int',
-		'product_id' => 'int'
+		'product_id' => 'string'
 	];
 
 	protected $fillable = [
@@ -42,20 +42,17 @@ class ProductVariant extends Model
 		'product_id'
 	];
 
-	public function product()
-	{
+	public function product() {
 		return $this->belongsTo(Product::class);
 	}
 
-	public function order_items()
-	{
+	public function order_items() {
 		return $this->hasMany(OrderItem::class);
 	}
 
-	public function variant_options()
-	{
+	public function variant_options() {
 		return $this->belongsToMany(VariantOption::class)
-					->withPivot('id')
-					->withTimestamps();
+			->withPivot('id')
+			->withTimestamps();
 	}
 }
