@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/migrate', function () {
+    echo Artisan::call('migrate:fresh --seed');
+});
 Route::get('/', function () {
     return view('welcome');
 });
