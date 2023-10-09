@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers;
+use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,10 @@ use App\Http\Controllers;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+Route::get('/migrate', function () {
+    return Artisan::call('migrate:fresh --seed');
+});
 
 Route::group([
     'middleware' => 'api',
