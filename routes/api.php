@@ -2,9 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\ProductController;
+use App\Http\Controllers;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,30 +19,44 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'
 ], function () {
-    Route::post('login', [AuthController::class, "login"]);
-    Route::post('register', [AuthController::class, "register"]);
+    Route::post('login', [Controllers\AuthController::class, "login"]);
+    Route::post('register', [Controllers\AuthController::class, "register"]);
 });
 
 Route::group([
     'middleware' => 'auth.jwt',
     'prefix' => 'auth'
 ], function () {
-    Route::get('me', [AuthController::class, "me"]);
-    Route::post('refresh', [AuthController::class, "refresh"]);
-    Route::post('logout', [AuthController::class, "logout"]);
+    Route::get('me', [Controllers\AuthController::class, "me"]);
+    Route::post('refresh', [Controllers\AuthController::class, "refresh"]);
+    Route::post('logout', [Controllers\AuthController::class, "logout"]);
 });
 
 
+// PUBLIC ROUTES
+Route::group([
+    'middleware' => 'api',
+], function () {
+    Route::prefix('categories')->group(function () {
+        Route::get('/', [Controllers\CategoryController::class, "index"]);
+    });
 
-Route::group([
-    'middleware' => 'api',
-    'prefix' => 'products'
-], function () {
-    Route::get('/', [ProductController::class, "index"]);
+    Route::prefix('products')->group(function () {
+        Route::get('/', [Controllers\ProductController::class, "index"]);
+    });
+
+    Route::prefix('stores')->group(function () {
+        Route::get('/', [Controllers\StoreController::class, "index"]);
+    });
 });
+
+
+// PRIVATE ROUTES
 Route::group([
-    'middleware' => 'api',
-    'prefix' => 'categories'
+    'middleware' => 'auth.jwt',
 ], function () {
-    Route::get('/', [CategoryController::class, "index"]);
+    Route::get(
+        '/mystore',
+        [Controllers\User\StoreController::class, "mystore"]
+    );
 });

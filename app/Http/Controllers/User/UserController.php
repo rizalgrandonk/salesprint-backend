@@ -1,16 +1,18 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
-use App\Models\Product;
+use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 
-class ProductController extends Controller {
+class UserController extends Controller {
+
     /**
      * Display a listing of the resource.
      */
     public function index() {
-        return Product::with('category', 'store_category', 'store', 'product_images', 'product_variants.variant_options.variant_type')->withCount("reviews")->get();
+        //
     }
 
     /**
@@ -23,21 +25,21 @@ class ProductController extends Controller {
     /**
      * Display the specified resource.
      */
-    public function show(Product $product) {
+    public function show(User $user) {
         //
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product) {
+    public function update(Request $request, User $user) {
         //
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product) {
+    public function destroy(User $user) {
         //
     }
 }

@@ -7,15 +7,13 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-class JwtAuthenticateMiddleware
-{
+class JwtAuthenticateMiddleware {
     /**
      * Handle an incoming request.
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
-    {
+    public function handle(Request $request, Closure $next, string $role = null): Response {
         try {
             $user = JWTAuth::parseToken()->authenticate();
         } catch (\Exception $e) {
@@ -24,6 +22,10 @@ class JwtAuthenticateMiddleware
         }
 
         if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        if ($role && (!$user->role || $user->role !== $role)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 

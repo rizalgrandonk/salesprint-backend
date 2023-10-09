@@ -6,14 +6,14 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-class AuthController extends Controller
-{
+class AuthController extends Controller {
 
-    public function register(Request $request)
-    {
+    public function register(Request $request) {
         $validatedData = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'username' => ['required', 'string', 'max:255', 'unique:users'],
+            'phone_number' => ['required', 'string', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
@@ -21,6 +21,9 @@ class AuthController extends Controller
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'password' => bcrypt($validatedData['password']),
+            'username' => $validatedData['username'],
+            'phone_number' => $validatedData['phone_number'],
+            'image' => env("DEFAULT_USER_IMAGE", ""),
             'role' => 'user'
         ]);
 
@@ -34,11 +37,10 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login()
-    {
+    public function login() {
         $credentials = request(['email', 'password']);
 
-        if (! $token = auth()->attempt($credentials)) {
+        if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -50,8 +52,7 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function me()
-    {
+    public function me() {
         return response()->json(auth()->user());
     }
 
@@ -60,8 +61,7 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function logout()
-    {
+    public function logout() {
         auth()->logout();
 
         return response()->json(['message' => 'Successfully logged out']);
@@ -72,8 +72,7 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function refresh()
-    {
+    public function refresh() {
         return $this->respondWithTokenAndUser(auth()->refresh(), auth()->user());
     }
 
@@ -84,8 +83,7 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function respondWithTokenAndUser($token, $user)
-    {
+    protected function respondWithTokenAndUser($token, $user) {
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',

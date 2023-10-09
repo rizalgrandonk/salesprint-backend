@@ -57,7 +57,8 @@ class User extends Authenticatable implements JWTSubject {
 		'password',
 		'phone_number',
 		'image',
-		'remember_token'
+		'remember_token',
+		'username'
 	];
 
 	public function orders() {
@@ -68,8 +69,8 @@ class User extends Authenticatable implements JWTSubject {
 		return $this->hasMany(Review::class);
 	}
 
-	public function stores() {
-		return $this->hasMany(Store::class);
+	public function store() {
+		return $this->hasOne(Store::class);
 	}
 
 	/**

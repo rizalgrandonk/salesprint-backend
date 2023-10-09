@@ -18,47 +18,52 @@ class DatabaseSeeder extends Seeder {
         $user1 = \App\Models\User::create([
             'name' => 'User',
             'email' => 'user@gmail.com',
+            'username' => 'user666',
             'role' => 'user',
             'password' => bcrypt('66666666'),
             'remember_token' => Str::random(10),
-            'phone_number' => '08123123123123',
-            'image' => 'https://source.unsplash.com/random/?person user',
+            'phone_number' => '08123239483123',
+            'image' => 'https://source.unsplash.com/random/?person%20user',
         ]);
         $user2 = \App\Models\User::create([
             'name' => 'Grandonk User',
             'email' => 'grandonkuser@gmail.com',
+            'username' => 'grandonkuser666',
             'role' => 'user',
             'password' => bcrypt('66666666'),
             'remember_token' => Str::random(10),
-            'phone_number' => '08123123123123',
+            'phone_number' => '08242301323123',
             'image' => 'https://source.unsplash.com/random/?musician',
         ]);
         $user3 = \App\Models\User::create([
             'name' => 'Seller',
             'email' => 'seller@gmail.com',
+            'username' => 'seller666',
             'role' => 'seller',
             'password' => bcrypt('66666666'),
             'remember_token' => Str::random(10),
-            'phone_number' => '08123123123123',
-            'image' => 'https://source.unsplash.com/random/?seller person',
+            'phone_number' => '08154536315424',
+            'image' => 'https://source.unsplash.com/random/?seller%20person',
         ]);
         $user4 = \App\Models\User::create([
             'name' => 'Grandonk Seller',
             'email' => 'grandonkseller@gmail.com',
+            'username' => 'grandonkseller666',
             'role' => 'seller',
             'password' => bcrypt('66666666'),
             'remember_token' => Str::random(10),
-            'phone_number' => '08123123123123',
-            'image' => 'https://source.unsplash.com/random/?metal fans',
+            'phone_number' => '08123191347123',
+            'image' => 'https://source.unsplash.com/random/?metal%20fans',
         ]);
         $user5 = \App\Models\User::create([
             'name' => 'Admin',
             'email' => 'admin@gmail.com',
+            'username' => 'admin666',
             'role' => 'admin',
             'password' => bcrypt('66666666'),
             'remember_token' => Str::random(10),
-            'phone_number' => '08123123123123',
-            'image' => 'https://source.unsplash.com/random/?admin person',
+            'phone_number' => '08123171321243',
+            'image' => 'https://source.unsplash.com/random/?admin%20person',
         ]);
 
         return [
@@ -112,7 +117,7 @@ class DatabaseSeeder extends Seeder {
             $createdCategory = \App\Models\Category::create([
                 'name' => implode(" ", array_map(fn ($val) => Str::ucfirst($val), explode(" ", $name))),
                 'slug' => Str::slug($name),
-                'image' => 'https://source.unsplash.com/random/?' . $name
+                'image' => 'https://source.unsplash.com/random/?' . urlencode($name)
             ]);
 
             array_push($createdIds, ['id' => $createdCategory->id, 'prodNames' => $val]);
@@ -125,12 +130,12 @@ class DatabaseSeeder extends Seeder {
             [
                 'name' => 'New Product',
                 'slug' => Str::slug('New Product'),
-                'image' => 'https://source.unsplash.com/random/?new product'
+                'image' => 'https://source.unsplash.com/random/?new%20product'
             ],
             [
                 'name' => 'Top Seller',
                 'slug' => Str::slug('Top Seller'),
-                'image' => 'https://source.unsplash.com/random/?top seller'
+                'image' => 'https://source.unsplash.com/random/?top%20seller'
             ],
         ];
 
@@ -144,7 +149,7 @@ class DatabaseSeeder extends Seeder {
             'city' => 'Jakarta Pusat',
             'postal_code' => '66666',
             'status' => 'approved',
-            'image' => 'https://source.unsplash.com/random/?clothing store',
+            'image' => 'https://source.unsplash.com/random/?clothing%20store',
             'user_id' => \App\Models\User::where('email', 'grandonkseller@gmail.com')->first()->id
         ]);
 
@@ -158,7 +163,7 @@ class DatabaseSeeder extends Seeder {
             'city' => 'Jakarta Selatan',
             'postal_code' => '66666',
             'status' => 'approved',
-            'image' => 'https://source.unsplash.com/random/?sneakers store',
+            'image' => 'https://source.unsplash.com/random/?sneakers%20store',
             'user_id' => \App\Models\User::where('email', 'seller@gmail.com')->first()->id
         ]);
 
@@ -166,12 +171,12 @@ class DatabaseSeeder extends Seeder {
         $store_2->store_categories()->createMany($store_categories);
 
         $store_1->store_banners()->createMany([
-            ['image' => 'https://source.unsplash.com/random/?band merchandise'],
-            ['image' => 'https://source.unsplash.com/random/?metal band'],
+            ['image' => 'https://source.unsplash.com/random/?band%20merchandise'],
+            ['image' => 'https://source.unsplash.com/random/?metal%20band'],
         ]);
         $store_2->store_banners()->createMany([
             ['image' => 'https://source.unsplash.com/random/?sneakers'],
-            ['image' => 'https://source.unsplash.com/random/?shoes store'],
+            ['image' => 'https://source.unsplash.com/random/?shoes%20store'],
         ]);
 
         return [$store_1->id, $store_2->id];
@@ -222,7 +227,7 @@ class DatabaseSeeder extends Seeder {
                 array_push(
                     $productImages,
                     [
-                        'image_url' => 'https://source.unsplash.com/random/?' . $name . ' ' . fake()->word(),
+                        'image_url' => 'https://source.unsplash.com/random/?' . urlencode($name . ' ' . fake()->word()),
                         'main_image' => $i === 0
                     ]
                 );

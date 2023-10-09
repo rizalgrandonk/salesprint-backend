@@ -1,16 +1,24 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
-use App\Models\Product;
+use App\Http\Controllers\Controller;
+use App\Models\Store;
 use Illuminate\Http\Request;
 
-class ProductController extends Controller {
+class StoreController extends Controller {
+    /**
+     * Get user store
+     */
+    public function mystore() {
+        return Store::where("user_id", auth()->user()->id)->first();
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index() {
-        return Product::with('category', 'store_category', 'store', 'product_images', 'product_variants.variant_options.variant_type')->withCount("reviews")->get();
+        //
     }
 
     /**
@@ -23,21 +31,21 @@ class ProductController extends Controller {
     /**
      * Display the specified resource.
      */
-    public function show(Product $product) {
-        //
+    public function show(Store $store) {
+        return $store;
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product) {
+    public function update(Request $request, Store $store) {
         //
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product) {
+    public function destroy(Store $store) {
         //
     }
 }
