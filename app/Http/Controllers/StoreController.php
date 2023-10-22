@@ -1,18 +1,26 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\Store;
 use Illuminate\Http\Request;
 
-class UserController extends Controller {
+class StoreController extends Controller {
+    /**
+     * Get user store
+     */
+    public function mystore() {
+        return Store::where("user_id", auth()->user()->id)
+            ->with("store_banners", "store_categories")
+            ->first();
+    }
 
     /**
      * Display a listing of the resource.
      */
     public function index() {
-        //
+        return Store::with("store_banners")->get();
     }
 
     /**
@@ -25,21 +33,21 @@ class UserController extends Controller {
     /**
      * Display the specified resource.
      */
-    public function show(User $user) {
-        //
+    public function show(Store $store) {
+        return $store;
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user) {
+    public function update(Request $request, Store $store) {
         //
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user) {
+    public function destroy(Store $store) {
         //
     }
 }

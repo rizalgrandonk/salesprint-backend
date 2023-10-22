@@ -59,9 +59,10 @@ Route::group([
 // PRIVATE ROUTES
 Route::group([
     'middleware' => 'auth.jwt',
+    'prefix' => 'store'
 ], function () {
     Route::get(
         '/mystore',
-        [Controllers\User\StoreController::class, "mystore"]
+        [Controllers\StoreController::class, "mystore"]
     );
 });
