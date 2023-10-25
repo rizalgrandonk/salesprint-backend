@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $postal_code
  * @property string $status
  * @property string|null $image
+ * @property string|null $store_description
  * @property string $user_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -56,6 +57,7 @@ class Store extends Model {
 		'postal_code',
 		'status',
 		'image',
+		'store_description',
 		'user_id'
 	];
 

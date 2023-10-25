@@ -150,6 +150,7 @@ class DatabaseSeeder extends Seeder {
             'postal_code' => '66666',
             'status' => 'approved',
             'image' => 'https://source.unsplash.com/random/?clothing%20store',
+            'store_description' => fake()->paragraph(random_int(3, 5)),
             'user_id' => \App\Models\User::where('email', 'grandonkseller@gmail.com')->first()->id
         ]);
 
@@ -164,6 +165,7 @@ class DatabaseSeeder extends Seeder {
             'postal_code' => '66666',
             'status' => 'approved',
             'image' => 'https://source.unsplash.com/random/?sneakers%20store',
+            'store_description' => fake()->paragraph(random_int(3, 5)),
             'user_id' => \App\Models\User::where('email', 'seller@gmail.com')->first()->id
         ]);
 
