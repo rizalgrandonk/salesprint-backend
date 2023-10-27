@@ -186,9 +186,9 @@ class DatabaseSeeder extends Seeder {
 
     function createVariantTypes(): array {
         $optionMap = [
-            'Size' => ['S', 'M', 'L', 'XL'],
-            'Color' => ['Hitam', 'Putih', 'Abu - abu'],
-            'Material' => ['Kanvas', 'Kulit']
+            'Ukuran' => ['S', 'M', 'L', 'XL'],
+            'Warna' => ['Hitam', 'Putih', 'Abu - abu'],
+            'Bahan' => ['Kanvas', 'Kulit']
         ];
         $types = [
             'Ukuran',
