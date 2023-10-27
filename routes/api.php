@@ -52,6 +52,14 @@ Route::group([
 
     Route::prefix('stores')->group(function () {
         Route::get('/', [Controllers\StoreController::class, "index"]);
+        Route::get(
+            '/get_province',
+            [Controllers\StoreController::class, "get_province"]
+        );
+        Route::get(
+            '/get_cities',
+            [Controllers\StoreController::class, "get_cities"]
+        );
     });
 });
 
@@ -59,7 +67,7 @@ Route::group([
 // PRIVATE ROUTES
 Route::group([
     'middleware' => 'auth.jwt',
-    'prefix' => 'store'
+    'prefix' => 'stores'
 ], function () {
     Route::get(
         '/mystore',

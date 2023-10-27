@@ -10,7 +10,13 @@ class CategoryController extends Controller {
      * Display a listing of the resource.
      */
     public function index() {
-        return Category::with('products')->get();
+        $categories = Category::with('products')->get();
+
+        if (!$categories) {
+            return $this->responseFailed("Not Found", 404, "Categories not found");
+        }
+
+        return $this->responseSuccess($categories);
     }
 
     /**
