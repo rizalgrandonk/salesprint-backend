@@ -75,41 +75,41 @@ class DatabaseSeeder extends Seeder {
 
     function createCategories(): array {
         $category_names = [
-            'Electronics' => [
+            'Elektronik' => [
                 'High-End Smartphone',
-                'Notebook Budget'
+                'Notebook Murah'
             ],
-            'Clothing' => [
-                'T-Shirt',
-                'Long Pants'
+            'Pakaian' => [
+                'Kaos',
+                'Celana Panjang'
             ],
-            'Home Decor' => [
-                'Table Lamp',
-                'Band Poster'
+            'Dekorasi' => [
+                'Lampu Meja',
+                'Poster Band'
             ],
-            'Books' => [
-                'Science Fiction Book',
-                'Computer Science Book'
+            'Buku' => [
+                'Buku Fiksi',
+                'Komik'
             ],
-            'Toys' => [
-                'Gaming Console',
-                'Car Diecast'
+            'Mainan' => [
+                'Gaming CD',
+                'Diecast'
             ],
             'Furniture' => [
-                'Wooden Desk',
-                'Designer Sofa'
+                'Meja Kayu',
+                'Sofa'
             ],
-            'Sports' => [
-                'Soccer Ball',
-                'Football Jersey'
+            'Olahraga' => [
+                'Bola Sepak',
+                'Jersey Sepak Bola'
             ],
-            'Beauty' => [
-                'Perfume Set',
-                'Diamond Necklace'
+            'Kecantikan' => [
+                'Set Parfum',
+                'Kalung Liontin'
             ],
-            'Shoes' => [
+            'Sepatu' => [
                 'Sneakers',
-                'Football Shoes'
+                'Sepatu Sepak Bola'
             ],
         ];
         $createdIds = [];
@@ -128,8 +128,8 @@ class DatabaseSeeder extends Seeder {
     function createStores(): array {
         $store_categories = [
             [
-                'name' => 'New Product',
-                'slug' => Str::slug('New Product'),
+                'name' => 'Produk Baru',
+                'slug' => Str::slug('Produk Baru'),
                 'image' => 'https://source.unsplash.com/random/?new%20product'
             ],
             [
@@ -187,13 +187,13 @@ class DatabaseSeeder extends Seeder {
     function createVariantTypes(): array {
         $optionMap = [
             'Size' => ['S', 'M', 'L', 'XL'],
-            'Color' => ['Black', 'White', 'Gray'],
-            'Material' => ['Canvas', 'Leather']
+            'Color' => ['Hitam', 'Putih', 'Abu - abu'],
+            'Material' => ['Kanvas', 'Kulit']
         ];
         $types = [
-            'Size',
-            'Color',
-            'Material'
+            'Ukuran',
+            'Warna',
+            'Bahan'
         ];
         $createdIds = [];
         foreach ($types as $name) {
