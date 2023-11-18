@@ -13,7 +13,7 @@ class Controller extends BaseController {
         return response()->json($data, $status);
     }
 
-    public function responseFailed(string $error = "Request failed", int $status = 400, string $message) {
+    public function responseFailed(string $error = "Request failed", int $status = 400, string $message = null) {
         return response()->json([
             "error" => $error,
             "message" => $message ?? $error

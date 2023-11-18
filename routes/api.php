@@ -21,36 +21,66 @@ Route::get('/migrate', function () {
 });
 
 Route::group([
-    'middleware' => 'api',
     'prefix' => 'auth'
 ], function () {
-    Route::post('login', [Controllers\AuthController::class, "login"]);
-    Route::post('register', [Controllers\AuthController::class, "register"]);
+    Route::group([
+        'middleware' => 'api',
+    ], function () {
+        Route::post('/login', [Controllers\AuthController::class, "login"]);
+        Route::post(
+            '/register',
+            [Controllers\AuthController::class, "register"]
+        );
+    });
+
+    Route::group([
+        'middleware' => 'auth.jwt',
+    ], function () {
+        Route::get('/me', [Controllers\AuthController::class, "me"]);
+        Route::post('/refresh', [Controllers\AuthController::class, "refresh"]);
+        Route::post('/logout', [Controllers\AuthController::class, "logout"]);
+    });
 });
 
 Route::group([
-    'middleware' => 'auth.jwt',
-    'prefix' => 'auth'
+    "prefix" => "categories"
 ], function () {
-    Route::get('me', [Controllers\AuthController::class, "me"]);
-    Route::post('refresh', [Controllers\AuthController::class, "refresh"]);
-    Route::post('logout', [Controllers\AuthController::class, "logout"]);
-});
-
-
-// PUBLIC ROUTES
-Route::group([
-    'middleware' => 'api',
-], function () {
-    Route::prefix('categories')->group(function () {
+    Route::group([
+        'middleware' => 'api',
+    ], function () {
         Route::get('/', [Controllers\CategoryController::class, "index"]);
     });
+});
 
-    Route::prefix('products')->group(function () {
+Route::group([
+    "prefix" => "products"
+], function () {
+    Route::group([
+        'middleware' => 'api',
+    ], function () {
         Route::get('/', [Controllers\ProductController::class, "index"]);
     });
+});
 
-    Route::prefix('stores')->group(function () {
+Route::group([
+    "prefix" => "stores"
+], function () {
+    Route::group([
+        'middleware' => 'auth.jwt',
+    ], function () {
+        Route::get(
+            '/mystore',
+            [Controllers\StoreController::class, "mystore"]
+        );
+        Route::post(
+            '/create',
+            [Controllers\StoreController::class, "store"]
+        );
+    });
+
+    Route::group([
+        'middleware' => 'api',
+    ], function () {
         Route::get('/', [Controllers\StoreController::class, "index"]);
         Route::get(
             '/get_province',
@@ -60,17 +90,9 @@ Route::group([
             '/get_cities',
             [Controllers\StoreController::class, "get_cities"]
         );
+        Route::get(
+            '/{slug}',
+            [Controllers\StoreController::class, "show"]
+        );
     });
-});
-
-
-// PRIVATE ROUTES
-Route::group([
-    'middleware' => 'auth.jwt',
-    'prefix' => 'stores'
-], function () {
-    Route::get(
-        '/mystore',
-        [Controllers\StoreController::class, "mystore"]
-    );
 });
