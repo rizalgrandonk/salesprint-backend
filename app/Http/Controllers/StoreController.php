@@ -7,6 +7,7 @@ use App\Models\Store;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use App\Http\Requests\StoreRequest;
 
 class StoreController extends Controller {
     /**
@@ -40,24 +41,14 @@ class StoreController extends Controller {
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) {
-        $validatedData = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'slug' => ['required', 'string', 'max:255', 'unique:stores'],
-            'phone_number' => ['required', 'string', 'max:255'],
-            'address' => ['required', 'string', 'max:255'],
-            'city' => ['required', 'string', 'max:255'],
-            'city_id' => ['required', 'string', 'max:255'],
-            'province' => ['required', 'string', 'max:255'],
-            'province_id' => ['required', 'string', 'max:255'],
-            'postal_code' => ['required', 'string', 'max:255'],
-        ]);
+    public function store(StoreRequest $request) {
+        $validatedData = $request->validated();
 
         $newStore =  Store::create([
+            'image' => env("DEFAULT_STORE_IMAGE", ""),
             ...$validatedData,
             "status" => "on_review",
-            'image' => env("DEFAULT_STORE_IMAGE", ""),
-            'user_id' => auth()->user()->id
+            'user_id' => auth()->user()->id,
         ]);
 
         User::where("id", auth()->user()->id)->update([
