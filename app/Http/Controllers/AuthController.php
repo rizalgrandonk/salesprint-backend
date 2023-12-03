@@ -33,10 +33,12 @@ class AuthController extends Controller {
         $credentials = request(['email', 'password']);
 
         if (!$token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return $this->responseFailed("Unauthorize", 403);
         }
 
-        return $this->respondWithTokenAndUser($token, auth()->user());
+        return $this->responseSuccess(
+            $this->respondWithTokenAndUser($token, auth()->user())
+        );
     }
 
     /**
@@ -45,7 +47,7 @@ class AuthController extends Controller {
      * @return \Illuminate\Http\JsonResponse
      */
     public function me() {
-        return response()->json(auth()->user());
+        return $this->responseSuccess(auth()->user());
     }
 
     /**
@@ -56,7 +58,7 @@ class AuthController extends Controller {
     public function logout() {
         auth()->logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return $this->responseSuccess(null, 200, 'Successfully logged out');
     }
 
     /**
@@ -65,7 +67,9 @@ class AuthController extends Controller {
      * @return \Illuminate\Http\JsonResponse
      */
     public function refresh() {
-        return $this->respondWithTokenAndUser(auth()->refresh(), auth()->user());
+        return $this->responseSuccess(
+            $this->respondWithTokenAndUser(auth()->refresh(), auth()->user())
+        );
     }
 
     /**
@@ -76,11 +80,11 @@ class AuthController extends Controller {
      * @return \Illuminate\Http\JsonResponse
      */
     protected function respondWithTokenAndUser($token, $user) {
-        return response()->json([
+        return [
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
             'user' => $user
-        ]);
+        ];
     }
 }

@@ -34,7 +34,7 @@ Route::group([
     });
 
     Route::group([
-        'middleware' => 'auth.jwt',
+        'middleware' => ['api', 'auth.jwt'],
     ], function () {
         Route::get('/me', [Controllers\AuthController::class, "me"]);
         Route::post('/refresh', [Controllers\AuthController::class, "refresh"]);
@@ -66,14 +66,14 @@ Route::group([
     "prefix" => "stores"
 ], function () {
     Route::group([
-        'middleware' => 'auth.jwt',
+        'middleware' => ['api', 'auth.jwt'],
     ], function () {
         Route::get(
             '/mystore',
             [Controllers\StoreController::class, "mystore"]
         );
         Route::post(
-            '/create',
+            '/',
             [Controllers\StoreController::class, "store"]
         );
     });
