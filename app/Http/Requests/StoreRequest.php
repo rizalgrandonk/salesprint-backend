@@ -28,7 +28,7 @@ class StoreRequest extends BaseRequest {
             'province' => ['required', 'string', 'max:255'],
             'province_id' => ['required', 'string', 'max:255'],
             'postal_code' => ['required', 'string', 'max:255'],
-            'store_description' => ['string', 'max:255', 'nullable'],
+            'store_description' => ['string', 'max:1000', 'nullable'],
             'image' => ['image', 'file', 'max:1024', 'nullable'],
         ];
     }

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Http;
 // use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Str;
@@ -264,6 +265,58 @@ class DatabaseSeeder extends Seeder {
         return $result;
     }
 
+    function createProvince() {
+        $res = Http::withHeaders([
+            'key' => 'b8993e20a6ece73dd669b63deece88f3',
+        ])->get('https://api.rajaongkir.com/starter/province');
+
+        if ($res->failed()) {
+            throw $res->error();
+        }
+
+        $data = $res->json();
+        $listProvince = $data['rajaongkir']['results'];
+
+        $dataToInsert = array_map(function ($prov) {
+            return [
+                ...$prov,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }, $listProvince);
+
+        \App\Models\Province::insert($dataToInsert);
+
+        return $listProvince;
+    }
+
+    function createCities(string $provinceId) {
+        $res = Http::withHeaders([
+            'key' => 'b8993e20a6ece73dd669b63deece88f3',
+        ])->get('https://api.rajaongkir.com/starter/city', [
+            'province' => $provinceId
+        ]);
+
+        if ($res->failed()) {
+            throw $res->error();
+        }
+
+        $data = $res->json();
+        $listCity = $data['rajaongkir']['results'];
+
+        $dataToInsert = array_map(function ($city) {
+            return [
+                ...$city,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }, $listCity);
+
+        \App\Models\City::insert($dataToInsert);
+
+        return;
+    }
+
     public function run(): void {
         $createdUserIdByRole = $this->createUsers();
         $createdCategoryIds = $this->createCategories();
@@ -311,6 +364,12 @@ class DatabaseSeeder extends Seeder {
                 $resultStok += $prodVar->stok;
             }
             $newProduct->update(['stok' => $resultStok]);
+        }
+
+        $listProvince = $this->createProvince();
+
+        foreach ($listProvince as $province) {
+            $this->createCities($province['province_id']);
         }
     }
 }

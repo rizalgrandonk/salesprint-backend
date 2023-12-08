@@ -63,6 +63,26 @@ Route::group([
 });
 
 Route::group([
+    "prefix" => "province"
+], function () {
+    Route::group([
+        'middleware' => 'api',
+    ], function () {
+        Route::get('/', [Controllers\ProvinceController::class, "index"]);
+    });
+});
+
+Route::group([
+    "prefix" => "city"
+], function () {
+    Route::group([
+        'middleware' => 'api',
+    ], function () {
+        Route::get('/', [Controllers\CityController::class, "index"]);
+    });
+});
+
+Route::group([
     "prefix" => "stores"
 ], function () {
     Route::group([
