@@ -8,6 +8,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Http\Requests\StoreRequest;
+use App\Http\Controllers\CloudinaryStorage;
+use Illuminate\Support\Facades\Log;
 
 class StoreController extends Controller {
     /**
@@ -19,7 +21,7 @@ class StoreController extends Controller {
             ->first();
 
         if (!$store) {
-            return $this->responseFailed("Not Found", 404, "User store not found");
+            return $this->responseFailed("User store not found", 404, "User store not found");
         }
 
         return $this->responseSuccess($store);
@@ -32,7 +34,7 @@ class StoreController extends Controller {
         $stores = Store::with("store_banners")->get();
 
         if (!$stores) {
-            return $this->responseFailed("Not Found", 404, "Stores not found");
+            return $this->responseFailed("Stores not Found", 404, "Stores not found");
         }
 
         return $this->responseSuccess($stores);
@@ -44,8 +46,18 @@ class StoreController extends Controller {
     public function store(StoreRequest $request) {
         $validatedData = $request->validated();
 
+        if (isset($validatedData['image'])) {
+            $image = $validatedData['image'];
+            $result = CloudinaryStorage::upload(
+                $image->getRealPath(),
+                $image->getClientOriginalName()
+            );
+            $validatedData["image"] = $result;
+        } else {
+            $validatedData["image"] = env("DEFAULT_STORE_IMAGE", null);
+        }
+
         $newStore =  Store::create([
-            'image' => env("DEFAULT_STORE_IMAGE", ""),
             ...$validatedData,
             "status" => "on_review",
             'user_id' => auth()->user()->id,
@@ -55,7 +67,7 @@ class StoreController extends Controller {
             'role' => 'seller'
         ]);
 
-        return $this->responseSuccess($newStore);
+        return $this->responseSuccess($newStore, 201);
     }
 
     /**
@@ -64,7 +76,7 @@ class StoreController extends Controller {
     public function show(string $slug) {
         $store = Store::where("slug", $slug)->first();
         if (!$store) {
-            return $this->responseFailed("Not Found", 404, "Store not found");
+            return $this->responseFailed("Stores not Found", 404, "Store not found");
         }
 
         return $this->responseSuccess($store);
@@ -73,8 +85,39 @@ class StoreController extends Controller {
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Store $store) {
-        //
+    public function update(StoreRequest $request, string $slug) {
+        $store = Store::where("slug", $slug)
+            ->first();
+
+        if (!$store) {
+            return $this->responseFailed("Stores not Found", 404, "Store not found");
+        }
+
+        $validatedData = $request->validated();
+
+        $defaultImage = env("DEFAULT_STORE_IMAGE", null);
+
+        if (isset($validatedData['image'])) {
+            if ($defaultImage !== null && $store->image !== $defaultImage) {
+                $image = $validatedData['image'];
+                $result = CloudinaryStorage::replace(
+                    $store->image,
+                    $image->getRealPath(),
+                    $image->getClientOriginalName()
+                );
+                $validatedData["image"] = $result;
+            } else {
+                $image = $validatedData['image'];
+                $result = CloudinaryStorage::upload(
+                    $image->getRealPath(),
+                    $image->getClientOriginalName()
+                );
+                $validatedData["image"] = $result;
+            }
+        }
+
+        $store->update($validatedData);
+        return $this->responseSuccess($store);
     }
 
     /**
@@ -89,7 +132,7 @@ class StoreController extends Controller {
      */
     public function get_province() {
         $res = Http::withHeaders([
-            'key' => 'f26ecb1fd37bc662a35832e653f4a3fa',
+            'key' => 'b8993e20a6ece73dd669b63deece88f3',
         ])->get('https://api.rajaongkir.com/starter/province');
 
         if ($res->failed()) {
@@ -109,7 +152,7 @@ class StoreController extends Controller {
         }
 
         $res = Http::withHeaders([
-            'key' => 'f26ecb1fd37bc662a35832e653f4a3fa',
+            'key' => 'b8993e20a6ece73dd669b63deece88f3',
         ])->get('https://api.rajaongkir.com/starter/city', [
             'province' => $province_id
         ]);

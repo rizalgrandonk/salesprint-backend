@@ -76,6 +76,10 @@ Route::group([
             '/',
             [Controllers\StoreController::class, "store"]
         );
+        Route::post(
+            '/{slug}',
+            [Controllers\StoreController::class, "update"]
+        );
     });
 
     Route::group([

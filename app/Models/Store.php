@@ -49,6 +49,7 @@ class Store extends Model {
 	protected $fillable = [
 		'name',
 		'slug',
+		'phone_number',
 		'address',
 		'city',
 		'city_id',

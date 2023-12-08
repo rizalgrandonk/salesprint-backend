@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class StoreRequest extends FormRequest {
+class StoreRequest extends BaseRequest {
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -20,7 +20,7 @@ class StoreRequest extends FormRequest {
     public function rules(): array {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'slug' => ['required', 'string', 'max:255', 'unique:stores'],
+            'slug' => ['string', 'max:255', 'unique:stores', 'nullable'],
             'phone_number' => ['required', 'string', 'max:255'],
             'address' => ['required', 'string', 'max:255'],
             'city' => ['required', 'string', 'max:255'],
@@ -28,8 +28,8 @@ class StoreRequest extends FormRequest {
             'province' => ['required', 'string', 'max:255'],
             'province_id' => ['required', 'string', 'max:255'],
             'postal_code' => ['required', 'string', 'max:255'],
-            'store_description' => ['string', 'max:255'],
-            'image' => ['string', 'max:255'],
+            'store_description' => ['string', 'max:255', 'nullable'],
+            'image' => ['image', 'file', 'max:1024', 'nullable'],
         ];
     }
 
@@ -46,7 +46,6 @@ class StoreRequest extends FormRequest {
                 'string' => 'Format Nama toko tidak sesuai',
             ],
             'slug' => [
-                'required' => 'Domain toko harus diisi',
                 'max' => "Domain toko tidak boleh lebih dari 255 karakter",
                 'string' => 'Format Domain toko tidak sesuai',
                 'unique' => 'Domain toko sudah dipakai',
@@ -87,8 +86,9 @@ class StoreRequest extends FormRequest {
                 'string' => 'Format Kode pos tidak sesuai',
             ],
             'image' => [
-                'max' => "Foto tidak boleh lebih dari 255 karakter",
-                'string' => 'Format Foto tidak sesuai',
+                'max' => "Foto tidak boleh lebih dari 1 MB",
+                'image' => 'Format Foto tidak sesuai',
+                'file' => 'Format Foto tidak sesuai',
             ],
             'store_description' => [
                 'max' => "Deskripsi tidak boleh lebih dari 255 karakter",

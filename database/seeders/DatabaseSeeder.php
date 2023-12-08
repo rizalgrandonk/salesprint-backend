@@ -142,6 +142,7 @@ class DatabaseSeeder extends Seeder {
         $store_1 = \App\Models\Store::create([
             'name' => 'Grandonk Merch',
             'slug' => Str::slug('Grandonk Merch'),
+            'phone_number' => '0812345678987',
             'address' => 'Jakarta Pusat',
             'province_id' => '6',
             'province' => 'DKI Jakarta',
@@ -157,6 +158,7 @@ class DatabaseSeeder extends Seeder {
         $store_2 = \App\Models\Store::create([
             'name' => 'Upscale Store',
             'slug' => Str::slug('Upscale Store'),
+            'phone_number' => '0898787653412',
             'address' => 'Jakarta Selatan',
             'province_id' => '6',
             'province' => 'DKI Jakarta',

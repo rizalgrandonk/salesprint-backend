@@ -13,6 +13,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
+            $table->string('phone_number');
             $table->string('address');
             $table->string('city');
             $table->string('city_id');
