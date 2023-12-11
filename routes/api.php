@@ -85,6 +85,7 @@ Route::group([
 Route::group([
     "prefix" => "stores"
 ], function () {
+    // ? PROTECTED
     Route::group([
         'middleware' => ['api', 'auth.jwt'],
     ], function () {
@@ -92,6 +93,12 @@ Route::group([
             '/mystore',
             [Controllers\StoreController::class, "mystore"]
         );
+    });
+
+    // ? PROTECTED (SELLER, ADMIN)
+    Route::group([
+        'middleware' => ['api', 'auth.jwt:seller,admin',],
+    ], function () {
         Route::post(
             '/',
             [Controllers\StoreController::class, "store"]
@@ -100,8 +107,17 @@ Route::group([
             '/{slug}',
             [Controllers\StoreController::class, "update"]
         );
+        Route::post(
+            '/{slug}/banners',
+            [Controllers\StoreBannerController::class, "store"]
+        );
+        Route::delete(
+            '/{slug}/banners/{id}',
+            [Controllers\StoreBannerController::class, "destroy"]
+        );
     });
 
+    // ? PUBLIC
     Route::group([
         'middleware' => 'api',
     ], function () {
@@ -117,6 +133,10 @@ Route::group([
         Route::get(
             '/{slug}',
             [Controllers\StoreController::class, "show"]
+        );
+        Route::get(
+            '/{slug}/banners',
+            [Controllers\StoreBannerController::class, "index"]
         );
     });
 });

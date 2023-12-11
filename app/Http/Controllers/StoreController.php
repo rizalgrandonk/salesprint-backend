@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateStoreRequest;
 use App\Models\Store;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use App\Http\Requests\StoreRequest;
+use App\Http\Requests\CreateStoreRequest;
 use App\Http\Controllers\CloudinaryStorage;
-use Illuminate\Support\Facades\Log;
 
 class StoreController extends Controller {
     /**
@@ -43,7 +43,7 @@ class StoreController extends Controller {
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreRequest $request) {
+    public function store(CreateStoreRequest $request) {
         $validatedData = $request->validated();
 
         if (isset($validatedData['image'])) {
@@ -57,15 +57,18 @@ class StoreController extends Controller {
             $validatedData["image"] = env("DEFAULT_STORE_IMAGE", null);
         }
 
-        $newStore =  Store::create([
+        $newStore = Store::create([
             ...$validatedData,
             "status" => "on_review",
             'user_id' => auth()->user()->id,
         ]);
 
-        User::where("id", auth()->user()->id)->update([
-            'role' => 'seller'
-        ]);
+        $user = User::where("id", auth()->user()->id)->first();
+        if ($user->role === "user") {
+            $user->update([
+                'role' => 'seller'
+            ]);
+        }
 
         return $this->responseSuccess($newStore, 201);
     }
@@ -85,12 +88,21 @@ class StoreController extends Controller {
     /**
      * Update the specified resource in storage.
      */
-    public function update(StoreRequest $request, string $slug) {
+    public function update(UpdateStoreRequest $request, string $slug) {
         $store = Store::where("slug", $slug)
             ->first();
 
         if (!$store) {
             return $this->responseFailed("Stores not Found", 404, "Store not found");
+        }
+
+        if (auth()->user()->role === "seller") {
+            $userStore = Store::where("user_id", auth()->user()->id)
+                ->first();
+
+            if ($store->id !== $userStore->id) {
+                return $this->responseFailed("Store not belongs to current user", 401, "Unauthorize");
+            }
         }
 
         $validatedData = $request->validated();
@@ -123,8 +135,26 @@ class StoreController extends Controller {
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Store $store) {
-        //
+    public function destroy(string $slug) {
+        $store = Store::where("slug", $slug)
+            ->first();
+
+        if (!$store) {
+            return $this->responseFailed("Stores not Found", 404, "Store not found");
+        }
+
+        if (auth()->user()->role === "seller") {
+            $userStore = Store::where("user_id", auth()->user()->id)
+                ->first();
+
+            if ($store->id !== $userStore->id) {
+                return $this->responseFailed("Store not belongs to current user", 401, "Unauthorize");
+            }
+        }
+
+        $store->delete();
+
+        return $this->responseSuccess(['id' => $store->id], 200, "Data deleted");
     }
 
     /**
@@ -154,8 +184,8 @@ class StoreController extends Controller {
         $res = Http::withHeaders([
             'key' => 'b8993e20a6ece73dd669b63deece88f3',
         ])->get('https://api.rajaongkir.com/starter/city', [
-            'province' => $province_id
-        ]);
+                    'province' => $province_id
+                ]);
 
         if ($res->failed()) {
             return $this->responseFailed("Not Found", 500, "List Cities not found");
