@@ -111,6 +111,11 @@ Route::group([
             '/{slug}/banners',
             [Controllers\StoreBannerController::class, "store"]
         );
+        Route::post(
+            '/{slug}/banners/{id}',
+            [Controllers\StoreBannerController::class, "update"]
+        );
+
         Route::delete(
             '/{slug}/banners/{id}',
             [Controllers\StoreBannerController::class, "destroy"]

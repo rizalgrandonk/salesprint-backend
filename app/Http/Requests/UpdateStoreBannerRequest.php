@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use App\Http\Requests\BaseRequest;
 
-class CreateStoreBannerRequest extends BaseRequest {
+class UpdateStoreBannerRequest extends BaseRequest {
   /**
    * Determine if the user is authorized to make this request.
    */
@@ -49,8 +49,8 @@ class CreateStoreBannerRequest extends BaseRequest {
    */
   public function getFileOrStringRule(string $key): array {
     if (request()->hasFile($key)) {
-      return ['required', 'image', 'file', 'max:1024'];
+      return ['image', 'file', 'max:1024', 'nullable'];
     }
-    return ['required', 'string', 'max:1000'];
+    return ['string', 'max:1000', 'nullable'];
   }
 }
