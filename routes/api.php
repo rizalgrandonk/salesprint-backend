@@ -143,5 +143,9 @@ Route::group([
             '/{slug}/banners',
             [Controllers\StoreBannerController::class, "index"]
         );
+        Route::get(
+            '/{slug}/categories',
+            [Controllers\StoreCategoryController::class, "index"]
+        );
     });
 });
