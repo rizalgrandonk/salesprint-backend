@@ -107,6 +107,7 @@ Route::group([
             '/{slug}',
             [Controllers\StoreController::class, "update"]
         );
+
         Route::post(
             '/{slug}/banners',
             [Controllers\StoreBannerController::class, "store"]
@@ -119,6 +120,20 @@ Route::group([
         Route::delete(
             '/{slug}/banners/{id}',
             [Controllers\StoreBannerController::class, "destroy"]
+        );
+
+        Route::post(
+            '/{slug}/categories',
+            [Controllers\StoreCategoryController::class, "store"]
+        );
+        Route::post(
+            '/{slug}/categories/{id}',
+            [Controllers\StoreCategoryController::class, "update"]
+        );
+
+        Route::delete(
+            '/{slug}/categories/{id}',
+            [Controllers\StoreCategoryController::class, "destroy"]
         );
     });
 

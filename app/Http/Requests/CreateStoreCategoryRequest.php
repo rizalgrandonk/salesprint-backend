@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use App\Http\Requests\BaseRequest;
 
-class CreateStoreBannerRequest extends BaseRequest {
+class CreateStoreCategoryRequest extends BaseRequest {
   /**
    * Determine if the user is authorized to make this request.
    */
@@ -19,7 +19,8 @@ class CreateStoreBannerRequest extends BaseRequest {
    */
   public function rules(): array {
     return [
-      'description' => ['string', 'max:1000', 'nullable'],
+      'name' => ['required', 'string', 'max:1000',],
+      'slug' => ['required', 'string', 'max:1200',],
       'image' => $this->getFileOrStringRule('image'),
     ];
   }
@@ -31,15 +32,21 @@ class CreateStoreBannerRequest extends BaseRequest {
    */
   public function messages(): array {
     return [
+      'name' => [
+        'required' => 'Nama harus diisi',
+        'max' => "Nama tidak boleh lebih dari 1000 karakter",
+        'string' => 'Format Nama tidak sesuai',
+      ],
+      'slug' => [
+        'required' => 'Nama harus diisi',
+        'max' => "Nama tidak boleh lebih dari 1200 karakter",
+        'string' => 'Format Nama tidak sesuai',
+      ],
       'image' => [
-        'required' => 'Foto harus diisi',
+        'required' => 'Gambar harus diisi',
         'max' => "Foto tidak boleh lebih dari 1 MB",
         'image' => 'Format Foto tidak sesuai',
         'file' => 'Format Foto tidak sesuai',
-      ],
-      'description' => [
-        'max' => "Deskripsi tidak boleh lebih dari 255 karakter",
-        'string' => 'Format Deskripsi tidak sesuai',
       ],
     ];
   }

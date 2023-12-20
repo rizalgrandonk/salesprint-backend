@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use App\Http\Requests\BaseRequest;
 
-class CreateStoreBannerRequest extends BaseRequest {
+class UpdateStoreCategoryRequest extends BaseRequest {
   /**
    * Determine if the user is authorized to make this request.
    */
@@ -19,7 +19,8 @@ class CreateStoreBannerRequest extends BaseRequest {
    */
   public function rules(): array {
     return [
-      'description' => ['string', 'max:1000', 'nullable'],
+      'name' => ['string', 'max:1000', 'nullable'],
+      'slug' => ['string', 'max:1200', 'nullable'],
       'image' => $this->getFileOrStringRule('image'),
     ];
   }
@@ -31,15 +32,18 @@ class CreateStoreBannerRequest extends BaseRequest {
    */
   public function messages(): array {
     return [
+      'name' => [
+        'max' => "Nama tidak boleh lebih dari 1000 karakter",
+        'string' => 'Format Nama tidak sesuai',
+      ],
+      'slug' => [
+        'max' => "Nama tidak boleh lebih dari 1200 karakter",
+        'string' => 'Format Nama tidak sesuai',
+      ],
       'image' => [
-        'required' => 'Foto harus diisi',
         'max' => "Foto tidak boleh lebih dari 1 MB",
         'image' => 'Format Foto tidak sesuai',
         'file' => 'Format Foto tidak sesuai',
-      ],
-      'description' => [
-        'max' => "Deskripsi tidak boleh lebih dari 255 karakter",
-        'string' => 'Format Deskripsi tidak sesuai',
       ],
     ];
   }
@@ -50,8 +54,8 @@ class CreateStoreBannerRequest extends BaseRequest {
    */
   public function getFileOrStringRule(string $key): array {
     if (request()->hasFile($key)) {
-      return ['required', 'image', 'file', 'max:1024'];
+      return ['image', 'file', 'max:1024', 'nullable'];
     }
-    return ['required', 'string', 'max:1000'];
+    return ['string', 'max:1000', 'nullable'];
   }
 }

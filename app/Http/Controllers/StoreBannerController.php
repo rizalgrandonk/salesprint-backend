@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateStoreBannerRequest;
+use App\Http\Requests\UpdateStoreBannerRequest;
 use App\Models\Store;
 use App\Models\StoreBanner;
 use Illuminate\Http\Request;
@@ -18,13 +19,6 @@ class StoreBannerController extends Controller {
         }
 
         return $this->responseSuccess($store->store_banners);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create() {
-        //
     }
 
     /**
@@ -62,23 +56,9 @@ class StoreBannerController extends Controller {
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(StoreBanner $storeBanner) {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(StoreBanner $storeBanner) {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
-    public function update(CreateStoreBannerRequest $request, string $slug, string $id) {
+    public function update(UpdateStoreBannerRequest $request, string $slug, string $id) {
         $store = Store::where("slug", $slug)->first();
         if (!$store) {
             return $this->responseFailed("Stores not Found", 404, "Store not found");
@@ -141,6 +121,10 @@ class StoreBannerController extends Controller {
         $banner = StoreBanner::where("id", $id)->first();
         if (!$banner) {
             return $this->responseFailed("Store banner not Found", 404, "Store banner not found");
+        }
+
+        if (isset($banner->image) && !str_contains($banner->image, "unsplash")) {
+            CloudinaryStorage::delete($banner->image);
         }
 
         $banner->delete();
