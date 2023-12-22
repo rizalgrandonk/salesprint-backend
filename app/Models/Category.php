@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class Category extends Model {
+class Category extends BaseModel {
 	protected $table = 'categories';
 
 	protected $casts = [

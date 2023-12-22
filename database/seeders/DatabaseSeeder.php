@@ -116,7 +116,7 @@ class DatabaseSeeder extends Seeder {
         $createdIds = [];
         foreach ($category_names as $name => $val) {
             $createdCategory = \App\Models\Category::create([
-                'name' => implode(" ", array_map(fn ($val) => Str::ucfirst($val), explode(" ", $name))),
+                'name' => implode(" ", array_map(fn($val) => Str::ucfirst($val), explode(" ", $name))),
                 'slug' => Str::slug($name),
                 'image' => 'https://source.unsplash.com/random/?' . urlencode($name)
             ]);
@@ -183,6 +183,25 @@ class DatabaseSeeder extends Seeder {
             ['image' => 'https://source.unsplash.com/random/?sneakers'],
             ['image' => 'https://source.unsplash.com/random/?shoes%20store'],
         ]);
+
+        for ($i = 0; $i < 30; $i++) {
+            $name = fake()->name();
+            \App\Models\Store::create([
+                'name' => $name,
+                'slug' => Str::slug($name),
+                'phone_number' => fake()->phoneNumber(),
+                'address' => fake()->address(),
+                'province_id' => '6',
+                'province' => 'DKI Jakarta',
+                'city_id' => '153',
+                'city' => 'Jakarta Selatan',
+                'postal_code' => '66666',
+                'status' => fake()->randomElement(['on_review', 'approved', 'rejected']),
+                'image' => 'https://source.unsplash.com/random/?' . fake()->word(),
+                'store_description' => fake()->paragraph(random_int(3, 5)),
+                'user_id' => \App\Models\User::where('email', 'seller@gmail.com')->first()->id
+            ]);
+        }
 
         return [$store_1->id, $store_2->id];
     }
@@ -294,8 +313,8 @@ class DatabaseSeeder extends Seeder {
         $res = Http::withHeaders([
             'key' => 'b8993e20a6ece73dd669b63deece88f3',
         ])->get('https://api.rajaongkir.com/starter/city', [
-            'province' => $provinceId
-        ]);
+                    'province' => $provinceId
+                ]);
 
         if ($res->failed()) {
             throw $res->error();
@@ -334,7 +353,7 @@ class DatabaseSeeder extends Seeder {
             $prodOpts = [];
             foreach (array_slice($createdVarTypeMap, random_int(0, 2)) as $val) {
                 $prodTypeOpts = $newProduct->variant_options()->createMany(
-                    array_map(fn ($option) => [
+                    array_map(fn($option) => [
                         'value' => $option, 'variant_type_id' => $val['id']
                     ], $val['options'])
                 );

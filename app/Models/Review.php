@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class Review extends Model {
+class Review extends BaseModel {
 	protected $table = 'reviews';
 
 	protected $casts = [

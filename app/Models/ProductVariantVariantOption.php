@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class ProductVariantVariantOption extends Model {
+class ProductVariantVariantOption extends BaseModel {
 	protected $table = 'product_variant_variant_option';
 
 	protected $casts = [

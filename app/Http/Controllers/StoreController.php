@@ -41,6 +41,19 @@ class StoreController extends Controller {
     }
 
     /**
+     * Display a listing of the resource.
+     */
+    public function paginated(Request $request) {
+        $stores = Store::getDataTable($request->query());
+
+        if (!$stores) {
+            return $this->responseFailed("Stores not Found", 404, "Stores not found");
+        }
+
+        return $this->responseSuccess($stores);
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(CreateStoreRequest $request) {

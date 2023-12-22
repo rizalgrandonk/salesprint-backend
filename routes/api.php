@@ -162,5 +162,16 @@ Route::group([
             '/{slug}/categories',
             [Controllers\StoreCategoryController::class, "index"]
         );
+
     });
+});
+
+Route::group([
+    'prefix' => 'paginated',
+    'middleware' => 'api'
+], function () {
+    Route::get(
+        '/stores',
+        [Controllers\StoreController::class, "paginated"]
+    );
 });

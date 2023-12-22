@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class ProductImage extends Model {
+class ProductImage extends BaseModel {
 	protected $table = 'product_images';
 
 	protected $casts = [

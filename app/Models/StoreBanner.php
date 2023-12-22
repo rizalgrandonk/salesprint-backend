@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class StoreBanner extends Model {
+class StoreBanner extends BaseModel {
 	protected $table = 'store_banners';
 
 	protected $casts = [

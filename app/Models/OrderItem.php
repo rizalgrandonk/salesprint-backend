@@ -26,7 +26,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class OrderItem extends Model {
+class OrderItem extends BaseModel {
 	protected $table = 'order_items';
 
 	protected $casts = [

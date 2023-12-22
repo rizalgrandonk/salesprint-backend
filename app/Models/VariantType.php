@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class VariantType extends Model {
+class VariantType extends BaseModel {
 	protected $table = 'variant_types';
 
 	protected $casts = [

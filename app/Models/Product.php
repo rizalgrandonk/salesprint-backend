@@ -37,7 +37,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class Product extends Model {
+class Product extends BaseModel {
 	protected $table = 'products';
 
 	protected $casts = [
