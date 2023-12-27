@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->string('province');
             $table->string('province_id');
             $table->string('postal_code');
-            $table->enum('status', ['on_review', 'approved', 'rejected']);
+            $table->enum('status', ['approved', 'on_review', 'rejected']);
             $table->string('image')->nullable();
             $table->longText('store_description')->nullable();
             $table->unsignedBigInteger('user_id');

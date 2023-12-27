@@ -145,6 +145,22 @@ class StoreController extends Controller {
         return $this->responseSuccess($store);
     }
 
+    public function update_store_status(Request $request, string $slug) {
+        $validatedData = $request->validate([
+            'status' => ['required', 'string']
+        ]);
+
+        $store = Store::where("slug", $slug)
+            ->first();
+
+        if (!$store) {
+            return $this->responseFailed("Stores not Found", 404, "Store not found");
+        }
+
+        $store->update($validatedData);
+        return $this->responseSuccess($store);
+    }
+
     /**
      * Remove the specified resource from storage.
      */

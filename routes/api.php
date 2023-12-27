@@ -137,6 +137,16 @@ Route::group([
         );
     });
 
+    // ? PROTECTED (ADMIN)
+    Route::group([
+        'middleware' => ['api', 'auth.jwt:admin'],
+    ], function () {
+        Route::post(
+            '/{slug}/update_store_status',
+            [Controllers\StoreController::class, "update_store_status"]
+        );
+    });
+
     // ? PUBLIC
     Route::group([
         'middleware' => 'api',
