@@ -50,6 +50,24 @@ Route::group([
     ], function () {
         Route::get('/', [Controllers\CategoryController::class, "index"]);
     });
+
+    // ? PROTECTED (ADMIN)
+    Route::group([
+        'middleware' => ['api', 'auth.jwt:admin'],
+    ], function () {
+        Route::post(
+            '/',
+            [Controllers\CategoryController::class, "store"]
+        );
+        Route::post(
+            '/{slug}',
+            [Controllers\CategoryController::class, "update"]
+        );
+        Route::delete(
+            '/{slug}',
+            [Controllers\CategoryController::class, "destroy"]
+        );
+    });
 });
 
 Route::group([
@@ -183,5 +201,9 @@ Route::group([
     Route::get(
         '/stores',
         [Controllers\StoreController::class, "paginated"]
+    );
+    Route::get(
+        '/categories',
+        [Controllers\CategoryController::class, "paginated"]
     );
 });
