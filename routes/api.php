@@ -225,6 +225,11 @@ Route::group([
             [Controllers\StoreCategoryController::class, "index"]
         );
 
+        Route::get(
+            '/{store_slug}/products',
+            [Controllers\ProductController::class, "store_products"]
+        );
+
     });
 });
 
@@ -235,6 +240,10 @@ Route::group([
     Route::get(
         '/stores',
         [Controllers\StoreController::class, "paginated"]
+    );
+    Route::get(
+        '/stores/{store_slug}/products',
+        [Controllers\ProductController::class, "paginated_store_products"]
     );
     Route::get(
         '/categories',
