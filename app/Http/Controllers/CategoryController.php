@@ -25,13 +25,13 @@ class CategoryController extends Controller {
      * Display a listing of the resource.
      */
     public function paginated(Request $request) {
-        $stores = Category::getDataTable($request->query());
+        $categories = Category::getDataTable($request->query());
 
-        if (!$stores) {
-            return $this->responseFailed("Stores not Found", 404, "Stores not found");
+        if (!$categories) {
+            return $this->responseFailed("Categories not Found", 404, "Categories not found");
         }
 
-        return $this->responseSuccess($stores);
+        return $this->responseSuccess($categories);
     }
 
     /**

@@ -71,6 +71,40 @@ Route::group([
 });
 
 Route::group([
+    "prefix" => "variant-types"
+], function () {
+    Route::group([
+        'middleware' => 'api',
+    ], function () {
+        Route::get('/', [Controllers\VariantTypeController::class, "index"]);
+    });
+
+    // ? PROTECTED (ADMIN)
+    Route::group([
+        'middleware' => ['api', 'auth.jwt:admin'],
+    ], function () {
+        Route::post(
+            '/{id}',
+            [Controllers\VariantTypeController::class, "update"]
+        );
+        Route::delete(
+            '/{id}',
+            [Controllers\VariantTypeController::class, "destroy"]
+        );
+    });
+
+    // ? PROTECTED (ADMIN, SELLER)
+    Route::group([
+        'middleware' => ['api', 'auth.jwt:admin,seller'],
+    ], function () {
+        Route::post(
+            '/',
+            [Controllers\VariantTypeController::class, "store"]
+        );
+    });
+});
+
+Route::group([
     "prefix" => "products"
 ], function () {
     Route::group([
@@ -205,5 +239,9 @@ Route::group([
     Route::get(
         '/categories',
         [Controllers\CategoryController::class, "paginated"]
+    );
+    Route::get(
+        '/variant-types',
+        [Controllers\VariantTypeController::class, "paginated"]
     );
 });
