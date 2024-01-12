@@ -53,10 +53,16 @@ class Product extends BaseModel {
 	protected $fillable = [
 		'name',
 		'slug',
+		'slug_with_store',
 		'description',
 		'price',
 		'stok',
+		'sku',
 		'average_rating',
+		'weight',
+		'length',
+		'width',
+		'height',
 		'category_id',
 		'store_id',
 		'store_category_id'

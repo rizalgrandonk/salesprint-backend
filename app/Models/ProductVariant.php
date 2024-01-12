@@ -39,6 +39,7 @@ class ProductVariant extends BaseModel {
 	protected $fillable = [
 		'price',
 		'stok',
+		'sku',
 		'product_id'
 	];
 

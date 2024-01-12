@@ -13,6 +13,7 @@ return new class extends Migration {
             $table->id();
             $table->float('price', 10, 2);
             $table->integer('stok');
+            $table->string('sku');
             $table->unsignedBigInteger('product_id');
 
             $table->foreign('product_id')->references('id')->on('products');

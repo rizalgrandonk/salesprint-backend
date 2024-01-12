@@ -233,17 +233,24 @@ class DatabaseSeeder extends Seeder {
         foreach ($prodNames as $name) {
             $seledctedCatId = $categoryId;
             $seledctedStoreId = fake()->randomElement($storeIds);
+            $selectedStore = \App\Models\Store::where("id", $seledctedStoreId)->first();
 
             $createdProduct = \App\Models\Product::create([
                 'name' => $name,
                 'slug' => Str::slug($name),
+                'slug_with_store' => $selectedStore->slug . "/" . Str::slug($name),
                 'description' => fake()->paragraph(random_int(3, 5)),
                 'price' => random_int(100, 3000) * 1000,
                 'stok' => random_int(20, 150),
+                'sku' => fake()->word(),
                 'average_rating' => fake()->randomFloat(1, 1, 5),
+                'weight' => random_int(800, 1000),
+                'length' => random_int(10, 50),
+                'width' => random_int(10, 50),
+                'height' => random_int(10, 50),
                 'category_id' => $seledctedCatId,
-                'store_id' => $seledctedStoreId,
-                'store_category_id' => \App\Models\StoreCategory::where('store_id', $seledctedStoreId)->inRandomOrder()->first()->id
+                'store_id' => $selectedStore->id,
+                'store_category_id' => \App\Models\StoreCategory::where('store_id', $selectedStore->id)->inRandomOrder()->first()->id
             ]);
 
             $productImages = [];
@@ -372,6 +379,7 @@ class DatabaseSeeder extends Seeder {
                 $prodVar = \App\Models\ProductVariant::create([
                     'price' => $newProduct->price,
                     'stok' => random_int(10, 60),
+                    'sku' => fake()->word(),
                     'product_id' => $newProduct->id
                 ]);
                 $prodVar->variant_options()->attach($optIds);

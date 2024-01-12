@@ -189,6 +189,16 @@ Route::group([
         );
     });
 
+    // ? PROTECTED (SELLER)
+    Route::group([
+        'middleware' => ['api', 'auth.jwt:seller'],
+    ], function () {
+        Route::post(
+            '/{store_slug}/products',
+            [Controllers\ProductController::class, "store"]
+        );
+    });
+
     // ? PROTECTED (ADMIN)
     Route::group([
         'middleware' => ['api', 'auth.jwt:admin'],
