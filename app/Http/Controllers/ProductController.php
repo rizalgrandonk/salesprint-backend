@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateProductImageRequest;
 use App\Http\Requests\CreateProductRequest;
 use App\Models\Product;
+use App\Models\ProductImage;
 use App\Models\ProductVariant;
 use App\Models\Store;
 use App\Models\VariantOption;
@@ -159,6 +161,66 @@ class ProductController extends Controller {
         return $newProduct;
     }
 
+    public function store_images(CreateProductImageRequest $request, string $store_slug, string $product_slug) {
+        $store = Store::where("slug", $store_slug)->first();
+        if (!$store) {
+            return $this->responseFailed(
+                "Store not Found",
+                404,
+                "Store not found"
+            );
+        }
+
+        $userStore = Store::where("user_id", auth()->user()->id)
+            ->first();
+
+        if ($store->id !== $userStore->id) {
+            return $this->responseFailed(
+                "Store not belongs to current user",
+                401,
+                "Unauthorize"
+            );
+        }
+
+        $product = Product::with(['product_images'])
+            ->where("slug_with_store", $store_slug . "/" . $product_slug)
+            ->first();
+        if (!$product) {
+            return $this->responseFailed(
+                "Product not Found",
+                404,
+                "Product not found"
+            );
+        }
+
+        $validatedData = $request->validated();
+
+        $mainImage = $this->upload_create_image(
+            $product->id,
+            $validatedData['main_image'],
+            true
+        );
+        if (!$mainImage) {
+            return $this->responseFailed(
+                "Main image not Found",
+                400,
+                "Main image not found"
+            );
+        }
+
+
+        $images = [];
+        foreach ($validatedData['images'] as $image) {
+            $image = $this->upload_create_image(
+                $product->id,
+                $image
+            );
+            array_push($images, $image);
+        }
+
+        return [$mainImage, ...$images];
+    }
+
     /**
      * Display the specified resource.
      */
@@ -182,5 +244,43 @@ class ProductController extends Controller {
      */
     public function destroy(Product $product) {
         //
+    }
+
+    function upload_create_image(string $productId, $image, $isMainImage = false) {
+        if (!$image) {
+            return null;
+        }
+
+        if ($image instanceof \Illuminate\Http\UploadedFile) {
+            $result = CloudinaryStorage::upload(
+                $image->getRealPath(),
+                $image->getClientOriginalName()
+            );
+
+            $newImage = ProductImage::create([
+                'image_url' => $result,
+                'main_image' => $isMainImage,
+                'product_id' => $productId
+            ]);
+
+            return $newImage;
+        }
+
+        $existingImage = ProductImage::where('product_id', $productId)
+            ->where('main_image', $isMainImage)
+            ->where('image_url', $image)
+            ->first();
+        if ($existingImage) {
+            return $existingImage;
+        }
+
+        $newImage = ProductImage::create([
+            'image_url' => $image,
+            'main_image' => $isMainImage,
+            'product_id' => $productId
+        ]);
+
+        return $newImage;
+
     }
 }

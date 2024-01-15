@@ -197,6 +197,10 @@ Route::group([
             '/{store_slug}/products',
             [Controllers\ProductController::class, "store"]
         );
+        Route::post(
+            '/{store_slug}/products/{product_slug}/images',
+            [Controllers\ProductController::class, "store_images"]
+        );
     });
 
     // ? PROTECTED (ADMIN)
