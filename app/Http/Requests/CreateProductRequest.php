@@ -61,6 +61,7 @@ class CreateProductRequest extends BaseRequest {
         'required' => 'Nama harus diisi',
         'max' => "Nama tidak boleh lebih dari 2000 karakter",
         'string' => 'Format Nama tidak sesuai',
+        'unique' => "Nama sudah digunakan"
       ],
       'description' => [
         'required' => 'Deskripsi harus diisi',

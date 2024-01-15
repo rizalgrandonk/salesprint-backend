@@ -158,7 +158,7 @@ class ProductController extends Controller {
             }
         }
 
-        return $newProduct;
+        return $this->responseSuccess($newProduct, 201);
     }
 
     public function store_images(CreateProductImageRequest $request, string $store_slug, string $product_slug) {
@@ -218,7 +218,7 @@ class ProductController extends Controller {
             array_push($images, $image);
         }
 
-        return [$mainImage, ...$images];
+        return $this->responseSuccess([$mainImage, ...$images], 201);
     }
 
     /**
