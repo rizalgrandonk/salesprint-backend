@@ -12,8 +12,11 @@ class StoreBannerController extends Controller {
     /**
      * Display a listing of the resource.
      */
-    public function index(string $slug) {
-        $store = Store::where("slug", $slug)->with('store_banners')->first();
+    public function index(Request $request, string $slug) {
+        $store = Store::where("slug", $slug)
+            ->paramsWith($request->query())
+            ->first();
+
         if (!$store) {
             return $this->responseFailed("Stores not Found", 404, "Store not found");
         }

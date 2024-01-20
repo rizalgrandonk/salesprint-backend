@@ -15,9 +15,9 @@ class StoreController extends Controller {
     /**
      * Get user store
      */
-    public function mystore() {
+    public function mystore(Request $request) {
         $store = Store::where("user_id", auth()->user()->id)
-            ->with("store_banners", "store_categories")
+            ->paramsWith($request->query())
             ->first();
 
         if (!$store) {
@@ -30,8 +30,9 @@ class StoreController extends Controller {
     /**
      * Display a listing of the resource.
      */
-    public function index() {
-        $stores = Store::with("store_banners")->get();
+    public function index(Request $request) {
+        $stores = Store::paramsWith($request->query())
+            ->get();
 
         if (!$stores) {
             return $this->responseFailed("Stores not Found", 404, "Stores not found");
@@ -89,8 +90,11 @@ class StoreController extends Controller {
     /**
      * Display the specified resource.
      */
-    public function show(string $slug) {
-        $store = Store::where("slug", $slug)->first();
+    public function show(Request $request, string $slug) {
+        $store = Store::where("slug", $slug)
+            ->paramsWith($request->query())
+            ->first();
+
         if (!$store) {
             return $this->responseFailed("Stores not Found", 404, "Store not found");
         }

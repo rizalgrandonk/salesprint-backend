@@ -12,13 +12,15 @@ class StoreCategoryController extends Controller {
     /**
      * Display a listing of the resource.
      */
-    public function index(string $slug) {
+    public function index(Request $request, string $slug) {
         $store = Store::where("slug", $slug)->first();
         if (!$store) {
             return $this->responseFailed("Stores not Found", 404, "Store not found");
         }
 
-        $store_categories = StoreCategory::where("store_id", $store->id)->withCount('products')->get();
+        $store_categories = StoreCategory::where("store_id", $store->id)
+            ->paramsWith($request->query())
+            ->get();
 
         return $this->responseSuccess($store_categories);
     }

@@ -24,6 +24,7 @@ class CreateProductRequest extends BaseRequest {
       'slug_with_store' => ['required', 'string', 'max:2000', 'unique:products'],
       'description' => ['required', 'string', 'max:5000',],
       'category_id' => ['required', 'string',],
+      'store_category_id' => ['required', 'string',],
       'weight' => ['required', 'integer', 'max:5000',],
       'length' => ['required', 'integer', 'max:1000',],
       'width' => ['required', 'integer', 'max:1000',],

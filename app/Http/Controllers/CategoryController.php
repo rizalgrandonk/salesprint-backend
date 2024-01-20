@@ -11,8 +11,9 @@ class CategoryController extends Controller {
     /**
      * Display a listing of the resource.
      */
-    public function index() {
-        $categories = Category::with('products')->get();
+    public function index(Request $request) {
+        $categories = Category::paramsWith($request->query())
+            ->get();
 
         if (!$categories) {
             return $this->responseFailed("Not Found", 404, "Categories not found");

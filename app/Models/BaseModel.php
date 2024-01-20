@@ -57,4 +57,24 @@ class BaseModel extends Model {
         $limit = isset($param['limit']) ? (int) $param['limit'] : 10;
         return $query->paginate($limit);
     }
+
+    /**
+     * Scope a query to only include records with a certain status.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array<string mixed> param
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeParamsWith($query, $param) {
+        if (isset($param['with'])) {
+            $with = $param['with'];
+            $query->with($with);
+        }
+
+        if (isset($param['withCount'])) {
+            $withCount = $param['withCount'];
+            $query->withCount($withCount);
+        }
+        return $query;
+    }
 }

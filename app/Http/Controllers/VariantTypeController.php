@@ -11,8 +11,9 @@ class VariantTypeController extends Controller {
     /**
      * Display a listing of the resource.
      */
-    public function index() {
-        $list = VariantType::get();
+    public function index(Request $request) {
+        $list = VariantType::paramsWith($request->query())
+            ->get();
 
         if (!$list) {
             return $this->responseFailed("Not Found", 404, "Variant types not found");

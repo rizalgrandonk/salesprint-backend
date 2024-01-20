@@ -16,8 +16,10 @@ class ProductController extends Controller {
     /**
      * Display a listing of the resource.
      */
-    public function index() {
-        $products = Product::with('category', 'store_category', 'store', 'product_images', 'product_variants.variant_options.variant_type')->withCount("reviews")->get();
+    public function index(Request $request) {
+        // $products = Product::with('category', 'store_category', 'store', 'product_images', 'product_variants.variant_options.variant_type')->withCount("reviews")->get();
+        $products = Product::paramsWith($request->query())
+            ->get();
 
         if (!$products) {
             return $this->responseFailed("Not Found", 404, "Products not found");
@@ -224,7 +226,13 @@ class ProductController extends Controller {
     /**
      * Display the specified resource.
      */
-    public function show(Product $product) {
+    public function show(Request $request, string $store_slug, string $product_slug) {
+        $product = Product::where(
+            "store_with_slug",
+            $store_slug . "/" . $product_slug
+        )
+            ->paramsWith($request->query())
+            ->first();
         if (!$product) {
             return $this->responseFailed("Not Found", 404, "Product not found");
         }
