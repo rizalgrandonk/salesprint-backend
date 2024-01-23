@@ -21,7 +21,6 @@ class CreateProductImageRequest extends BaseRequest {
     return [
       'main_image' => ['required', ...$this->getFileOrStringRule('main_image')],
       'images' => ['required', 'array', 'min:1', 'max:12'],
-      'images.*' => ['required', ...$this->getFileOrStringRule('images.*')]
     ];
   }
 

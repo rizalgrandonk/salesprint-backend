@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use App\Http\Requests\BaseRequest;
 
-class CreateProductRequest extends BaseRequest {
+class UpdateProductRequest extends BaseRequest {
   /**
    * Determine if the user is authorized to make this request.
    */
@@ -21,7 +21,7 @@ class CreateProductRequest extends BaseRequest {
     return [
       'name' => ['required', 'string', 'max:1000',],
       'slug' => ['required', 'string', 'max:2000',],
-      'slug_with_store' => ['required', 'string', 'max:2000', 'unique:products'],
+      'slug_with_store' => ['required', 'string', 'max:2000'],
       'description' => ['required', 'string', 'max:5000',],
       'category_id' => ['required', 'string',],
       'store_category_id' => ['string', 'nullable'],

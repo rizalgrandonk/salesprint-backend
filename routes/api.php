@@ -112,6 +112,11 @@ Route::group([
     ], function () {
         Route::get('/', [Controllers\ProductController::class, "index"]);
     });
+    Route::group([
+        'middleware' => 'api',
+    ], function () {
+        Route::get('/{store_slug}/{product_slug}', [Controllers\ProductController::class, "show"]);
+    });
 });
 
 Route::group([
@@ -198,8 +203,16 @@ Route::group([
             [Controllers\ProductController::class, "store"]
         );
         Route::post(
+            '/{store_slug}/products/{product_slug}',
+            [Controllers\ProductController::class, "update"]
+        );
+        Route::post(
             '/{store_slug}/products/{product_slug}/images',
             [Controllers\ProductController::class, "store_images"]
+        );
+        Route::delete(
+            '/{store_slug}/products/{product_slug}/images',
+            [Controllers\ProductController::class, "destroy_image"]
         );
     });
 
