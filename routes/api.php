@@ -206,6 +206,10 @@ Route::group([
             '/{store_slug}/products/{product_slug}',
             [Controllers\ProductController::class, "update"]
         );
+        Route::delete(
+            '/{store_slug}/products/{product_slug}',
+            [Controllers\ProductController::class, "destroy"]
+        );
         Route::post(
             '/{store_slug}/products/{product_slug}/images',
             [Controllers\ProductController::class, "store_images"]
