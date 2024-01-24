@@ -32,14 +32,16 @@ class Review extends BaseModel {
 		'id' => 'string',
 		'rating' => 'int',
 		'user_id' => 'string',
-		'product_id' => 'string'
+		'product_id' => 'string',
+		'product_variant_id' => 'string'
 	];
 
 	protected $fillable = [
 		'rating',
 		'coment',
 		'user_id',
-		'product_id'
+		'product_id',
+		'product_variant_id',
 	];
 
 	public function product() {

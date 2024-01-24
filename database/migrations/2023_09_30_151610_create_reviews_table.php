@@ -13,11 +13,24 @@ return new class extends Migration {
             $table->id();
             $table->integer('rating');
             $table->string('coment');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('product_variant_id')->nullable();
 
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('product_id')->references('id')->on('products')->onDelete("cascade");
+            $table->foreign('user_id')
+                ->nullable()
+                ->references('id')
+                ->on('users')
+                ->nullOnDelete();
+            $table->foreign('product_id')
+                ->references('id')
+                ->on('products')
+                ->onDelete("cascade");
+            $table->foreign('product_variant_id')
+                ->nullable()
+                ->references('id')
+                ->on('product_variants')
+                ->nullOnDelete();
 
             $table->timestamps();
         });

@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->id();
             $table->integer('quantity');
             $table->unsignedBigInteger('product_id');
-            $table->unsignedBigInteger('product_variant_id');
+            $table->unsignedBigInteger('product_variant_id')->nullable();
             $table->unsignedBigInteger('order_id');
 
             $table->foreign('product_id')
@@ -21,9 +21,10 @@ return new class extends Migration {
                 ->on('products')
                 ->onDelete("cascade");
             $table->foreign('product_variant_id')
+                ->nullable()
                 ->references('id')
                 ->on('product_variants')
-                ->onDelete("cascade");
+                ->nullOnDelete();
             $table->foreign('order_id')
                 ->references('id')
                 ->on('orders')

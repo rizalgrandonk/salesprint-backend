@@ -4,6 +4,9 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Review;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Http;
 // use Illuminate\Support\Facades\Hash;
@@ -67,11 +70,28 @@ class DatabaseSeeder extends Seeder {
             'image' => 'https://source.unsplash.com/random/?admin%20person',
         ]);
 
-        return [
+        $result = [
             'admin' => [$user5->id],
             'seller' => [$user3->id, $user4->id],
             'user' => [$user1->id, $user2->id],
         ];
+
+        for ($i = 0; $i < 100; $i++) {
+            $nameUser = fake()->firstName() . fake()->randomNumber(3, true);
+            $createdUser = \App\Models\User::create([
+                'name' => $nameUser,
+                'email' => strtolower($nameUser) . '@gmail.com',
+                'username' => strtolower($nameUser),
+                'role' => 'user',
+                'password' => bcrypt('66666666'),
+                'remember_token' => Str::random(10),
+                'phone_number' => fake()->phoneNumber(),
+                'image' => 'https://source.unsplash.com/random/?person' . fake()->randomLetter(),
+            ]);
+            array_push($result['user'], $createdUser->id);
+        }
+
+        return $result;
     }
 
     function createCategories(): array {
@@ -210,12 +230,10 @@ class DatabaseSeeder extends Seeder {
         $optionMap = [
             'Ukuran' => ['S', 'M', 'L', 'XL'],
             'Warna' => ['Hitam', 'Putih', 'Abu - abu'],
-            'Bahan' => ['Kanvas', 'Kulit']
         ];
         $types = [
             'Ukuran',
             'Warna',
-            'Bahan'
         ];
         $createdIds = [];
         foreach ($types as $name) {
@@ -358,7 +376,7 @@ class DatabaseSeeder extends Seeder {
 
         foreach ($createdProducts as $newProduct) {
             $prodOpts = [];
-            foreach (array_slice($createdVarTypeMap, random_int(0, 2)) as $val) {
+            foreach (array_slice($createdVarTypeMap, random_int(0, 1)) as $val) {
                 $prodTypeOpts = $newProduct->variant_options()->createMany(
                     array_map(fn($option) => [
                         'value' => $option, 'variant_type_id' => $val['id']
@@ -386,11 +404,53 @@ class DatabaseSeeder extends Seeder {
                 array_push($prodVars, $prodVar);
             }
 
+            $ratings = [];
+            foreach (fake()->randomElements($createdUserIdByRole['user'], random_int(2, 50)) as $userId) {
+                $selectedVar = fake()->randomElement($prodVars);
+                $quantity = random_int(1, 3);
+                $orderTotal = ((float) $selectedVar->price * $quantity) + 20000;
+                $createdOrder = Order::create([
+                    'total' => $orderTotal,
+                    'serial_order' => 'ORDER' . fake()->randomNumber(),
+                    'transaction_id' => fake()->uuid(),
+                    'status' => 'settlement',
+                    'status_code' => 200,
+                    'payment_type' => 'bank_transfer',
+                    'delivery_service' => 'JNE',
+                    'delivery_address' => fake()->address(),
+                    'delivery_cost' => 20000,
+                    'user_id' => $userId,
+                ]);
+
+                $createdOrderItem = OrderItem::create([
+                    'quantity' => $quantity,
+                    'product_id' => $newProduct->id,
+                    'product_variant_id' => $selectedVar->id,
+                    'order_id' => $createdOrder->id,
+                ]);
+
+                $rating = random_int(3, 5);
+                $createdReview = Review::create([
+                    'rating' => $rating,
+                    'coment' => fake()->realText(),
+                    'user_id' => $userId,
+                    'product_id' => $newProduct->id,
+                    'product_variant_id' => $selectedVar->id,
+                ]);
+                array_push($ratings, $rating);
+            }
+
             $resultStok = 0;
             foreach ($prodVars as $prodVar) {
                 $resultStok += $prodVar->stok;
             }
-            $newProduct->update(['stok' => $resultStok]);
+
+            $resultAverageRating = number_format((float) (array_sum($ratings) / count($ratings)), 2, '.', '');
+
+            $newProduct->update([
+                'stok' => $resultStok,
+                'average_rating' => $resultAverageRating
+            ]);
         }
 
         $listProvince = $this->createProvince();

@@ -27,10 +27,19 @@ return new class extends Migration {
             $table->unsignedBigInteger('store_id');
             $table->unsignedBigInteger('store_category_id')->nullable();
 
-            $table->foreign('category_id')->references('id')->on('categories');
-            $table->foreign('store_id')->references('id')->on('stores');
-            $table->foreign('store_category_id')->nullable()
-                ->references('id')->on('store_categories');
+            $table->foreign('category_id')
+                ->references('id')
+                ->on('categories')
+                ->onDelete("cascade");
+            $table->foreign('store_id')
+                ->references('id')
+                ->on('stores')
+                ->onDelete("cascade");
+            $table->foreign('store_category_id')
+                ->nullable()
+                ->references('id')
+                ->on('store_categories')
+                ->nullOnDelete();
 
             $table->timestamps();
         });
