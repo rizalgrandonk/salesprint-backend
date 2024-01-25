@@ -51,6 +51,7 @@ class VariantOption extends BaseModel {
 
 	public function product_variants() {
 		return $this->belongsToMany(ProductVariant::class)
+			->using(ProductVariantVariantOption::class)
 			->withPivot('id')
 			->withTimestamps();
 	}

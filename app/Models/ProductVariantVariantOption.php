@@ -7,7 +7,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
  * Class ProductVariantVariantOption
@@ -17,13 +17,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $variant_option_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * 
- * @property ProductVariant $product_variant
- * @property VariantOption $variant_option
  *
  * @package App\Models
  */
-class ProductVariantVariantOption extends BaseModel {
+class ProductVariantVariantOption extends Pivot {
 	protected $table = 'product_variant_variant_option';
 
 	protected $casts = [
@@ -36,12 +33,4 @@ class ProductVariantVariantOption extends BaseModel {
 		'product_variant_id',
 		'variant_option_id'
 	];
-
-	public function product_variant() {
-		return $this->belongsTo(ProductVariant::class);
-	}
-
-	public function variant_option() {
-		return $this->belongsTo(VariantOption::class);
-	}
 }
