@@ -135,13 +135,25 @@ class DatabaseSeeder extends Seeder {
         ];
         $createdIds = [];
         foreach ($category_names as $name => $val) {
+            $prodNames = $val;
             $createdCategory = \App\Models\Category::create([
                 'name' => implode(" ", array_map(fn($val) => Str::ucfirst($val), explode(" ", $name))),
                 'slug' => Str::slug($name),
                 'image' => 'https://source.unsplash.com/random/?' . urlencode($name)
             ]);
 
-            array_push($createdIds, ['id' => $createdCategory->id, 'prodNames' => $val]);
+            for ($i = 0; $i < random_int(5, 15); $i++) {
+                array_push(
+                    $prodNames,
+                    fake()->realTextBetween(28, 40)
+                );
+            }
+
+            array_push(
+                $createdIds,
+                ['id' => $createdCategory->id, 'prodNames' => $prodNames]
+            );
+
         }
         return $createdIds;
     }
