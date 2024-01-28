@@ -37,9 +37,10 @@ class BaseModel extends Model {
 
         if (isset($param['filters'])) {
             $filters = $param['filters'];
-            foreach ($filters as $key => $value) {
-                if ($key && $key !== '' && $value && $value !== '') {
-                    $query->where($key, $value);
+            foreach ($filters as $key => $val) {
+                list($operator, $value) = explode(';', $val);
+                if ($key && $key !== '' && $value && $value !== '' && $operator && $operator !== '') {
+                    $query->where($key, $operator, $value);
                 }
             }
         }
@@ -56,6 +57,63 @@ class BaseModel extends Model {
 
         $limit = isset($param['limit']) ? (int) $param['limit'] : 10;
         return $query->paginate($limit);
+    }
+
+    /**
+     * Scope a query to only include records with a certain status.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array<string mixed> param
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeParamQuery($query, $param) {
+
+        if (isset($param['with'])) {
+            $with = $param['with'];
+            $query->with($with);
+        }
+
+        if (isset($param['withCount'])) {
+            $withCount = $param['withCount'];
+            $query->withCount($withCount);
+        }
+
+        if (isset($param['orderBy'])) {
+            $orderBy = $param['orderBy'];
+            $field = array_keys($orderBy)[0];
+            $order = $orderBy[$field];
+
+            if ($field && $field !== '' && $order && $order !== '') {
+                $query->orderBy($field, $order);
+            }
+        }
+
+        if (isset($param['filters'])) {
+            $filters = $param['filters'];
+            foreach ($filters as $key => $val) {
+                list($operator, $value) = explode(';', $val);
+                if ($key && $key !== '' && $value && $value !== '' && $operator && $operator !== '') {
+                    $query->where($key, $operator, $value);
+                }
+            }
+        }
+
+        if (isset($param['search'])) {
+            $search = $param['search'];
+            $field = array_keys($search)[0];
+            $value = $search[$field];
+
+            if ($field && $field !== '' && $value && $value !== '') {
+                $query->where($field, 'LIKE', '%' . $value . '%');
+            }
+        }
+
+        if (isset($param['limit'])) {
+            $limit = $param['limit'];
+            $query->limit($limit);
+        }
+
+        return $query;
     }
 
     /**

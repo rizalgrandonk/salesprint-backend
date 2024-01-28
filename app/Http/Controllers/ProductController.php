@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductVariant;
+use App\Models\Review;
 use App\Models\Store;
 use App\Models\VariantOption;
 use App\Models\VariantType;
@@ -19,9 +20,17 @@ class ProductController extends Controller {
      * Display a listing of the resource.
      */
     public function index(Request $request) {
-        // $products = Product::with('category', 'store_category', 'store', 'product_images', 'product_variants.variant_options.variant_type')->withCount("reviews")->get();
-        $products = Product::paramsWith($request->query())
+        $products = Product::paramQuery($request->query())
             ->get();
+
+        if (!$products) {
+            return $this->responseFailed("Not Found", 404, "Products not found");
+        }
+
+        return $this->responseSuccess($products);
+    }
+    public function paginated(Request $request) {
+        $products = Product::getDataTable($request->query());
 
         if (!$products) {
             return $this->responseFailed("Not Found", 404, "Products not found");
@@ -33,20 +42,14 @@ class ProductController extends Controller {
     /**
      * Display a listing of the resource.
      */
-    public function store_products(string $store_slug) {
+    public function store_products(Request $request, string $store_slug) {
         $store = Store::where("slug", $store_slug)->first();
         if (!$store) {
             return $this->responseFailed("Stores not Found", 404, "Store not found");
         }
         $products = Product::where("store_id", $store->id)
-            ->with(
-                'category',
-                'store_category',
-                'store',
-                'product_images',
-                'product_variants.variant_options.variant_type'
-            )
-            ->withCount("reviews")->get();
+            ->paramQuery($request->query())
+            ->get();
 
         if (!$products) {
             return $this->responseFailed("Not Found", 404, "Products not found");
@@ -452,13 +455,32 @@ class ProductController extends Controller {
             "slug_with_store",
             $store_slug . "/" . $product_slug
         )
-            ->paramsWith($request->query())
+            ->paramQuery($request->query())
             ->first();
         if (!$product) {
             return $this->responseFailed("Not Found", 404, "Product not found");
         }
 
         return $this->responseSuccess($product);
+    }
+
+    public function paginated_product_reviews(Request $request, string $store_slug, string $product_slug) {
+        $product = Product::where(
+            "slug_with_store",
+            $store_slug . "/" . $product_slug
+        )
+            ->first();
+        if (!$product) {
+            return $this->responseFailed("Not Found", 404, "Product not found");
+        }
+
+        $reviews = Review::where('product_id', $product->id)->getDataTable($request->query());
+
+        if (!$reviews) {
+            return $this->responseFailed("Not Found", 404, "Reviews not found");
+        }
+
+        return $this->responseSuccess($reviews);
     }
 
     /**

@@ -17,7 +17,7 @@ class StoreController extends Controller {
      */
     public function mystore(Request $request) {
         $store = Store::where("user_id", auth()->user()->id)
-            ->paramsWith($request->query())
+            ->paramQuery($request->query())
             ->first();
 
         if (!$store) {
@@ -31,7 +31,7 @@ class StoreController extends Controller {
      * Display a listing of the resource.
      */
     public function index(Request $request) {
-        $stores = Store::paramsWith($request->query())
+        $stores = Store::paramQuery($request->query())
             ->get();
 
         if (!$stores) {
@@ -92,7 +92,7 @@ class StoreController extends Controller {
      */
     public function show(Request $request, string $slug) {
         $store = Store::where("slug", $slug)
-            ->paramsWith($request->query())
+            ->paramQuery($request->query())
             ->first();
 
         if (!$store) {

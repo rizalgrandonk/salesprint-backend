@@ -12,7 +12,7 @@ class CategoryController extends Controller {
      * Display a listing of the resource.
      */
     public function index(Request $request) {
-        $categories = Category::paramsWith($request->query())
+        $categories = Category::paramQuery($request->query())
             ->get();
 
         if (!$categories) {

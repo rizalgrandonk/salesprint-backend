@@ -14,7 +14,7 @@ class StoreBannerController extends Controller {
      */
     public function index(Request $request, string $slug) {
         $store = Store::where("slug", $slug)
-            ->paramsWith($request->query())
+            ->paramQuery($request->query())
             ->first();
 
         if (!$store) {

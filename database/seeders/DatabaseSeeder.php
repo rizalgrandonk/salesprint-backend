@@ -246,6 +246,35 @@ class DatabaseSeeder extends Seeder {
         return $createdIds;
     }
 
+    function generateProductDescription(): string {
+        $description = '';
+
+        for ($i = 0; $i < random_int(2, 3); $i++) {
+            $description = $description
+                . '<p>'
+                . fake()->realTextBetween(130, 250)
+                . '</p>';
+        }
+
+        $description = $description . '<ul>';
+        for ($i = 0; $i < random_int(3, 6); $i++) {
+            $description = $description
+                . '<li>'
+                . fake()->realTextBetween(28, 40)
+                . '</li>';
+        }
+        $description = $description . '</ul>';
+
+        for ($i = 0; $i < random_int(1, 3); $i++) {
+            $description = $description
+                . '<p>'
+                . fake()->realTextBetween(130, 250)
+                . '</p>';
+        }
+
+        return $description;
+    }
+
     function createProducts($prodNames, $categoryId, $storeIds): array {
         $createdProducts = [];
         foreach ($prodNames as $name) {
@@ -257,7 +286,7 @@ class DatabaseSeeder extends Seeder {
                 'name' => $name,
                 'slug' => Str::slug($name),
                 'slug_with_store' => $selectedStore->slug . "/" . Str::slug($name),
-                'description' => fake()->paragraph(random_int(3, 5)),
+                'description' => $this->generateProductDescription(),
                 'price' => random_int(100, 3000) * 1000,
                 'stok' => random_int(20, 150),
                 'sku' => fake()->word(),
@@ -445,7 +474,7 @@ class DatabaseSeeder extends Seeder {
                 $resultStok += $prodVar->stok;
             }
 
-            $resultAverageRating = number_format((float) (array_sum($ratings) / count($ratings)), 2, '.', '');
+            $resultAverageRating = round((float) (array_sum($ratings) / count($ratings)), 2);
 
             $newProduct->update([
                 'stok' => $resultStok,

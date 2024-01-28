@@ -19,7 +19,7 @@ class StoreCategoryController extends Controller {
         }
 
         $store_categories = StoreCategory::where("store_id", $store->id)
-            ->paramsWith($request->query())
+            ->paramQuery($request->query())
             ->get();
 
         return $this->responseSuccess($store_categories);

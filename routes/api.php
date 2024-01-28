@@ -273,8 +273,16 @@ Route::group([
         [Controllers\StoreController::class, "paginated"]
     );
     Route::get(
+        '/products',
+        [Controllers\ProductController::class, "paginated"]
+    );
+    Route::get(
         '/stores/{store_slug}/products',
         [Controllers\ProductController::class, "paginated_store_products"]
+    );
+    Route::get(
+        '/products/{store_slug}/{product_slug}/reviews',
+        [Controllers\ProductController::class, "paginated_product_reviews"]
     );
     Route::get(
         '/categories',

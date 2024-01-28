@@ -12,7 +12,7 @@ class VariantTypeController extends Controller {
      * Display a listing of the resource.
      */
     public function index(Request $request) {
-        $list = VariantType::paramsWith($request->query())
+        $list = VariantType::paramQuery($request->query())
             ->get();
 
         if (!$list) {
