@@ -18,6 +18,84 @@ class DatabaseSeeder extends Seeder {
      * Seed the application's database.
      */
 
+    public $productImageOptions = [
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457417/salesprint/zvfimmc2nneexz4btfpu.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457414/salesprint/zlxkmecml3yr4950ef1w.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457413/salesprint/z4meu38cmjyjsf8mkqdk.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457414/salesprint/yq4cs4leginztcsavrsy.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457413/salesprint/yo7hzbqdmimi1suaawei.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457413/salesprint/y8qlr6aslr4rh677ub2h.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457416/salesprint/x2cpadn2bmrbifeudgp1.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457412/salesprint/wboziavdalny7nurh8mq.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457415/salesprint/vml7q0dmiuofexodoptk.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457416/salesprint/tvufvbl5yrpbeo55ygqq.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457414/salesprint/tr9a7fnqhnpriafkusy4.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457414/salesprint/scrvwncskhq4em2dqfxx.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457416/salesprint/saiatpvjyrs3l42b8kmt.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457412/salesprint/rgbnv2xoibybmzhjjpbo.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457412/salesprint/r4awcvocabt2spl7290h.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457415/salesprint/q9paelodmpvqvayqkauf.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457413/salesprint/q86wnchsscjujx0vr3gf.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457416/salesprint/objjkqarxpz0tq0dr3e6.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457415/salesprint/ndxbokmos2fanx8gwbep.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457413/salesprint/lbyij8ox10khynhejlqu.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457412/salesprint/kpumfqsscmxysxvhlr10.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457415/salesprint/hg2ut2m6cqclfxrgm2xt.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457413/salesprint/gzs31szwkmtoppvkiikl.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457413/salesprint/gwsr0psjaes6ozutdh7e.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457416/salesprint/gbw27wxi7h9wrjzrsrgm.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457415/salesprint/eync24wbjskyozsi005i.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457412/salesprint/eblpohq0nodvejpdcgym.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457412/salesprint/d9gnjkltib5owyukwbrd.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457414/salesprint/chbcwcjtxamer6ebtz9d.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457415/salesprint/bgzqkrqq6dkmn7xvhzng.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706457414/salesprint/apxqspbmdocsfjlnbmui.jpg'
+    ];
+
+    public $userImageOptions = [
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460008/salesprint/xdm0lpiz7bbryzitxiac.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460008/salesprint/vq4qjgo5zsvqjkebigep.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460007/salesprint/r1sdztel9bbuoa8rlhmk.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460007/salesprint/cdomyp8npfswg3ovbbai.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460007/salesprint/qec9aoyqcjcqbg1tiuky.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460007/salesprint/p5jze4jzv4cya5violbo.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460007/salesprint/szg8kethm27bk3yb34sm.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460006/salesprint/iwzual4rznlnzonucamw.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460005/salesprint/kwabdpo4hkwlpakgwebr.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460005/salesprint/zfbkzcvrozagkeqxiqq5.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460005/salesprint/rpu4qw3l2rk7kzsfwegb.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460005/salesprint/cpkn1ew1aoc6785ygux6.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460005/salesprint/wkwtndiggkr0xd8xsz1u.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460003/salesprint/cbspssshbgzlaaomf9m4.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460003/salesprint/ohy9lfzuqkiufrbbknfc.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460003/salesprint/xegrckztrlejob0d0h5e.jpg'
+    ];
+
+    public $storeImageOptions = [
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460607/salesprint/fach1leshcctpqpaercl.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460607/salesprint/lmmjfk4lkqht44wq99ae.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460606/salesprint/yzaogipw4pi5d02cgzjy.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460606/salesprint/lkw7aeykwpduzf9o1kwe.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460606/salesprint/hp5pu3scrye2esqiynon.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460605/salesprint/yy8rhk3y1r7vale4cm39.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460605/salesprint/kazjysd7pobfodbdwidv.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460605/salesprint/hyxgmwhpvkkopbkyciex.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460604/salesprint/tyzkgiqp5qes9wlzsngn.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460604/salesprint/nlyhgcdoiy1gwpjqyquz.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460604/salesprint/vwxpkyblabm9ussxi6ks.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460604/salesprint/eyzdtr8iquinq7ixeaiv.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460603/salesprint/ylnkqlqebdktonfrx0ke.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460603/salesprint/dlexscdsox6odrnjlbqy.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460602/salesprint/ouxalwkrjazfpyog9ych.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460602/salesprint/p6g5fb0tkjto4swyulgi.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460602/salesprint/jczazoogwoqiczi8iznl.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460601/salesprint/rob8v0u9gbmuyo3m8mnw.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460601/salesprint/afugelycaraqlch3jzsl.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460601/salesprint/brze29zdcas5pshp9kkq.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460600/salesprint/wn2fksbrpbh9h59ppvlt.jpg',
+        'http://res.cloudinary.com/grandonk-merch/image/upload/v1706460600/salesprint/tnzon6j3q6db07esieul.jpg'
+    ];
+
     function createUsers(): array {
         $user1 = \App\Models\User::create([
             'name' => 'User',
@@ -27,7 +105,7 @@ class DatabaseSeeder extends Seeder {
             'password' => bcrypt('66666666'),
             'remember_token' => Str::random(10),
             'phone_number' => '08123239483123',
-            'image' => 'https://source.unsplash.com/random/?person%20user',
+            'image' => fake()->randomElement($this->userImageOptions),
         ]);
         $user2 = \App\Models\User::create([
             'name' => 'Grandonk User',
@@ -37,7 +115,7 @@ class DatabaseSeeder extends Seeder {
             'password' => bcrypt('66666666'),
             'remember_token' => Str::random(10),
             'phone_number' => '08242301323123',
-            'image' => 'https://source.unsplash.com/random/?musician',
+            'image' => fake()->randomElement($this->userImageOptions),
         ]);
         $user3 = \App\Models\User::create([
             'name' => 'Seller',
@@ -47,7 +125,7 @@ class DatabaseSeeder extends Seeder {
             'password' => bcrypt('66666666'),
             'remember_token' => Str::random(10),
             'phone_number' => '08154536315424',
-            'image' => 'https://source.unsplash.com/random/?seller%20person',
+            'image' => fake()->randomElement($this->userImageOptions),
         ]);
         $user4 = \App\Models\User::create([
             'name' => 'Grandonk Seller',
@@ -57,7 +135,7 @@ class DatabaseSeeder extends Seeder {
             'password' => bcrypt('66666666'),
             'remember_token' => Str::random(10),
             'phone_number' => '08123191347123',
-            'image' => 'https://source.unsplash.com/random/?metal%20fans',
+            'image' => fake()->randomElement($this->userImageOptions),
         ]);
         $user5 = \App\Models\User::create([
             'name' => 'Admin',
@@ -67,7 +145,7 @@ class DatabaseSeeder extends Seeder {
             'password' => bcrypt('66666666'),
             'remember_token' => Str::random(10),
             'phone_number' => '08123171321243',
-            'image' => 'https://source.unsplash.com/random/?admin%20person',
+            'image' => fake()->randomElement($this->userImageOptions),
         ]);
 
         $result = [
@@ -86,9 +164,23 @@ class DatabaseSeeder extends Seeder {
                 'password' => bcrypt('66666666'),
                 'remember_token' => Str::random(10),
                 'phone_number' => fake()->phoneNumber(),
-                'image' => 'https://source.unsplash.com/random/?person' . fake()->randomLetter(),
+                'image' => fake()->randomElement($this->userImageOptions),
             ]);
             array_push($result['user'], $createdUser->id);
+        }
+        for ($i = 0; $i < 30; $i++) {
+            $nameUser = fake()->firstName() . fake()->randomNumber(3, true);
+            $createdUser = \App\Models\User::create([
+                'name' => $nameUser,
+                'email' => strtolower($nameUser) . '@gmail.com',
+                'username' => strtolower($nameUser),
+                'role' => 'seller',
+                'password' => bcrypt('66666666'),
+                'remember_token' => Str::random(10),
+                'phone_number' => fake()->phoneNumber(),
+                'image' => fake()->randomElement($this->userImageOptions),
+            ]);
+            array_push($result['seller'], $createdUser->id);
         }
 
         return $result;
@@ -139,7 +231,7 @@ class DatabaseSeeder extends Seeder {
             $createdCategory = \App\Models\Category::create([
                 'name' => implode(" ", array_map(fn($val) => Str::ucfirst($val), explode(" ", $name))),
                 'slug' => Str::slug($name),
-                'image' => 'https://source.unsplash.com/random/?' . urlencode($name)
+                'image' => fake()->randomElement($this->productImageOptions)
             ]);
 
             for ($i = 0; $i < random_int(5, 15); $i++) {
@@ -158,17 +250,18 @@ class DatabaseSeeder extends Seeder {
         return $createdIds;
     }
 
-    function createStores(): array {
+    function createStores(array $userIds): array {
+        $imgCat = fake()->randomElements($this->productImageOptions, 2);
         $store_categories = [
             [
                 'name' => 'Produk Baru',
                 'slug' => Str::slug('Produk Baru'),
-                'image' => 'https://source.unsplash.com/random/?new%20product'
+                'image' => $imgCat[0]
             ],
             [
                 'name' => 'Top Seller',
                 'slug' => Str::slug('Top Seller'),
-                'image' => 'https://source.unsplash.com/random/?top%20seller'
+                'image' => $imgCat[1]
             ],
         ];
 
@@ -183,7 +276,7 @@ class DatabaseSeeder extends Seeder {
             'city' => 'Jakarta Pusat',
             'postal_code' => '66666',
             'status' => 'approved',
-            'image' => 'https://source.unsplash.com/random/?clothing%20store',
+            'image' => fake()->randomElement($this->storeImageOptions),
             'store_description' => fake()->paragraph(random_int(3, 5)),
             'user_id' => \App\Models\User::where('email', 'grandonkseller@gmail.com')->first()->id
         ]);
@@ -199,7 +292,7 @@ class DatabaseSeeder extends Seeder {
             'city' => 'Jakarta Selatan',
             'postal_code' => '66666',
             'status' => 'approved',
-            'image' => 'https://source.unsplash.com/random/?sneakers%20store',
+            'image' => fake()->randomElement($this->storeImageOptions),
             'store_description' => fake()->paragraph(random_int(3, 5)),
             'user_id' => \App\Models\User::where('email', 'seller@gmail.com')->first()->id
         ]);
@@ -208,17 +301,19 @@ class DatabaseSeeder extends Seeder {
         $store_2->store_categories()->createMany($store_categories);
 
         $store_1->store_banners()->createMany([
-            ['image' => 'https://source.unsplash.com/random/?band%20merchandise'],
-            ['image' => 'https://source.unsplash.com/random/?metal%20band'],
+            ['image' => fake()->randomElement($this->storeImageOptions)],
+            ['image' => fake()->randomElement($this->storeImageOptions)],
         ]);
         $store_2->store_banners()->createMany([
-            ['image' => 'https://source.unsplash.com/random/?sneakers'],
-            ['image' => 'https://source.unsplash.com/random/?shoes%20store'],
+            ['image' => fake()->randomElement($this->storeImageOptions)],
+            ['image' => fake()->randomElement($this->storeImageOptions)],
         ]);
 
-        for ($i = 0; $i < 30; $i++) {
+        $storeIds = [$store_1->id, $store_2->id];
+
+        foreach (array_slice($userIds, 2) as $userId) {
             $name = fake()->name();
-            \App\Models\Store::create([
+            $createdStore = \App\Models\Store::create([
                 'name' => $name,
                 'slug' => Str::slug($name),
                 'phone_number' => fake()->phoneNumber(),
@@ -229,13 +324,22 @@ class DatabaseSeeder extends Seeder {
                 'city' => 'Jakarta Selatan',
                 'postal_code' => '66666',
                 'status' => fake()->randomElement(['on_review', 'approved', 'rejected']),
-                'image' => 'https://source.unsplash.com/random/?' . fake()->word(),
+                'image' => fake()->randomElement($this->storeImageOptions),
                 'store_description' => fake()->paragraph(random_int(3, 5)),
-                'user_id' => \App\Models\User::where('email', 'seller@gmail.com')->first()->id
+                'user_id' => $userId
             ]);
+
+            $createdStore->store_categories()->createMany($store_categories);
+
+            $createdStore->store_banners()->createMany([
+                ['image' => fake()->randomElement($this->storeImageOptions)],
+                ['image' => fake()->randomElement($this->storeImageOptions)],
+            ]);
+
+            array_push($storeIds, $createdStore->id);
         }
 
-        return [$store_1->id, $store_2->id];
+        return $storeIds;
     }
 
     function createVariantTypes(): array {
@@ -312,13 +416,23 @@ class DatabaseSeeder extends Seeder {
                 'store_category_id' => \App\Models\StoreCategory::where('store_id', $selectedStore->id)->inRandomOrder()->first()->id
             ]);
 
-            $productImages = [];
-            for ($i = 0; $i < random_int(3, 4); $i++) {
+            $mainImageUrl = fake()->randomElement($this->productImageOptions);
+
+            $prodImgOptions = array_filter($this->productImageOptions, function ($img) use ($mainImageUrl) {
+                return $img !== $mainImageUrl;
+            });
+
+            $productImages = [[
+                'image_url' => $mainImageUrl,
+                'main_image' => true
+            ]];
+
+            foreach (fake()->randomElements($prodImgOptions, random_int(2, 4)) as $img) {
                 array_push(
                     $productImages,
                     [
-                        'image_url' => 'https://source.unsplash.com/random/?' . urlencode($name . ' ' . fake()->word()),
-                        'main_image' => $i === 0
+                        'image_url' => $img,
+                        'main_image' => false
                     ]
                 );
             }
@@ -405,7 +519,7 @@ class DatabaseSeeder extends Seeder {
     public function run(): void {
         $createdUserIdByRole = $this->createUsers();
         $createdCategoryIds = $this->createCategories();
-        $createdStoreIds = $this->createStores();
+        $createdStoreIds = $this->createStores($createdUserIdByRole['seller']);
         $createdVarTypeMap = $this->createVariantTypes();
 
         $createdProducts = [];

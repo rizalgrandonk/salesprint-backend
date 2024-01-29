@@ -39,6 +39,20 @@ class ProductController extends Controller {
         return $this->responseSuccess($products);
     }
 
+    public function paginated_recomendation(Request $request) {
+        $limit = $request->query('limit') ?? 10;
+        $data = Product::getRecomendation(
+            $request->query(),
+            auth()->check() ? auth()->user()->id : null
+        )->paginate($limit);
+
+        if (!$data) {
+            return $this->responseFailed("Not Found", 404, "Products not found");
+        }
+
+        return $this->responseSuccess($data);
+    }
+
     /**
      * Display a listing of the resource.
      */
