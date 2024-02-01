@@ -573,15 +573,17 @@ class DatabaseSeeder extends Seeder {
                 $orderTotal = ((float) $selectedVar->price * $quantity) + 20000;
                 $createdOrder = Order::create([
                     'total' => $orderTotal,
+                    'order_status' => 'COMPLETED',
                     'serial_order' => 'ORDER' . fake()->randomNumber(),
                     'transaction_id' => fake()->uuid(),
-                    'status' => 'settlement',
+                    'payment_status' => 'settlement',
                     'status_code' => 200,
                     'payment_type' => 'bank_transfer',
                     'delivery_service' => 'JNE',
                     'delivery_address' => fake()->address(),
                     'delivery_cost' => 20000,
                     'user_id' => $userId,
+                    'store_id' => $newProduct->store->id
                 ]);
 
                 $createdOrderItem = OrderItem::create([

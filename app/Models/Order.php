@@ -48,9 +48,10 @@ class Order extends BaseModel {
 
 	protected $fillable = [
 		'total',
+		'order_status',
 		'serial_order',
 		'transaction_id',
-		'status',
+		'payment_status',
 		'status_code',
 		'payment_type',
 		'payment_code',

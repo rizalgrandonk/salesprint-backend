@@ -12,23 +12,31 @@ return new class extends Migration {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->float('total', 10, 2);
+            $table->enum('order_status', [
+                'UNPAID', 'PAID', 'PROCESSED', 'SHIPPED', 'COMPLETED'
+            ]);
             $table->string('serial_order');
             $table->string('transaction_id');
-            $table->string('status');
+            $table->string('payment_status');
             $table->string('status_code');
             $table->string('payment_type');
             $table->string('payment_code')->nullable();
             $table->string('pdf_url')->nullable();
             $table->string('delivery_address');
             $table->string('delivery_service');
-            $table->float('delivery_cost');
+            $table->float('delivery_cost', 10, 2);
             $table->string('receipt_number')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('store_id')->nullable();
 
             $table->foreign('user_id')
                 ->nullable()
                 ->references('id')
                 ->on('users')
+                ->nullOnDelete();
+            $table->foreign('store_id')
+                ->references('id')
+                ->on('stores')
                 ->nullOnDelete();
 
             $table->timestamps();
