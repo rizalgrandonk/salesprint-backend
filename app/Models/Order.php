@@ -43,7 +43,8 @@ class Order extends BaseModel {
 		'total' => 'float',
 		'transaction_id' => 'string',
 		'delivery_cost' => 'float',
-		'user_id' => 'string'
+		'user_id' => 'string',
+		'store_id' => 'string',
 	];
 
 	protected $fillable = [
@@ -60,7 +61,8 @@ class Order extends BaseModel {
 		'delivery_service',
 		'delivery_cost',
 		'receipt_number',
-		'user_id'
+		'user_id',
+		'store_id'
 	];
 
 	public function user() {
