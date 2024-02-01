@@ -312,7 +312,14 @@ class DatabaseSeeder extends Seeder {
         $storeIds = [$store_1->id, $store_2->id];
 
         foreach (array_slice($userIds, 2) as $userId) {
-            $name = fake()->name();
+            $name = fake()->streetName()
+                . ' '
+                . fake()->randomElement([
+                    "Store", "Retail", "Outlet", "Market", "Boutique", "Shop"
+                ])
+                . ' '
+                . fake()->randomNumber(2, true);
+
             $createdStore = \App\Models\Store::create([
                 'name' => $name,
                 'slug' => Str::slug($name),
