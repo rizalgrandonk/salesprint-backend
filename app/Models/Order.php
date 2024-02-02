@@ -43,6 +43,7 @@ class Order extends BaseModel {
 		'total' => 'float',
 		'transaction_id' => 'string',
 		'delivery_cost' => 'float',
+		'shipping_history' => 'array',
 		'user_id' => 'string',
 		'store_id' => 'string',
 	];
@@ -50,6 +51,10 @@ class Order extends BaseModel {
 	protected $fillable = [
 		'total',
 		'order_status',
+		'shipping_status',
+		'shipping_tracking_number',
+		'shipping_courier',
+		'shipping_history',
 		'serial_order',
 		'transaction_id',
 		'payment_status',

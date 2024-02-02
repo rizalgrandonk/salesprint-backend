@@ -120,23 +120,26 @@ Route::group([
 });
 
 Route::group([
-    "prefix" => "province"
+    "prefix" => "logistic"
 ], function () {
     Route::group([
         'middleware' => 'api',
     ], function () {
-        Route::get('/', [Controllers\ProvinceController::class, "index"]);
+        Route::get('/province', [Controllers\ProvinceController::class, "index"]);
     });
-});
-
-Route::group([
-    "prefix" => "city"
-], function () {
     Route::group([
         'middleware' => 'api',
     ], function () {
-        Route::get('/', [Controllers\CityController::class, "index"]);
+        Route::get('/city', [Controllers\CityController::class, "index"]);
     });
+    Route::get(
+        '/get_province',
+        [Controllers\LogisticController::class, "get_province"]
+    );
+    Route::get(
+        '/get_cities',
+        [Controllers\LogisticController::class, "get_cities"]
+    );
 });
 
 Route::group([
@@ -235,14 +238,6 @@ Route::group([
         'middleware' => 'api',
     ], function () {
         Route::get('/', [Controllers\StoreController::class, "index"]);
-        Route::get(
-            '/get_province',
-            [Controllers\StoreController::class, "get_province"]
-        );
-        Route::get(
-            '/get_cities',
-            [Controllers\StoreController::class, "get_cities"]
-        );
         Route::get(
             '/{slug}',
             [Controllers\StoreController::class, "show"]

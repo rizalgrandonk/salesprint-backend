@@ -574,6 +574,48 @@ class DatabaseSeeder extends Seeder {
                 $createdOrder = Order::create([
                     'total' => $orderTotal,
                     'order_status' => 'COMPLETED',
+                    'shipping_status' => "DELIVERED",
+                    'shipping_tracking_number' => fake()->isbn10(),
+                    'shipping_courier' => fake()->randomElement(
+                        ['jne', 'sicepat', 'jnt', 'pos', 'anteraja']
+                    ),
+                    'shipping_history' => '[
+                        {
+                          "date": "2024-01-17 10:42:00",
+                          "desc": "PAKET DITERIMA OLEH [BU WASIH - (KEL) KELUARGA SERUMAH]",
+                          "location": ""
+                        },
+                        {
+                          "date": "2024-01-17 08:18:00",
+                          "desc": "PAKET DIBAWA [SIGESIT - M IRFAN ARIF]",
+                          "location": ""
+                        },
+                        {
+                          "date": "2024-01-17 08:16:00",
+                          "desc": "PAKET TELAH DI TERIMA DI MOJOKERTO [DAWAR]",
+                          "location": ""
+                        },
+                        {
+                          "date": "2024-01-16 20:33:00",
+                          "desc": "PAKET KELUAR DARI SIDOARJO [SURABAYA SORTATION]",
+                          "location": ""
+                        },
+                        {
+                          "date": "2024-01-16 04:39:00",
+                          "desc": "PAKET TELAH DI TERIMA DI SIDOARJO [SURABAYA SORTATION]",
+                          "location": ""
+                        },
+                        {
+                          "date": "2024-01-16 03:38:00",
+                          "desc": "PAKET KELUAR DARI SURABAYA [SURABAYA MARGOMULYO]",
+                          "location": ""
+                        },
+                        {
+                          "date": "2024-01-15 18:59:00",
+                          "desc": "PAKET TELAH DI INPUT (MANIFESTED) DI SURABAYA [SURABAYA MARGOMULYO]",
+                          "location": ""
+                        }
+                      ]',
                     'serial_order' => 'ORDER' . fake()->randomNumber(),
                     'transaction_id' => fake()->uuid(),
                     'payment_status' => 'settlement',

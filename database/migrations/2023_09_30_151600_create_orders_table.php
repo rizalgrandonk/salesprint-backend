@@ -15,6 +15,10 @@ return new class extends Migration {
             $table->enum('order_status', [
                 'UNPAID', 'PAID', 'PROCESSED', 'SHIPPED', 'COMPLETED'
             ]);
+            $table->string('shipping_tracking_number')->nullable();
+            $table->string('shipping_status');
+            $table->string('shipping_courier');
+            $table->json('shipping_history');
             $table->string('serial_order');
             $table->string('transaction_id');
             $table->string('payment_status');
