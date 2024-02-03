@@ -15,16 +15,16 @@ class Controller extends BaseController {
         $message = "Request Success"
     ) {
         return response()
-            ->withHeaders([
-                'Access-Control-Allow-Origin' => '*',
-                'Access-Control-Allow-Methods' => '*',
-                'Access-Control-Allow-Headers' => '*'
-            ])
             ->json([
                 "success" => true,
                 "message" => $message,
                 "data" => $data,
-            ], $status);
+            ], $status)
+            ->withHeaders([
+                'Access-Control-Allow-Origin' => '*',
+                'Access-Control-Allow-Methods' => '*',
+                'Access-Control-Allow-Headers' => '*'
+            ]);
     }
 
     public function responseFailed(
@@ -33,15 +33,15 @@ class Controller extends BaseController {
         $errors = null,
     ) {
         return response()
-            ->withHeaders([
-                'Access-Control-Allow-Origin' => '*',
-                'Access-Control-Allow-Methods' => '*',
-                'Access-Control-Allow-Headers' => '*'
-            ])
             ->json([
                 "success" => false,
                 "message" => $message,
                 "errors" => $errors ?? $message,
-            ], $status);
+            ], $status)
+            ->withHeaders([
+                'Access-Control-Allow-Origin' => '*',
+                'Access-Control-Allow-Methods' => '*',
+                'Access-Control-Allow-Headers' => '*'
+            ]);
     }
 }
