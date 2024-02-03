@@ -22,7 +22,7 @@ class Controller extends BaseController {
             ], $status)
             ->withHeaders([
                 'Access-Control-Allow-Origin' => '*',
-                'Access-Control-Allow-Methods' => '*',
+                'Access-Control-Allow-Methods' => 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
                 'Access-Control-Allow-Headers' => '*'
             ]);
     }
@@ -40,7 +40,7 @@ class Controller extends BaseController {
             ], $status)
             ->withHeaders([
                 'Access-Control-Allow-Origin' => '*',
-                'Access-Control-Allow-Methods' => '*',
+                'Access-Control-Allow-Methods' => 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
                 'Access-Control-Allow-Headers' => '*'
             ]);
     }
