@@ -14,11 +14,17 @@ class Controller extends BaseController {
         int $status = 200,
         $message = "Request Success"
     ) {
-        return response()->json([
-            "success" => true,
-            "message" => $message,
-            "data" => $data,
-        ], $status);
+        return response()
+            ->withHeaders([
+                'Access-Control-Allow-Origin' => '*',
+                'Access-Control-Allow-Methods' => '*',
+                'Access-Control-Allow-Headers' => '*'
+            ])
+            ->json([
+                "success" => true,
+                "message" => $message,
+                "data" => $data,
+            ], $status);
     }
 
     public function responseFailed(
@@ -26,10 +32,16 @@ class Controller extends BaseController {
         int $status = 400,
         $errors = null,
     ) {
-        return response()->json([
-            "success" => false,
-            "message" => $message,
-            "errors" => $errors ?? $message,
-        ], $status);
+        return response()
+            ->withHeaders([
+                'Access-Control-Allow-Origin' => '*',
+                'Access-Control-Allow-Methods' => '*',
+                'Access-Control-Allow-Headers' => '*'
+            ])
+            ->json([
+                "success" => false,
+                "message" => $message,
+                "errors" => $errors ?? $message,
+            ], $status);
     }
 }
