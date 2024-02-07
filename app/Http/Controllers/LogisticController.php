@@ -47,4 +47,31 @@ class LogisticController extends Controller {
 
     return $this->responseSuccess($listCity);
   }
+
+  public function cost(Request $request) {
+    $validatedData = $request->validate([
+      'origin' => ['required', 'string'],
+      'destination' => ['required', 'string'],
+      'weight' => ['required', 'integer'],
+    ]);
+
+    $res = Http::withHeaders([
+      'key' => env('RAJAONGKIR_API_KEY', ''),
+    ])
+      ->post('https://api.rajaongkir.com/starter/cost', [
+        "origin" => $validatedData['origin'],
+        "destination" => $validatedData['destination'],
+        "weight" => (int) $validatedData['weight'],
+        "courier" => "jne"
+      ]);
+
+    if ($res->failed()) {
+      return $this->responseFailed("Not Found", 500, "List Cities not found");
+    }
+
+    $data = $res->json();
+    $list = $data['rajaongkir']['results'];
+
+    return $this->responseSuccess($list);
+  }
 }

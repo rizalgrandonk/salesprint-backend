@@ -13,25 +13,26 @@ return new class extends Migration {
             $table->id();
             $table->float('total', 10, 2);
             $table->enum('order_status', [
-                'UNPAID', 'PAID', 'PROCESSED', 'SHIPPED', 'COMPLETED'
+                'UNPAID', 'PAID', 'PROCESSED', 'SHIPPED', 'COMPLETED', 'CANCELED'
             ]);
+            $table->string('cancel_reason')->nullable();
             $table->string('shipping_tracking_number')->nullable();
             $table->string('shipping_status');
             $table->string('shipping_courier');
-            $table->json('shipping_history');
-            $table->string('serial_order');
-            $table->string('transaction_id');
-            $table->string('payment_status');
-            $table->string('status_code');
-            $table->string('payment_type');
-            $table->string('payment_code')->nullable();
-            $table->string('pdf_url')->nullable();
+            $table->json('shipping_history')->nullable();
+            $table->string('reciever_name');
+            $table->string('reciever_phone');
             $table->string('delivery_address');
+            $table->string('delivery_province_id');
+            $table->string('delivery_city_id');
+            $table->string('delivery_province');
+            $table->string('delivery_city');
+            $table->string('delivery_postal_code');
             $table->string('delivery_service');
             $table->float('delivery_cost', 10, 2);
-            $table->string('receipt_number')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('store_id')->nullable();
+            $table->unsignedBigInteger('transaction_id')->nullable();
 
             $table->foreign('user_id')
                 ->nullable()
@@ -41,6 +42,10 @@ return new class extends Migration {
             $table->foreign('store_id')
                 ->references('id')
                 ->on('stores')
+                ->nullOnDelete();
+            $table->foreign('transaction_id')
+                ->references('id')
+                ->on('transactions')
                 ->nullOnDelete();
 
             $table->timestamps();

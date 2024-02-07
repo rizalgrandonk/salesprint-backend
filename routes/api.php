@@ -126,20 +126,36 @@ Route::group([
         'middleware' => 'api',
     ], function () {
         Route::get('/province', [Controllers\ProvinceController::class, "index"]);
-    });
-    Route::group([
-        'middleware' => 'api',
-    ], function () {
+
         Route::get('/city', [Controllers\CityController::class, "index"]);
+
+        Route::get(
+            '/get_province',
+            [Controllers\LogisticController::class, "get_province"]
+        );
+
+        Route::get(
+            '/get_cities',
+            [Controllers\LogisticController::class, "get_cities"]
+        );
+
+        Route::post(
+            '/cost',
+            [Controllers\LogisticController::class, "cost"]
+        );
     });
-    Route::get(
-        '/get_province',
-        [Controllers\LogisticController::class, "get_province"]
-    );
-    Route::get(
-        '/get_cities',
-        [Controllers\LogisticController::class, "get_cities"]
-    );
+});
+
+Route::group([
+    "prefix" => "orders"
+], function () {
+    Route::group([
+        'middleware' => ['api', 'auth.jwt:user'],
+    ], function () {
+        Route::post('/get_token', [Controllers\OrderController::class, "get_token"]);
+
+        Route::post('/update_transaction_by_token', [Controllers\OrderController::class, "update_transaction_by_token"]);
+    });
 });
 
 Route::group([

@@ -7,6 +7,7 @@ namespace Database\Seeders;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Review;
+use App\Models\Transaction;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Http;
 // use Illuminate\Support\Facades\Hash;
@@ -168,7 +169,7 @@ class DatabaseSeeder extends Seeder {
             ]);
             array_push($result['user'], $createdUser->id);
         }
-        for ($i = 0; $i < 30; $i++) {
+        for ($i = 0; $i < 8; $i++) {
             $nameUser = fake()->firstName() . fake()->randomNumber(3, true);
             $createdUser = \App\Models\User::create([
                 'name' => $nameUser,
@@ -188,42 +189,107 @@ class DatabaseSeeder extends Seeder {
 
     function createCategories(): array {
         $category_names = [
-            'Elektronik' => [
-                'High-End Smartphone',
-                'Notebook Murah'
-            ],
-            'Pakaian' => [
-                'Kaos',
-                'Celana Panjang'
-            ],
-            'Dekorasi' => [
-                'Lampu Meja',
-                'Poster Band'
-            ],
-            'Buku' => [
-                'Buku Fiksi',
-                'Komik'
-            ],
-            'Mainan' => [
-                'Gaming CD',
-                'Diecast'
-            ],
-            'Furniture' => [
-                'Meja Kayu',
-                'Sofa'
-            ],
-            'Olahraga' => [
-                'Bola Sepak',
-                'Jersey Sepak Bola'
-            ],
-            'Kecantikan' => [
-                'Set Parfum',
-                'Kalung Liontin'
-            ],
-            'Sepatu' => [
-                'Sneakers',
-                'Sepatu Sepak Bola'
-            ],
+            'Electronics' => array(
+                'QuantumGear Smartwatch',
+                'TechFusion Wireless Earbuds',
+                'InfinityLight LED Desk Lamp',
+                'PowerPod Portable Charger',
+                'StellarTech Laptop Stand',
+                'PowerPlay Gaming Mouse',
+                'StellarSound Bluetooth Speaker',
+                'PowerPulse Massage Gun',
+                'QuantumQuilt Weighted Blanket',
+                'PowerGlide Portable Laptop Stand'
+            ),
+            'Home & Living' => array(
+                'LuxeLife Velvet Throw Pillow',
+                'UrbanChic Backpack',
+                'AquaFlow Water Bottle',
+                'ZenScape Meditation Cushion',
+                'LuxeLoom Egyptian Cotton Towels',
+                'UrbanGourmet Spice Rack',
+                'ZenMist Aromatherapy Diffuser',
+                'LuxeLounge Velvet Sofa Throw',
+                'UrbanVogue Fashion Sketchbook',
+                'LuxeLinen Linen Bedding Set'
+            ),
+            'Health & Fitness' => array(
+                'NovaFit Resistance Bands Set',
+                'BioFresh Organic Laundry Detergent',
+                'PowerFlex Yoga Mat',
+                'QuantumBlend Smoothie Maker',
+                'ZenPet Calming Collar',
+                'FitFlow Yoga Block Set',
+                'BioFuel Plant-Based Protein Powder',
+                'AquaCool Cooling Towel',
+                'QuantumFlex Resistance Yoga Bands',
+                'PowerBalance Fitness Resistance Bands'
+            ),
+            'Fashion & Accessories' => array(
+                'TrendSetter Fashion Sunglasses',
+                'LuxeLeather Passport Holder',
+                'ZenZone Stress Relief Kit',
+                'UrbanHarbor Cityscape Wall Art',
+                'EcoGrip Eco-Friendly Phone Grip',
+                'QuantumQuill Calligraphy Pen Set',
+                'LuxeLounge Lounge Chair Cover',
+                'ZenHaven Meditation Blanket',
+                'UrbanUnity Puzzle Art Print',
+                'LuxeLift Facial Massage Roller'
+            ),
+            'Home & Garden' => array(
+                'NatureNest Bird Feeder',
+                'UrbanScape Cityscape Puzzle',
+                'EcoVibe Reusable Shopping Bags',
+                'NatureNook Indoor Plant Kit',
+                'FreshChef Herb Garden Kit',
+                'BioBloom Seed Bomb Kit',
+                'NatureNurture Plant-Based Baby Onesies',
+                'UrbanZen Desktop Mini Garden',
+                'EcoPetal Plantable Seed Paper',
+                'NatureNotes Eco-Friendly Notebook'
+            ),
+            'Beauty & Personal Care' => array(
+                'StellarGlow Facial Serum',
+                'LuxLash Faux Mink Eyelashes',
+                'BioEpic Natural Skincare Set',
+                'EcoPaws Organic Pet Shampoo',
+                'ZenNectar Honey Infuser',
+                'BioBite Biodegradable Cutlery Set',
+                'StellarSleep Silk Pillowcase',
+                'BioGlow Natural Skincare Set',
+                'FreshFlare Scented Candles',
+                'BioBright Natural Teeth Whitening Kit'
+            ),
+            'Outdoor & Adventure' => array(
+                'AquaSplash Waterproof Phone Case',
+                'AquaAdventure Snorkel Set',
+                'QuantumQuest Adventure Board Game',
+                'AquaTrek Waterproof Hiking Boots',
+                'NatureNest Squirrel-Proof Bird Feeder',
+                'AquaFlex Water-Resistant Backpack',
+                'AquaArmor Waterproof Phone Pouch',
+                'AquaFit Swim Resistance Bands',
+                'QuantumQuick Dry Towel Set',
+                'AquaAdventure Waterproof Camping Lantern'
+            ),
+            'Kitchen & Dining' => array(
+                'FreshBrew Coffee Grinder',
+                'EcoEssentials Bamboo Kitchen Set',
+                'QuantumBlend Smoothie Maker',
+                'FreshFill Reusable Water Filter',
+                'FreshFluff Eco-Friendly Dryer Balls',
+                'QuantumQuench Collapsible Water Bottle'
+            ),
+            'Pets' => array(
+                'EcoPaws Organic Pet Shampoo',
+                'NatureNurture Plant-Based Baby Onesies'
+            ),
+            'Books & Stationery' => array(
+                'UrbanVogue Fashion Sketchbook',
+                'NatureNotes Eco-Friendly Notebook',
+                'QuantumQuill Calligraphy Pen Set'
+            )
         ];
         $createdIds = [];
         foreach ($category_names as $name => $val) {
@@ -234,12 +300,12 @@ class DatabaseSeeder extends Seeder {
                 'image' => fake()->randomElement($this->productImageOptions)
             ]);
 
-            for ($i = 0; $i < random_int(5, 15); $i++) {
-                array_push(
-                    $prodNames,
-                    fake()->realTextBetween(28, 40)
-                );
-            }
+            // for ($i = 0; $i < random_int(5, 15); $i++) {
+            //     array_push(
+            //         $prodNames,
+            //         fake()->realTextBetween(28, 40)
+            //     );
+            // }
 
             array_push(
                 $createdIds,
@@ -571,6 +637,15 @@ class DatabaseSeeder extends Seeder {
                 $selectedVar = fake()->randomElement($prodVars);
                 $quantity = random_int(1, 3);
                 $orderTotal = ((float) $selectedVar->price * $quantity) + 20000;
+                $createdTransaction = Transaction::create([
+                    'total' => $orderTotal,
+                    'serial_order' => 'ORDER' . fake()->randomNumber(),
+                    'transaction_id' => fake()->uuid(),
+                    'payment_status' => 'settlement',
+                    'status_code' => 200,
+                    'status_message' => 'Success, pembayaran berhasil',
+                    'payment_type' => 'bank_transfer',
+                ]);
                 $createdOrder = Order::create([
                     'total' => $orderTotal,
                     'order_status' => 'COMPLETED',
@@ -616,16 +691,19 @@ class DatabaseSeeder extends Seeder {
                           "location": ""
                         }
                       ]',
-                    'serial_order' => 'ORDER' . fake()->randomNumber(),
-                    'transaction_id' => fake()->uuid(),
-                    'payment_status' => 'settlement',
-                    'status_code' => 200,
-                    'payment_type' => 'bank_transfer',
                     'delivery_service' => 'JNE',
                     'delivery_address' => fake()->address(),
+                    'reciever_name' => fake()->name(),
+                    'reciever_phone' => fake()->phoneNumber(),
+                    'delivery_province_id' => '11',
+                    'delivery_province' => 'Jawa Timur',
+                    'delivery_city_id' => '444',
+                    'delivery_city' => 'Kota Surabaya',
+                    'delivery_postal_code' => '66666',
                     'delivery_cost' => 20000,
                     'user_id' => $userId,
-                    'store_id' => $newProduct->store->id
+                    'store_id' => $newProduct->store->id,
+                    'transaction_id' => $createdTransaction->id
                 ]);
 
                 $createdOrderItem = OrderItem::create([

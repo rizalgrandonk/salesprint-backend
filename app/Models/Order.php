@@ -15,18 +15,25 @@ use Illuminate\Database\Eloquent\Model;
  * 
  * @property string $id
  * @property float $total
- * @property string $serial_order
- * @property string $transaction_id
- * @property string $status
- * @property string $status_code
- * @property string $payment_type
- * @property string|null $payment_code
- * @property string|null $pdf_url
+ * @property string $order_status
+ * @property string $shipping_status
+ * @property string $cancel_reason
+ * @property string $shipping_tracking_number
+ * @property string $shipping_courier
+ * @property array $shipping_history
+ * @property string $reciever_name
+ * @property string $reciever_phone
+ * @property string $delivery_province_id
+ * @property string $delivery_province
+ * @property string $delivery_city_id
+ * @property string $delivery_city
+ * @property string $delivery_postal_code
  * @property string $delivery_address
  * @property string $delivery_service
  * @property float $delivery_cost
- * @property string|null $receipt_number
  * @property string $user_id
+ * @property string $store_id
+ * @property string $transaction_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * 
@@ -52,26 +59,33 @@ class Order extends BaseModel {
 		'total',
 		'order_status',
 		'shipping_status',
+		'cancel_reason',
 		'shipping_tracking_number',
 		'shipping_courier',
 		'shipping_history',
-		'serial_order',
-		'transaction_id',
-		'payment_status',
-		'status_code',
-		'payment_type',
-		'payment_code',
-		'pdf_url',
+		'reciever_name',
+		'reciever_phone',
+		'delivery_province_id',
+		'delivery_province',
+		'delivery_city_id',
+		'delivery_city',
+		'delivery_postal_code',
 		'delivery_address',
 		'delivery_service',
 		'delivery_cost',
-		'receipt_number',
 		'user_id',
-		'store_id'
+		'store_id',
+		'transaction_id'
 	];
 
 	public function user() {
 		return $this->belongsTo(User::class);
+	}
+	public function store() {
+		return $this->belongsTo(Store::class);
+	}
+	public function transaction() {
+		return $this->belongsTo(Transaction::class);
 	}
 
 	public function order_items() {
