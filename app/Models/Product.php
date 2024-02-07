@@ -157,15 +157,15 @@ class Product extends BaseModel {
 			})
 			->toArray();
 
-		// info("userItemMatrix");
-		// info($userItemMatrix);
+		info("userItemMatrix " . $targetUser);
+		info($userItemMatrix);
 
 		$similarityMatrix = $this->calculateSimilarity($userItemMatrix);
 
 		// info("similarityMatrix");
 		// info($similarityMatrix);
 
-		$userSimilarities = $similarityMatrix['1'];
+		$userSimilarities = $similarityMatrix[$targetUser];
 		uasort($userSimilarities, function ($a, $b) {
 			if ($a == $b) {
 				return 0;
@@ -177,8 +177,8 @@ class Product extends BaseModel {
 		// info($userSimilarities);
 
 		$nearestNeighbors = array_keys($userSimilarities);
-		// info("nearestNeighbors");
-		// info($nearestNeighbors);
+		info("nearestNeighbors" . $targetUser);
+		info($nearestNeighbors);
 
 		$recommendations = [];
 		$reviewed = [];
@@ -257,6 +257,8 @@ class Product extends BaseModel {
 				return $this->generateRecommendations($userId);
 			}
 		);
+
+		info($userId, $ids);
 
 		return $query->whereIn('id', $ids)
 			->orderByRaw("FIELD(id, " . implode(',', $ids) . ")");

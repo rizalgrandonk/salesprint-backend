@@ -210,14 +210,12 @@ class DatabaseSeeder extends Seeder {
                 'UrbanGourmet Spice Rack',
                 'ZenMist Aromatherapy Diffuser',
                 'LuxeLounge Velvet Sofa Throw',
-                'UrbanVogue Fashion Sketchbook',
                 'LuxeLinen Linen Bedding Set'
             ),
             'Health & Fitness' => array(
                 'NovaFit Resistance Bands Set',
                 'BioFresh Organic Laundry Detergent',
                 'PowerFlex Yoga Mat',
-                'QuantumBlend Smoothie Maker',
                 'ZenPet Calming Collar',
                 'FitFlow Yoga Block Set',
                 'BioFuel Plant-Based Protein Powder',
@@ -231,7 +229,6 @@ class DatabaseSeeder extends Seeder {
                 'ZenZone Stress Relief Kit',
                 'UrbanHarbor Cityscape Wall Art',
                 'EcoGrip Eco-Friendly Phone Grip',
-                'QuantumQuill Calligraphy Pen Set',
                 'LuxeLounge Lounge Chair Cover',
                 'ZenHaven Meditation Blanket',
                 'UrbanUnity Puzzle Art Print',
@@ -244,16 +241,13 @@ class DatabaseSeeder extends Seeder {
                 'NatureNook Indoor Plant Kit',
                 'FreshChef Herb Garden Kit',
                 'BioBloom Seed Bomb Kit',
-                'NatureNurture Plant-Based Baby Onesies',
                 'UrbanZen Desktop Mini Garden',
                 'EcoPetal Plantable Seed Paper',
-                'NatureNotes Eco-Friendly Notebook'
             ),
             'Beauty & Personal Care' => array(
                 'StellarGlow Facial Serum',
                 'LuxLash Faux Mink Eyelashes',
                 'BioEpic Natural Skincare Set',
-                'EcoPaws Organic Pet Shampoo',
                 'ZenNectar Honey Infuser',
                 'BioBite Biodegradable Cutlery Set',
                 'StellarSleep Silk Pillowcase',
@@ -632,8 +626,16 @@ class DatabaseSeeder extends Seeder {
                 array_push($prodVars, $prodVar);
             }
 
+            $selectedUserIds = fake()->randomElements(
+                array_filter($createdUserIdByRole['user'], function ($userId) use ($newProduct) {
+                    return ((int) $userId % 2 === 0) === ((int) $newProduct->id % 2 === 0);
+                }),
+                random_int(2, 30)
+            );
+
             $ratings = [];
-            foreach (fake()->randomElements($createdUserIdByRole['user'], random_int(2, 50)) as $userId) {
+            foreach ($selectedUserIds as $userId) {
+
                 $selectedVar = fake()->randomElement($prodVars);
                 $quantity = random_int(1, 3);
                 $orderTotal = ((float) $selectedVar->price * $quantity) + 20000;
