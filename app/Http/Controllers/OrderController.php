@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Store;
 use App\Models\Transaction;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 const TRANSACTION_ORDER_STATUS_MAP = [
@@ -25,6 +26,61 @@ class OrderController extends Controller {
     /**
      * Display a listing of the resource.
      */
+    public function user_transactions(Request $request) {
+        $transactions = Transaction::where('user_id', auth()->user()->id)
+            ->paramQuery($request->query())
+            ->get();
+
+        if (!$transactions) {
+            return $this->responseFailed("Not Found", 404, "Transactions not found");
+        }
+
+        return $this->responseSuccess($transactions);
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function paginated_user_transactions(Request $request) {
+        $transactions = Transaction::where('user_id', auth()->user()->id)
+            ->getDataTable($request->query());
+
+        if (!$transactions) {
+            return $this->responseFailed("Transactions not Found", 404, "Transactions not found");
+        }
+
+        return $this->responseSuccess($transactions);
+    }
+    /**
+     * Display a listing of the resource.
+     */
+    public function user_orders(Request $request) {
+        $orders = Order::where('user_id', auth()->user()->id)
+            ->paramQuery($request->query())
+            ->get();
+
+        if (!$orders) {
+            return $this->responseFailed("Not Found", 404, "Orders not found");
+        }
+
+        return $this->responseSuccess($orders);
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function paginated_user_orders(Request $request) {
+        $orders = Order::where('user_id', auth()->user()->id)
+            ->getDataTable($request->query());
+
+        if (!$orders) {
+            return $this->responseFailed("Orders not Found", 404, "Orders not found");
+        }
+
+        return $this->responseSuccess($orders);
+    }
+
+
     public function get_token(TokenOrderRequest $request) {
         \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY', '');
         \Midtrans\Config::$isProduction = env('MIDTRANS_IS_PRODUCTION', '');
@@ -124,9 +180,12 @@ class OrderController extends Controller {
             ]
         ];
 
+        $serialOrder = Carbon::now()->format("Ymd")
+            . Carbon::createMidnightDate()->diffInMilliseconds(Carbon::now());
+
         $payload = [
             'transaction_details' => [
-                'order_id' => 'ORDER_' . rand(),
+                'order_id' => $serialOrder,
                 'gross_amount' => $grossAmount,
             ],
             'customer_details' => $customer_details,
@@ -137,11 +196,12 @@ class OrderController extends Controller {
 
         $createdTransaction = Transaction::create([
             'total' => $grossAmount,
-            'serial_order' => $payload['transaction_details']['order_id'],
+            'serial_order' => $serialOrder,
             'payment_status' => 'pending',
             'status_code' => 201,
             'status_message' => "Pending, Menunggu pembayaran",
-            'snap_token' => $snapToken
+            'snap_token' => $snapToken,
+            'user_id' => auth()->user()->id,
         ]);
 
 

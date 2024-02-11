@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Review;
 use App\Models\Transaction;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Http;
 // use Illuminate\Support\Facades\Hash;
@@ -639,14 +640,19 @@ class DatabaseSeeder extends Seeder {
                 $selectedVar = fake()->randomElement($prodVars);
                 $quantity = random_int(1, 3);
                 $orderTotal = ((float) $selectedVar->price * $quantity) + 20000;
+
+                $serialOrder = Carbon::now()->format("Ymd")
+                    . Carbon::createMidnightDate()->diffInMilliseconds(Carbon::now());
+
                 $createdTransaction = Transaction::create([
                     'total' => $orderTotal,
-                    'serial_order' => 'ORDER' . fake()->randomNumber(),
+                    'serial_order' => $serialOrder,
                     'transaction_id' => fake()->uuid(),
                     'payment_status' => 'settlement',
                     'status_code' => 200,
                     'status_message' => 'Success, pembayaran berhasil',
                     'payment_type' => 'bank_transfer',
+                    'user_id' => $userId,
                 ]);
                 $createdOrder = Order::create([
                     'total' => $orderTotal,

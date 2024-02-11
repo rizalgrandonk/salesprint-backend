@@ -155,6 +155,9 @@ Route::group([
         Route::post('/get_token', [Controllers\OrderController::class, "get_token"]);
 
         Route::post('/update_transaction_by_token', [Controllers\OrderController::class, "update_transaction_by_token"]);
+
+        Route::get('/user_transactions', [Controllers\OrderController::class, "user_transactions"]);
+        Route::get('/user_orders', [Controllers\OrderController::class, "user_orders"]);
     });
 });
 
@@ -307,4 +310,15 @@ Route::group([
         '/variant-types',
         [Controllers\VariantTypeController::class, "paginated"]
     );
+
+    Route::group(['middleware' => 'auth.jwt:user'], function () {
+        Route::get(
+            '/orders/user_transactions',
+            [Controllers\OrderController::class, "paginated_user_transactions"]
+        );
+        Route::get(
+            '/orders/user_orders',
+            [Controllers\OrderController::class, "paginated_user_orders"]
+        );
+    });
 });
