@@ -16,10 +16,20 @@ use Illuminate\Http\Request;
 const TRANSACTION_ORDER_STATUS_MAP = [
     'settlement' => 'PAID',
     'pending' => 'UNPAID',
+    'challenge' => 'CANCELED',
     'deny' => 'CANCELED',
     'cancel' => 'CANCELED',
     'expire' => 'CANCELED',
     'error' => 'CANCELED',
+];
+const TRANSACTION_STATUS_MESSAGE_MAP = [
+    'settlement' => 'Pembayaran berhasil',
+    'pending' => 'Menunggu pembayaran',
+    'challenge' => 'Pembayaran gagal, order ulang atau hubungi customer service',
+    'deny' => 'Pembayaran ditolak',
+    'cancel' => 'Pembayaran dibatalkan',
+    'expire' => 'Melebihi batas waktu pembayaran',
+    'error' => 'Error dalam fase pembayaran, order ulang atau hubungi customer service',
 ];
 
 class OrderController extends Controller {
@@ -86,6 +96,7 @@ class OrderController extends Controller {
         \Midtrans\Config::$isProduction = env('MIDTRANS_IS_PRODUCTION', '');
         \Midtrans\Config::$isSanitized = env('MIDTRANS_IS_SANITIZED', '');
         \Midtrans\Config::$is3ds = env('MIDTRANS_IS_3DS', '');
+        \Midtrans\Config::$overrideNotifUrl = env('APP_URL', '') . '/apis/orders/notification';
 
         $validatedData = $request->validated();
 
@@ -279,6 +290,8 @@ class OrderController extends Controller {
 
         $validatedData = $request->validated();
 
+        $validatedData['status_message'] = TRANSACTION_STATUS_MESSAGE_MAP[$validatedData['payment_status']];
+
         $transaction->update($validatedData);
 
         if (isset($validatedData['payment_status'])) {
@@ -291,5 +304,54 @@ class OrderController extends Controller {
         }
 
         return $this->responseSuccess($transaction);
+    }
+
+    public function notification() {
+        \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY', '');
+        \Midtrans\Config::$isProduction = env('MIDTRANS_IS_PRODUCTION', '');
+        $notif = new \Midtrans\Notification();
+
+        $serial_order = $notif->order_id;
+
+        $payment_status = $notif->transaction_status;
+
+        $orderTransaction = Transaction::where('serial_order', $serial_order)
+            ->first();
+
+        if (!$orderTransaction) {
+            return $this->responseFailed("Not Found", 404, "Transactions not found");
+        }
+
+
+        if ($notif->transaction_status == 'capture') {
+            // For credit card transaction, we need to check whether transaction is challenge by FDS or not
+            if ($notif->payment_type == 'credit_card') {
+                if ($notif->fraud_status == 'challenge') {
+                    $payment_status = 'challenge';
+                } else {
+                    $payment_status = 'settlement';
+                }
+            }
+        }
+
+        $orderTransaction->update([
+            'transaction_id' => $notif->transaction_id,
+            'payment_status' => $payment_status,
+            'status_code' => $notif->status_code,
+            'status_message' => TRANSACTION_STATUS_MESSAGE_MAP[$payment_status],
+            'payment_type' => $notif->payment_type,
+        ]);
+
+        $orderStatus = TRANSACTION_ORDER_STATUS_MAP[$payment_status];
+
+        $orderTransaction->orders()->update([
+            'order_status' => $orderStatus,
+            'cancel_reason' => $orderStatus === "CANCELED" ? TRANSACTION_STATUS_MESSAGE_MAP[$payment_status] : null
+        ]);
+
+        return $this->responseSuccess([
+            'serial_order' => $serial_order,
+            'status' => $notif->transaction_status
+        ]);
     }
 }

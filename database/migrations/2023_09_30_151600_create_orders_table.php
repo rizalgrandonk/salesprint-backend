@@ -15,6 +15,8 @@ return new class extends Migration {
             $table->enum('order_status', [
                 'UNPAID', 'PAID', 'PROCESSED', 'SHIPPED', 'COMPLETED', 'CANCELED'
             ]);
+            $table->string('shipping_deadline')->nullable();
+            $table->string('recieve_deadline')->nullable();
             $table->string('cancel_reason')->nullable();
             $table->string('shipping_tracking_number')->nullable();
             $table->string('shipping_status');

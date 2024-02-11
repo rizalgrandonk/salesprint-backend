@@ -147,10 +147,17 @@ Route::group([
 });
 
 Route::group([
-    "prefix" => "orders"
+    "prefix" => "orders",
+    'middleware' => ['api']
 ], function () {
+    Route::post(
+        '/notification',
+        [Controllers\OrderController::class, "notification"]
+    );
+
+
     Route::group([
-        'middleware' => ['api', 'auth.jwt:user'],
+        'middleware' => ['auth.jwt:user'],
     ], function () {
         Route::post('/get_token', [Controllers\OrderController::class, "get_token"]);
 
