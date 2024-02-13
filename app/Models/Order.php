@@ -57,6 +57,7 @@ class Order extends BaseModel {
 
 	protected $fillable = [
 		'total',
+		'order_number',
 		'order_status',
 		'shipping_status',
 		'cancel_reason',
