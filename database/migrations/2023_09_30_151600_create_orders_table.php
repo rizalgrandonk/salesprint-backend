@@ -11,12 +11,15 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            $table->string('order_number')->unique();
             $table->float('total', 10, 2);
             $table->enum('order_status', [
-                'UNPAID', 'PAID', 'PROCESSED', 'SHIPPED', 'COMPLETED', 'CANCELED'
+                'UNPAID', 'PAID', 'PROCESSED', 'SHIPPED', 'DELIVERED', 'COMPLETED', 'CANCELED'
             ]);
-            $table->string('shipping_deadline')->nullable();
-            $table->string('recieve_deadline')->nullable();
+            $table->integer('shipping_days_estimate')->nullable();
+            $table->dateTime('shipping_deadline')->nullable();
+            $table->dateTime('deliver_deadline')->nullable();
+            $table->dateTime('recieve_deadline')->nullable();
             $table->string('cancel_reason')->nullable();
             $table->string('shipping_tracking_number')->nullable();
             $table->string('shipping_status');

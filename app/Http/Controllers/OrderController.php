@@ -89,6 +89,44 @@ class OrderController extends Controller {
 
         return $this->responseSuccess($orders);
     }
+    /**
+     * Display a listing of the resource.
+     */
+    public function store_orders(Request $request) {
+        $store = Store::where('user_id', auth()->user()->id)->first();
+        if (!$store) {
+            return $this->responseFailed("Not Found", 404, "Store not found");
+        }
+
+        $orders = Order::where('store_id', $store->id)
+            ->paramQuery($request->query())
+            ->get();
+
+        if (!$orders) {
+            return $this->responseFailed("Not Found", 404, "Orders not found");
+        }
+
+        return $this->responseSuccess($orders);
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function paginated_store_orders(Request $request) {
+        $store = Store::where('user_id', auth()->user()->id)->first();
+        if (!$store) {
+            return $this->responseFailed("Not Found", 404, "Store not found");
+        }
+
+        $orders = Order::where('store_id', $store->id)
+            ->getDataTable($request->query());
+
+        if (!$orders) {
+            return $this->responseFailed("Orders not Found", 404, "Orders not found");
+        }
+
+        return $this->responseSuccess($orders);
+    }
 
 
     public function get_token(TokenOrderRequest $request) {
@@ -249,7 +287,8 @@ class OrderController extends Controller {
                 'delivery_cost' => $order['shipping']['delivery_cost'],
                 'user_id' => auth()->user()->id,
                 'store_id' => $order['store']->id,
-                'transaction_id' => $createdTransaction->id
+                'transaction_id' => $createdTransaction->id,
+                'order_number' => $serialOrder . $order['store']->id . $createdTransaction->id
             ]);
 
             $order_items = [];

@@ -12,7 +12,7 @@ return new class extends Migration {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->float('total', 10, 2);
-            $table->string('serial_order');
+            $table->string('serial_order')->unique();
             $table->string('snap_token')->nullable();
             $table->string('transaction_id')->nullable();
             $table->string('payment_status');

@@ -711,7 +711,8 @@ class DatabaseSeeder extends Seeder {
                     'delivery_cost' => 20000,
                     'user_id' => $userId,
                     'store_id' => $newProduct->store->id,
-                    'transaction_id' => $createdTransaction->id
+                    'transaction_id' => $createdTransaction->id,
+                    'order_number' => $serialOrder . $newProduct->store->id . $createdTransaction->id
                 ]);
 
                 $createdOrderItem = OrderItem::create([

@@ -166,6 +166,12 @@ Route::group([
         Route::get('/user_transactions', [Controllers\OrderController::class, "user_transactions"]);
         Route::get('/user_orders', [Controllers\OrderController::class, "user_orders"]);
     });
+
+    Route::group([
+        'middleware' => ['auth.jwt:seller'],
+    ], function () {
+        Route::get('/store_orders', [Controllers\OrderController::class, "store_orders"]);
+    });
 });
 
 Route::group([
@@ -326,6 +332,13 @@ Route::group([
         Route::get(
             '/orders/user_orders',
             [Controllers\OrderController::class, "paginated_user_orders"]
+        );
+    });
+
+    Route::group(['middleware' => 'auth.jwt:seller'], function () {
+        Route::get(
+            '/orders/store_orders',
+            [Controllers\OrderController::class, "paginated_store_orders"]
         );
     });
 });
