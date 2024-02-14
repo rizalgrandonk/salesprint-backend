@@ -58,6 +58,11 @@ class Order extends BaseModel {
 	protected $fillable = [
 		'total',
 		'order_number',
+		'shipping_days_estimate',
+		'accept_deadline',
+		'shipping_deadline',
+		'deliver_deadline',
+		'recieve_deadline',
 		'order_status',
 		'shipping_status',
 		'cancel_reason',

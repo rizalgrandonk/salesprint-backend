@@ -189,45 +189,4 @@ class StoreController extends Controller {
 
         return $this->responseSuccess(['id' => $store->id], 200, "Data deleted");
     }
-
-    /**
-     * Get list available province
-     */
-    public function get_province() {
-        $res = Http::withHeaders([
-            'key' => 'b8993e20a6ece73dd669b63deece88f3',
-        ])->get('https://api.rajaongkir.com/starter/province');
-
-        if ($res->failed()) {
-            return $this->responseFailed("Not Found", 500, "List Province not found");
-        }
-
-        $data = $res->json();
-        $listProvince = $data['rajaongkir']['results'];
-        return $this->responseSuccess($listProvince);
-    }
-
-    public function get_cities(Request $request) {
-        $province_id = $request->query('province_id');
-
-        if (!$province_id) {
-            return $this->responseFailed("Invalid params", 500, "No province_id provided");
-        }
-
-        $res = Http::withHeaders([
-            'key' => 'b8993e20a6ece73dd669b63deece88f3',
-        ])->get('https://api.rajaongkir.com/starter/city', [
-                    'province' => $province_id
-                ]);
-
-        if ($res->failed()) {
-            return $this->responseFailed("Not Found", 500, "List Cities not found");
-        }
-
-        $data = $res->json();
-        // dd($data['rajaongkir']['results']);
-        $listCity = $data['rajaongkir']['results'];
-
-        return $this->responseSuccess($listCity);
-    }
 }

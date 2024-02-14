@@ -171,6 +171,10 @@ Route::group([
         'middleware' => ['auth.jwt:seller'],
     ], function () {
         Route::get('/store_orders', [Controllers\OrderController::class, "store_orders"]);
+
+        Route::post('/accept_order', [Controllers\OrderController::class, "accept_order"]);
+        Route::post('/ship_order', [Controllers\OrderController::class, "ship_order"]);
+        Route::post('/cancel_order', [Controllers\OrderController::class, "cancel_order"]);
     });
 });
 
@@ -287,7 +291,6 @@ Route::group([
             '/{store_slug}/products',
             [Controllers\ProductController::class, "store_products"]
         );
-
     });
 });
 

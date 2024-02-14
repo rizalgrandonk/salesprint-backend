@@ -290,7 +290,7 @@ class DatabaseSeeder extends Seeder {
         foreach ($category_names as $name => $val) {
             $prodNames = $val;
             $createdCategory = \App\Models\Category::create([
-                'name' => implode(" ", array_map(fn($val) => Str::ucfirst($val), explode(" ", $name))),
+                'name' => implode(" ", array_map(fn ($val) => Str::ucfirst($val), explode(" ", $name))),
                 'slug' => Str::slug($name),
                 'image' => fake()->randomElement($this->productImageOptions)
             ]);
@@ -306,7 +306,6 @@ class DatabaseSeeder extends Seeder {
                 $createdIds,
                 ['id' => $createdCategory->id, 'prodNames' => $prodNames]
             );
-
         }
         return $createdIds;
     }
@@ -534,8 +533,13 @@ class DatabaseSeeder extends Seeder {
 
     function createProvince() {
         $res = Http::withHeaders([
-            'key' => 'b8993e20a6ece73dd669b63deece88f3',
-        ])->get('https://api.rajaongkir.com/starter/province');
+            'key' => env('RAJAONGKIR_API_KEY', ''),
+        ])->get(
+            env(
+                'RAJAONGKIR_BASE_URL',
+                'https://api.rajaongkir.com/starter'
+            ) . '/province'
+        );
 
         if ($res->failed()) {
             throw $res->error();
@@ -559,10 +563,16 @@ class DatabaseSeeder extends Seeder {
 
     function createCities(string $provinceId) {
         $res = Http::withHeaders([
-            'key' => 'b8993e20a6ece73dd669b63deece88f3',
-        ])->get('https://api.rajaongkir.com/starter/city', [
-                    'province' => $provinceId
-                ]);
+            'key' => env('RAJAONGKIR_API_KEY', ''),
+        ])->get(
+            env(
+                'RAJAONGKIR_BASE_URL',
+                'https://api.rajaongkir.com/starter'
+            ) . '/city',
+            [
+                'province' => $provinceId
+            ]
+        );
 
         if ($res->failed()) {
             throw $res->error();
@@ -601,7 +611,7 @@ class DatabaseSeeder extends Seeder {
             $prodOpts = [];
             foreach (array_slice($createdVarTypeMap, random_int(0, 1)) as $val) {
                 $prodTypeOpts = $newProduct->variant_options()->createMany(
-                    array_map(fn($option) => [
+                    array_map(fn ($option) => [
                         'value' => $option, 'variant_type_id' => $val['id']
                     ], $val['options'])
                 );

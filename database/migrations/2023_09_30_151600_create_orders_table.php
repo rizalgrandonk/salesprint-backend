@@ -17,6 +17,7 @@ return new class extends Migration {
                 'UNPAID', 'PAID', 'PROCESSED', 'SHIPPED', 'DELIVERED', 'COMPLETED', 'CANCELED'
             ]);
             $table->integer('shipping_days_estimate')->nullable();
+            $table->dateTime('accept_deadline')->nullable();
             $table->dateTime('shipping_deadline')->nullable();
             $table->dateTime('deliver_deadline')->nullable();
             $table->dateTime('recieve_deadline')->nullable();

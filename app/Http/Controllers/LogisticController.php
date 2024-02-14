@@ -13,7 +13,12 @@ class LogisticController extends Controller {
   public function get_province() {
     $res = Http::withHeaders([
       'key' => env('RAJAONGKIR_API_KEY', ''),
-    ])->get('https://api.rajaongkir.com/starter/province');
+    ])->get(
+      env(
+        'RAJAONGKIR_BASE_URL',
+        'https://api.rajaongkir.com/starter'
+      ) . '/province'
+    );
 
     if ($res->failed()) {
       return $this->responseFailed("Not Found", 500, "List Province not found");
@@ -33,9 +38,15 @@ class LogisticController extends Controller {
 
     $res = Http::withHeaders([
       'key' => env('RAJAONGKIR_API_KEY', ''),
-    ])->get('https://api.rajaongkir.com/starter/city', [
-      'province' => $province_id
-    ]);
+    ])->get(
+      env(
+        'RAJAONGKIR_BASE_URL',
+        'https://api.rajaongkir.com/starter'
+      ) . '/city',
+      [
+        'province' => $province_id
+      ]
+    );
 
     if ($res->failed()) {
       return $this->responseFailed("Not Found", 500, "List Cities not found");
@@ -58,12 +69,18 @@ class LogisticController extends Controller {
     $res = Http::withHeaders([
       'key' => env('RAJAONGKIR_API_KEY', ''),
     ])
-      ->post('https://api.rajaongkir.com/starter/cost', [
-        "origin" => $validatedData['origin'],
-        "destination" => $validatedData['destination'],
-        "weight" => (int) $validatedData['weight'],
-        "courier" => "jne"
-      ]);
+      ->post(
+        env(
+          'RAJAONGKIR_BASE_URL',
+          'https://api.rajaongkir.com/starter'
+        ) . '/cost',
+        [
+          "origin" => $validatedData['origin'],
+          "destination" => $validatedData['destination'],
+          "weight" => (int) $validatedData['weight'],
+          "courier" => "jne"
+        ]
+      );
 
     if ($res->failed()) {
       return $this->responseFailed("Not Found", 500, "List Costs not found");

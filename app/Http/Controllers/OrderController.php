@@ -385,12 +385,111 @@ class OrderController extends Controller {
 
         $orderTransaction->orders()->update([
             'order_status' => $orderStatus,
-            'cancel_reason' => $orderStatus === "CANCELED" ? TRANSACTION_STATUS_MESSAGE_MAP[$payment_status] : null
+            'cancel_reason' => $orderStatus === "CANCELED" ? TRANSACTION_STATUS_MESSAGE_MAP[$payment_status] : null,
+            'accept_deadline' => $orderStatus === 'PAID' ? Carbon::now()->addDays(2) : null
         ]);
 
         return $this->responseSuccess([
             'serial_order' => $serial_order,
             'status' => $notif->transaction_status
         ]);
+    }
+
+    public function accept_order(Request $request) {
+        $validatedData = $request->validate([
+            'order_number' => ['required', 'string']
+        ]);
+
+        $store = Store::where('user_id', auth()->user()->id)->first();
+        if (!$store) {
+            return $this->responseFailed("Store Not Found", 404, "Store not found");
+        }
+
+        $order = Order::where('store_id', $store->id)
+            ->where('order_number', $validatedData['order_number'])
+            ->where('accept_deadline', '>', now())
+            ->first();
+        if (!$order) {
+            return $this->responseFailed("Order Not Found", 404, "Order not found");
+        }
+
+        if ($order->order_status !== 'PAID') {
+            return $this->responseFailed("Invalid status order, not PAID", 404, "Invalid status order");
+        }
+
+        $order->update([
+            'order_status' => 'PROCESSED',
+            'shipping_deadline' => Carbon::now()->addDays(2)
+        ]);
+
+        return $this->responseSuccess($order);
+    }
+
+    public function ship_order(Request $request) {
+        $validatedData = $request->validate([
+            'order_number' => ['required', 'string'],
+            'shipping_tracking_number' => ['required', 'string'],
+            'shipping_days_estimate' => ['required', 'integer']
+        ]);
+
+        $store = Store::where('user_id', auth()->user()->id)->first();
+        if (!$store) {
+            return $this->responseFailed("Store Not Found", 404, "Store not found");
+        }
+
+        $order = Order::where('store_id', $store->id)
+            ->where('order_number', $validatedData['order_number'])
+            ->where('shipping_deadline', '>', now())
+            ->first();
+        if (!$order) {
+            return $this->responseFailed("Order Not Found", 404, "Order not found");
+        }
+
+        if ($order->order_status !== 'PROCESSED') {
+            return $this->responseFailed("Invalid status order, not PROCESSED", 404, "Invalid status order");
+        }
+
+        // TODO Check is valid tracking number
+
+        $order->update([
+            'order_status' => 'SHIPPED',
+            'deliver_deadline' => Carbon::now()->addDays(
+                (int) $validatedData['shipping_days_estimate']
+            ),
+            'shipping_days_estimate' => $validatedData['shipping_days_estimate'],
+            'shipping_tracking_number' => $validatedData['shipping_tracking_number'],
+        ]);
+
+        return $this->responseSuccess($order);
+    }
+
+    public function cancel_order(Request $request) {
+        $validatedData = $request->validate([
+            'order_number' => ['required', 'string'],
+            'cancel_reason' => ['required', 'string'],
+        ]);
+
+        $store = Store::where('user_id', auth()->user()->id)->first();
+        if (!$store) {
+            return $this->responseFailed("Store Not Found", 404, "Store not found");
+        }
+
+        $order = Order::where('store_id', $store->id)
+            ->where('order_number', $validatedData['order_number'])
+            ->first();
+        if (!$order) {
+            return $this->responseFailed("Order Not Found", 404, "Order not found");
+        }
+
+        if ($order->order_status !== 'PAID' && $order->order_status !== 'PROCESSED') {
+            return $this->responseFailed("Invalid status order", 404, "Invalid status order");
+        }
+
+        $order->update([
+            'order_status' => 'CANCELED',
+            'cancel_reason' => $validatedData['cancel_reason'],
+        ]);
+
+        return $this->responseSuccess($order);
     }
 }
