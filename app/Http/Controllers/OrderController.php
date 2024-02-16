@@ -386,7 +386,8 @@ class OrderController extends Controller {
         $orderTransaction->orders()->update([
             'order_status' => $orderStatus,
             'cancel_reason' => $orderStatus === "CANCELED" ? TRANSACTION_STATUS_MESSAGE_MAP[$payment_status] : null,
-            'accept_deadline' => $orderStatus === 'PAID' ? Carbon::now()->addDays(2) : null
+            'accept_deadline' => $orderStatus === 'PAID' ? Carbon::now()->addDays(2) : null,
+            'paid_at' => $orderStatus === 'PAID' ? Carbon::now() : null
         ]);
 
         return $this->responseSuccess([
@@ -419,7 +420,8 @@ class OrderController extends Controller {
 
         $order->update([
             'order_status' => 'PROCESSED',
-            'shipping_deadline' => Carbon::now()->addDays(2)
+            'shipping_deadline' => Carbon::now()->addDays(2),
+            'accepted_at' => Carbon::now(),
         ]);
 
         return $this->responseSuccess($order);
@@ -453,9 +455,11 @@ class OrderController extends Controller {
 
         $order->update([
             'order_status' => 'SHIPPED',
+            'shipping_status' => 'STARTED',
             'deliver_deadline' => Carbon::now()->addDays(
                 (int) $validatedData['shipping_days_estimate']
             ),
+            'shipped_at' => Carbon::now(),
             'shipping_days_estimate' => $validatedData['shipping_days_estimate'],
             'shipping_tracking_number' => $validatedData['shipping_tracking_number'],
         ]);
@@ -488,7 +492,9 @@ class OrderController extends Controller {
 
         $order->update([
             'order_status' => 'DELIVERED',
-            'recieve_deadline' => Carbon::now()->addDays(2)
+            'shipping_status' => 'DELIVERED',
+            'recieve_deadline' => Carbon::now()->addDays(2),
+            'delivered_at' => Carbon::now(),
         ]);
 
         return $this->responseSuccess($order);
@@ -518,6 +524,60 @@ class OrderController extends Controller {
 
         $order->update([
             'order_status' => 'CANCELED',
+            'cancel_reason' => $validatedData['cancel_reason'],
+            'canceled_at' => Carbon::now(),
+        ]);
+
+        return $this->responseSuccess($order);
+    }
+
+    public function user_complete_order(Request $request) {
+        $validatedData = $request->validate([
+            'order_number' => ['required', 'string']
+        ]);
+
+        $order = Order::where('user_id', auth()->user()->id)
+            ->where('order_number', $validatedData['order_number'])
+            ->first();
+        if (!$order) {
+            return $this->responseFailed("Order Not Found", 404, "Order not found");
+        }
+
+        if ($order->order_status !== 'DELIVERED') {
+            return $this->responseFailed("Invalid status order, not DELIVERED", 404, "Invalid status order");
+        }
+
+        $order->update([
+            'order_status' => 'COMPLETED',
+            'completed_at' => Carbon::now(),
+        ]);
+
+        return $this->responseSuccess($order);
+    }
+
+    public function user_cancel_order(Request $request) {
+        $validatedData = $request->validate([
+            'order_number' => ['required', 'string'],
+            'cancel_reason' => ['required', 'string'],
+        ]);
+
+        $order = Order::where('user_id', auth()->user()->id)
+            ->where('order_number', $validatedData['order_number'])
+            ->first();
+        if (!$order) {
+            return $this->responseFailed("Order Not Found", 404, "Order not found");
+        }
+
+        if (
+            $order->order_status !== 'UNPAID' &&
+            $order->order_status !== 'UNPAID'
+        ) {
+            return $this->responseFailed("Invalid status order", 404, "Invalid status order");
+        }
+
+        $order->update([
+            'order_status' => 'CANCELED',
+            'canceled_at' => Carbon::now(),
             'cancel_reason' => $validatedData['cancel_reason'],
         ]);
 

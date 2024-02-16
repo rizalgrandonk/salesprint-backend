@@ -290,7 +290,7 @@ class DatabaseSeeder extends Seeder {
         foreach ($category_names as $name => $val) {
             $prodNames = $val;
             $createdCategory = \App\Models\Category::create([
-                'name' => implode(" ", array_map(fn ($val) => Str::ucfirst($val), explode(" ", $name))),
+                'name' => implode(" ", array_map(fn($val) => Str::ucfirst($val), explode(" ", $name))),
                 'slug' => Str::slug($name),
                 'image' => fake()->randomElement($this->productImageOptions)
             ]);
@@ -535,11 +535,11 @@ class DatabaseSeeder extends Seeder {
         $res = Http::withHeaders([
             'key' => env('RAJAONGKIR_API_KEY', ''),
         ])->get(
-            env(
-                'RAJAONGKIR_BASE_URL',
-                'https://api.rajaongkir.com/starter'
-            ) . '/province'
-        );
+                env(
+                    'RAJAONGKIR_BASE_URL',
+                    'https://api.rajaongkir.com/starter'
+                ) . '/province'
+            );
 
         if ($res->failed()) {
             throw $res->error();
@@ -565,14 +565,14 @@ class DatabaseSeeder extends Seeder {
         $res = Http::withHeaders([
             'key' => env('RAJAONGKIR_API_KEY', ''),
         ])->get(
-            env(
-                'RAJAONGKIR_BASE_URL',
-                'https://api.rajaongkir.com/starter'
-            ) . '/city',
-            [
-                'province' => $provinceId
-            ]
-        );
+                env(
+                    'RAJAONGKIR_BASE_URL',
+                    'https://api.rajaongkir.com/starter'
+                ) . '/city',
+                [
+                    'province' => $provinceId
+                ]
+            );
 
         if ($res->failed()) {
             throw $res->error();
@@ -611,7 +611,7 @@ class DatabaseSeeder extends Seeder {
             $prodOpts = [];
             foreach (array_slice($createdVarTypeMap, random_int(0, 1)) as $val) {
                 $prodTypeOpts = $newProduct->variant_options()->createMany(
-                    array_map(fn ($option) => [
+                    array_map(fn($option) => [
                         'value' => $option, 'variant_type_id' => $val['id']
                     ], $val['options'])
                 );
@@ -669,9 +669,7 @@ class DatabaseSeeder extends Seeder {
                     'order_status' => 'COMPLETED',
                     'shipping_status' => "DELIVERED",
                     'shipping_tracking_number' => fake()->isbn10(),
-                    'shipping_courier' => fake()->randomElement(
-                        ['jne', 'sicepat', 'jnt', 'pos', 'anteraja']
-                    ),
+                    'shipping_courier' => 'jne',
                     'shipping_history' => '[
                         {
                           "date": "2024-01-17 10:42:00",
@@ -709,7 +707,7 @@ class DatabaseSeeder extends Seeder {
                           "location": ""
                         }
                       ]',
-                    'delivery_service' => 'JNE',
+                    'delivery_service' => 'OKE',
                     'delivery_address' => fake()->address(),
                     'reciever_name' => fake()->name(),
                     'reciever_phone' => fake()->phoneNumber(),
@@ -722,7 +720,14 @@ class DatabaseSeeder extends Seeder {
                     'user_id' => $userId,
                     'store_id' => $newProduct->store->id,
                     'transaction_id' => $createdTransaction->id,
-                    'order_number' => $serialOrder . $newProduct->store->id . $createdTransaction->id
+                    'order_number' => $serialOrder . $newProduct->store->id . $createdTransaction->id,
+                    'created_at' => Carbon::now()->subDays(5),
+                    'paid_at' => Carbon::now()->subDays(4),
+                    'accepted_at' => Carbon::now()->subDays(3),
+                    'shipped_at' => Carbon::now()->subDays(2),
+                    'delivered_at' => Carbon::now()->subDays(1),
+                    'completed_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
                 ]);
 
                 $createdOrderItem = OrderItem::create([

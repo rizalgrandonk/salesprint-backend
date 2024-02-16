@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('product_id');
             $table->unsignedBigInteger('product_variant_id')->nullable();
+            $table->unsignedBigInteger('order_item_id')->nullable();
 
             $table->foreign('user_id')
                 ->nullable()

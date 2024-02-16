@@ -16,11 +16,20 @@ return new class extends Migration {
             $table->enum('order_status', [
                 'UNPAID', 'PAID', 'PROCESSED', 'SHIPPED', 'DELIVERED', 'COMPLETED', 'CANCELED'
             ]);
+
             $table->integer('shipping_days_estimate')->nullable();
             $table->dateTime('accept_deadline')->nullable();
             $table->dateTime('shipping_deadline')->nullable();
             $table->dateTime('deliver_deadline')->nullable();
             $table->dateTime('recieve_deadline')->nullable();
+
+            $table->dateTime('paid_at')->nullable();
+            $table->dateTime('accepted_at')->nullable();
+            $table->dateTime('shipped_at')->nullable();
+            $table->dateTime('delivered_at')->nullable();
+            $table->dateTime('completed_at')->nullable();
+            $table->dateTime('canceled_at')->nullable();
+
             $table->string('cancel_reason')->nullable();
             $table->string('shipping_tracking_number')->nullable();
             $table->string('shipping_status');

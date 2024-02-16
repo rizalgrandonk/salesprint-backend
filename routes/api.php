@@ -177,6 +177,13 @@ Route::group([
         Route::post('/delivered_order', [Controllers\OrderController::class, "delivered_order"]);
         Route::post('/cancel_order', [Controllers\OrderController::class, "cancel_order"]);
     });
+
+    Route::group([
+        'middleware' => ['auth.jwt:user'],
+    ], function () {
+        Route::post('/user_complete_order', [Controllers\OrderController::class, "user_complete_order"]);
+        Route::post('/user_cancel_order', [Controllers\OrderController::class, "user_cancel_order"]);
+    });
 });
 
 Route::group([
