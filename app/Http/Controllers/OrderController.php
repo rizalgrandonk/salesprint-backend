@@ -202,7 +202,7 @@ class OrderController extends Controller {
                 "price" => (int) $order['shipping']['delivery_cost'],
                 "quantity" => 1,
                 "name" =>
-                strtoupper($order['shipping']['shipping_courier'])
+                    strtoupper($order['shipping']['shipping_courier'])
                     . " "
                     . $order['shipping']['delivery_service'],
             ]);
@@ -216,15 +216,15 @@ class OrderController extends Controller {
             'phone' => auth()->user()->phone_number,
             'shipping_address' => [
                 'first_name' =>
-                $validatedData['shipping_detail']['reciever_name'],
+                    $validatedData['shipping_detail']['reciever_name'],
                 'phone' =>
-                $validatedData['shipping_detail']['reciever_phone'],
+                    $validatedData['shipping_detail']['reciever_phone'],
                 "address" =>
-                $validatedData['shipping_detail']['delivery_address'],
+                    $validatedData['shipping_detail']['delivery_address'],
                 "city" =>
-                $validatedData['shipping_detail']['delivery_city'],
+                    $validatedData['shipping_detail']['delivery_city'],
                 "postal_code" =>
-                $validatedData['shipping_detail']['delivery_postal_code'],
+                    $validatedData['shipping_detail']['delivery_postal_code'],
                 "country_code" => "IDN"
             ]
         ];
@@ -269,21 +269,21 @@ class OrderController extends Controller {
                 'shipping_courier' => $order['shipping']['shipping_courier'],
                 'delivery_service' => $order['shipping']['delivery_service'],
                 'delivery_address' =>
-                $validatedData['shipping_detail']['delivery_address'],
+                    $validatedData['shipping_detail']['delivery_address'],
                 'reciever_name' =>
-                $validatedData['shipping_detail']['reciever_name'],
+                    $validatedData['shipping_detail']['reciever_name'],
                 'reciever_phone' =>
-                $validatedData['shipping_detail']['reciever_phone'],
+                    $validatedData['shipping_detail']['reciever_phone'],
                 'delivery_province_id' =>
-                $validatedData['shipping_detail']['delivery_province_id'],
+                    $validatedData['shipping_detail']['delivery_province_id'],
                 'delivery_province' =>
-                $validatedData['shipping_detail']['delivery_province'],
+                    $validatedData['shipping_detail']['delivery_province'],
                 'delivery_city_id' =>
-                $validatedData['shipping_detail']['delivery_city_id'],
+                    $validatedData['shipping_detail']['delivery_city_id'],
                 'delivery_city' =>
-                $validatedData['shipping_detail']['delivery_city'],
+                    $validatedData['shipping_detail']['delivery_city'],
                 'delivery_postal_code' =>
-                $validatedData['shipping_detail']['delivery_postal_code'],
+                    $validatedData['shipping_detail']['delivery_postal_code'],
                 'delivery_cost' => $order['shipping']['delivery_cost'],
                 'user_id' => auth()->user()->id,
                 'store_id' => $order['store']->id,
@@ -449,7 +449,7 @@ class OrderController extends Controller {
             return $this->responseFailed("Invalid status order, not PROCESSED", 404, "Invalid status order");
         }
 
-        // TODO Check is valid tracking number
+        // TODO Check with API if order is shipped
 
         $order->update([
             'order_status' => 'SHIPPED',
@@ -458,6 +458,37 @@ class OrderController extends Controller {
             ),
             'shipping_days_estimate' => $validatedData['shipping_days_estimate'],
             'shipping_tracking_number' => $validatedData['shipping_tracking_number'],
+        ]);
+
+        return $this->responseSuccess($order);
+    }
+
+    public function delivered_order(Request $request) {
+        $validatedData = $request->validate([
+            'order_number' => ['required', 'string']
+        ]);
+
+        $store = Store::where('user_id', auth()->user()->id)->first();
+        if (!$store) {
+            return $this->responseFailed("Store Not Found", 404, "Store not found");
+        }
+
+        $order = Order::where('store_id', $store->id)
+            ->where('order_number', $validatedData['order_number'])
+            ->first();
+        if (!$order) {
+            return $this->responseFailed("Order Not Found", 404, "Order not found");
+        }
+
+        if ($order->order_status !== 'SHIPPED') {
+            return $this->responseFailed("Invalid status order, not SHIPPED", 404, "Invalid status order");
+        }
+
+        // TODO Check with API if order is delivered
+
+        $order->update([
+            'order_status' => 'DELIVERED',
+            'recieve_deadline' => Carbon::now()->addDays(2)
         ]);
 
         return $this->responseSuccess($order);
