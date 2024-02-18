@@ -92,6 +92,26 @@ class OrderController extends Controller {
     /**
      * Display a listing of the resource.
      */
+    public function show_store_order(Request $request, string $order_number) {
+        $store = Store::where('user_id', auth()->user()->id)->first();
+        if (!$store) {
+            return $this->responseFailed("Not Found", 404, "Store not found");
+        }
+
+        $order = Order::where('store_id', $store->id)
+            ->where('order_number', $order_number)
+            ->paramQuery($request->query())
+            ->first();
+
+        if (!$order) {
+            return $this->responseFailed("Not Found", 404, "Order not found");
+        }
+
+        return $this->responseSuccess($order);
+    }
+    /**
+     * Display a listing of the resource.
+     */
     public function store_orders(Request $request) {
         $store = Store::where('user_id', auth()->user()->id)->first();
         if (!$store) {

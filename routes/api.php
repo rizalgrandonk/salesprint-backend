@@ -171,6 +171,7 @@ Route::group([
         'middleware' => ['auth.jwt:seller'],
     ], function () {
         Route::get('/store_orders', [Controllers\OrderController::class, "store_orders"]);
+        Route::get('/store_orders/{order_number}', [Controllers\OrderController::class, "show_store_order"]);
 
         Route::post('/accept_order', [Controllers\OrderController::class, "accept_order"]);
         Route::post('/ship_order', [Controllers\OrderController::class, "ship_order"]);
