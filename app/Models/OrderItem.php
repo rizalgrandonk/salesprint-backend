@@ -55,4 +55,8 @@ class OrderItem extends BaseModel {
 	public function product_variant() {
 		return $this->belongsTo(ProductVariant::class);
 	}
+
+	public function review() {
+		return $this->hasOne(Review::class);
+	}
 }

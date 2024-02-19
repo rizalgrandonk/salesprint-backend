@@ -32,6 +32,11 @@ return new class extends Migration {
                 ->references('id')
                 ->on('product_variants')
                 ->nullOnDelete();
+            $table->foreign('order_item_id')
+                ->nullable()
+                ->references('id')
+                ->on('order_items')
+                ->nullOnDelete();
 
             $table->timestamps();
         });

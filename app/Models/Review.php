@@ -33,7 +33,8 @@ class Review extends BaseModel {
 		'rating' => 'int',
 		'user_id' => 'string',
 		'product_id' => 'string',
-		'product_variant_id' => 'string'
+		'product_variant_id' => 'string',
+		'order_item_id' => 'string'
 	];
 
 	protected $fillable = [
@@ -42,13 +43,22 @@ class Review extends BaseModel {
 		'user_id',
 		'product_id',
 		'product_variant_id',
+		'order_item_id'
 	];
+
+	public function user() {
+		return $this->belongsTo(User::class);
+	}
 
 	public function product() {
 		return $this->belongsTo(Product::class);
 	}
 
-	public function user() {
-		return $this->belongsTo(User::class);
+	public function product_variant() {
+		return $this->belongsTo(ProductVariant::class);
+	}
+
+	public function order_item() {
+		return $this->belongsTo(OrderItem::class);
 	}
 }

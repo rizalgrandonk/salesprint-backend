@@ -188,6 +188,19 @@ Route::group([
 });
 
 Route::group([
+    "prefix" => "reviews",
+    'middleware' => ['api']
+], function () {
+    Route::group([
+        'middleware' => ['auth.jwt:user'],
+    ], function () {
+        Route::get('/user_reviews', [Controllers\ReviewController::class, "user_reviews"]);
+
+        Route::post('/create', [Controllers\ReviewController::class, "create"]);
+    });
+});
+
+Route::group([
     "prefix" => "stores"
 ], function () {
     // ? PROTECTED
@@ -344,6 +357,10 @@ Route::group([
         Route::get(
             '/orders/user_orders',
             [Controllers\OrderController::class, "paginated_user_orders"]
+        );
+        Route::get(
+            '/reviews/user_reviews',
+            [Controllers\ReviewController::class, "paginated_user_reviews"]
         );
     });
 

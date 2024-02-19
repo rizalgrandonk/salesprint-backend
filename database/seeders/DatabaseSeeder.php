@@ -744,6 +744,7 @@ class DatabaseSeeder extends Seeder {
                     'user_id' => $userId,
                     'product_id' => $newProduct->id,
                     'product_variant_id' => $selectedVar->id,
+                    'order_item_id' => $createdOrderItem->id,
                 ]);
                 array_push($ratings, $rating);
             }
