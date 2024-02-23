@@ -25,6 +25,15 @@ class BaseModel extends Model {
             $query->withCount($withCount);
         }
 
+        if (isset($param['withAvgs'])) {
+            $withAvgs = $param['withAvgs'];
+            foreach ($withAvgs as $key => $value) {
+                if ($key && $key !== '' && $value && $value !== '') {
+                    $query->withAvg($key, $value);
+                }
+            }
+        }
+
         if (isset($param['orderBy'])) {
             $orderBy = $param['orderBy'];
             $field = array_keys($orderBy)[0];
@@ -76,6 +85,15 @@ class BaseModel extends Model {
         if (isset($param['withCount'])) {
             $withCount = $param['withCount'];
             $query->withCount($withCount);
+        }
+
+        if (isset($param['withAvgs'])) {
+            $withAvgs = $param['withAvgs'];
+            foreach ($withAvgs as $key => $value) {
+                if ($key && $key !== '' && $value && $value !== '') {
+                    $query->withAvg($key, $value);
+                }
+            }
         }
 
         if (isset($param['orderBy'])) {

@@ -43,7 +43,8 @@ class Store extends BaseModel {
 		'id' => 'string',
 		'city_id' => 'string',
 		'province_id' => 'string',
-		'user_id' => 'string'
+		'user_id' => 'string',
+		'reviews_avg_rating' => 'float'
 	];
 
 	protected $fillable = [
