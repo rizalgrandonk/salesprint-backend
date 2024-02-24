@@ -6,6 +6,7 @@ use App\Http\Requests\CreateProductImageRequest;
 use App\Http\Requests\CreateProductRequest;
 use App\Http\Requests\DeleteProductImageRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductVariant;
@@ -81,6 +82,42 @@ class ProductController extends Controller {
             return $this->responseFailed("Stores not Found", 404, "Store not found");
         }
         $products = Product::where("store_id", $store->id)->getDataTable($request->query());
+
+        if (!$products) {
+            return $this->responseFailed("Not Found", 404, "Products not found");
+        }
+
+        return $this->responseSuccess($products);
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function category_products(Request $request, string $category_slug) {
+        $category = Category::where("slug", $category_slug)->first();
+        if (!$category) {
+            return $this->responseFailed("Category not Found", 404, "Category not found");
+        }
+        $products = Product::where("category_id", $category->id)
+            ->paramQuery($request->query())
+            ->get();
+
+        if (!$products) {
+            return $this->responseFailed("Not Found", 404, "Products not found");
+        }
+
+        return $this->responseSuccess($products);
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function paginated_category_products(Request $request, string $category_slug) {
+        $category = Category::where("slug", $category_slug)->first();
+        if (!$category) {
+            return $this->responseFailed("Category not Found", 404, "Category not found");
+        }
+        $products = Product::where("category_id", $category->id)->getDataTable($request->query());
 
         if (!$products) {
             return $this->responseFailed("Not Found", 404, "Products not found");

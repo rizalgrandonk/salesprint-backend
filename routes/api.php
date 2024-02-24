@@ -49,6 +49,11 @@ Route::group([
         'middleware' => 'api',
     ], function () {
         Route::get('/', [Controllers\CategoryController::class, "index"]);
+        Route::get('/{slug}', [Controllers\CategoryController::class, "show"]);
+        Route::get(
+            '/{category_slug}/products',
+            [Controllers\ProductController::class, "category_products"]
+        );
     });
 
     // ? PROTECTED (ADMIN)
@@ -335,6 +340,10 @@ Route::group([
     Route::get(
         '/stores/{store_slug}/products',
         [Controllers\ProductController::class, "paginated_store_products"]
+    );
+    Route::get(
+        '/categories/{category_slug}/products',
+        [Controllers\ProductController::class, "paginated_category_products"]
     );
     Route::get(
         '/products/{store_slug}/{product_slug}/reviews',

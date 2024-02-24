@@ -58,8 +58,16 @@ class CategoryController extends Controller {
     /**
      * Display the specified resource.
      */
-    public function show(Category $category) {
-        //
+    public function show(Request $request, string $slug) {
+        $categoriy = Category::where('slug', $slug)
+            ->paramQuery($request->query())
+            ->first();
+
+        if (!$categoriy) {
+            return $this->responseFailed("Categories Not Found", 404, "Categories not found");
+        }
+
+        return $this->responseSuccess($categoriy);
     }
 
     /**
