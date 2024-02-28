@@ -4,8 +4,10 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\City;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Province;
 use App\Models\Review;
 use App\Models\Transaction;
 use Carbon\Carbon;
@@ -157,11 +159,13 @@ class DatabaseSeeder extends Seeder {
         ];
 
         for ($i = 0; $i < 100; $i++) {
-            $nameUser = fake()->firstName() . fake()->randomNumber(3, true);
+            $fakeFirstName = fake()->firstName();
+            $fakeName = $fakeFirstName . " " . fake()->lastName();
+            $fakeUserName = $fakeFirstName . fake()->randomNumber(3, true);
             $createdUser = \App\Models\User::create([
-                'name' => $nameUser,
-                'email' => strtolower($nameUser) . '@gmail.com',
-                'username' => strtolower($nameUser),
+                'name' => $fakeName,
+                'email' => strtolower($fakeUserName) . '@gmail.com',
+                'username' => strtolower($fakeName),
                 'role' => 'user',
                 'password' => bcrypt('66666666'),
                 'remember_token' => Str::random(10),
@@ -171,11 +175,13 @@ class DatabaseSeeder extends Seeder {
             array_push($result['user'], $createdUser->id);
         }
         for ($i = 0; $i < 8; $i++) {
-            $nameUser = fake()->firstName() . fake()->randomNumber(3, true);
+            $fakeFirstName = fake()->firstName();
+            $fakeName = $fakeFirstName . " " . fake()->lastName();
+            $fakeUserName = $fakeFirstName . fake()->randomNumber(3, true);
             $createdUser = \App\Models\User::create([
-                'name' => $nameUser,
-                'email' => strtolower($nameUser) . '@gmail.com',
-                'username' => strtolower($nameUser),
+                'name' => $fakeName,
+                'email' => strtolower($fakeUserName) . '@gmail.com',
+                'username' => strtolower($fakeUserName),
                 'role' => 'seller',
                 'password' => bcrypt('66666666'),
                 'remember_token' => Str::random(10),
@@ -465,6 +471,8 @@ class DatabaseSeeder extends Seeder {
             $seledctedStoreId = fake()->randomElement($storeIds);
             $selectedStore = \App\Models\Store::where("id", $seledctedStoreId)->first();
 
+            $createDate = Carbon::create(2021, 1, random_int(1, 5), random_int(1, 24), 0, 0);
+
             $createdProduct = \App\Models\Product::create([
                 'name' => $name,
                 'slug' => Str::slug($name),
@@ -480,7 +488,9 @@ class DatabaseSeeder extends Seeder {
                 'height' => random_int(10, 50),
                 'category_id' => $seledctedCatId,
                 'store_id' => $selectedStore->id,
-                'store_category_id' => \App\Models\StoreCategory::where('store_id', $selectedStore->id)->inRandomOrder()->first()->id
+                'store_category_id' => \App\Models\StoreCategory::where('store_id', $selectedStore->id)->inRandomOrder()->first()->id,
+                'created_at' => $createDate,
+                'updated_at' => $createDate
             ]);
 
             $mainImageUrl = fake()->randomElement($this->productImageOptions);
@@ -556,7 +566,7 @@ class DatabaseSeeder extends Seeder {
             ];
         }, $listProvince);
 
-        \App\Models\Province::insert($dataToInsert);
+        Province::insert($dataToInsert);
 
         return $listProvince;
     }
@@ -589,12 +599,24 @@ class DatabaseSeeder extends Seeder {
             ];
         }, $listCity);
 
-        \App\Models\City::insert($dataToInsert);
+        City::insert($dataToInsert);
 
-        return;
+        return $listCity;
     }
 
     public function run(): void {
+        $listProvince = $this->createProvince();
+
+        echo "Success insert province list";
+
+        $listCities = [];
+        foreach ($listProvince as $province) {
+            $createdCities = $this->createCities($province['province_id']);
+            array_push($listCities, ...$createdCities);
+
+            echo "Success insert cities list for province {$province['province_id']} {$province['province']}";
+        }
+
         $createdUserIdByRole = $this->createUsers();
         $createdCategoryIds = $this->createCategories();
         $createdStoreIds = $this->createStores($createdUserIdByRole['seller']);
@@ -607,7 +629,7 @@ class DatabaseSeeder extends Seeder {
             array_push($createdProducts, ...$newProds);
         }
 
-        foreach ($createdProducts as $newProduct) {
+        foreach ($createdProducts as $index => $newProduct) {
             $prodOpts = [];
             foreach (array_slice($createdVarTypeMap, random_int(0, 1)) as $val) {
                 $prodTypeOpts = $newProduct->variant_options()->createMany(
@@ -637,116 +659,159 @@ class DatabaseSeeder extends Seeder {
                 array_push($prodVars, $prodVar);
             }
 
-            $selectedUserIds = fake()->randomElements(
-                array_filter($createdUserIdByRole['user'], function ($userId) use ($newProduct) {
-                    return ((int) $userId % 2 === 0) === ((int) $newProduct->id % 2 === 0);
-                }),
-                random_int(2, 30)
-            );
-
             $ratings = [];
-            foreach ($selectedUserIds as $userId) {
 
-                $selectedVar = fake()->randomElement($prodVars);
-                $quantity = random_int(1, 3);
-                $orderTotal = ((float) $selectedVar->price * $quantity) + 20000;
+            for (
+                $i = 0;
+                $i < Carbon::create($newProduct->created_at)->diffInMonths() + 1;
+                $i++
+            ) {
 
-                $serialOrder = Carbon::now()->format("Ymd")
-                    . Carbon::createMidnightDate()->diffInMilliseconds(Carbon::now());
+                $selectedUserIds = fake()->randomElements(
+                    array_filter($createdUserIdByRole['user'], function ($userId) use ($newProduct) {
+                        return ((int) $userId % 2 === 0) === ((int) $newProduct->id % 2 === 0);
+                    }),
+                    random_int(5, 10)
+                );
 
-                $createdTransaction = Transaction::create([
-                    'total' => $orderTotal,
-                    'serial_order' => $serialOrder,
-                    'transaction_id' => fake()->uuid(),
-                    'payment_status' => 'settlement',
-                    'status_code' => 200,
-                    'status_message' => 'Success, pembayaran berhasil',
-                    'payment_type' => 'bank_transfer',
-                    'user_id' => $userId,
-                ]);
-                $createdOrder = Order::create([
-                    'total' => $orderTotal,
-                    'order_status' => 'COMPLETED',
-                    'shipping_status' => "DELIVERED",
-                    'shipping_tracking_number' => fake()->isbn10(),
-                    'shipping_courier' => 'jne',
-                    'shipping_history' => '[
-                        {
-                          "date": "2024-01-17 10:42:00",
-                          "desc": "PAKET DITERIMA OLEH [BU WASIH - (KEL) KELUARGA SERUMAH]",
-                          "location": ""
-                        },
-                        {
-                          "date": "2024-01-17 08:18:00",
-                          "desc": "PAKET DIBAWA [SIGESIT - M IRFAN ARIF]",
-                          "location": ""
-                        },
-                        {
-                          "date": "2024-01-17 08:16:00",
-                          "desc": "PAKET TELAH DI TERIMA DI MOJOKERTO [DAWAR]",
-                          "location": ""
-                        },
-                        {
-                          "date": "2024-01-16 20:33:00",
-                          "desc": "PAKET KELUAR DARI SIDOARJO [SURABAYA SORTATION]",
-                          "location": ""
-                        },
-                        {
-                          "date": "2024-01-16 04:39:00",
-                          "desc": "PAKET TELAH DI TERIMA DI SIDOARJO [SURABAYA SORTATION]",
-                          "location": ""
-                        },
-                        {
-                          "date": "2024-01-16 03:38:00",
-                          "desc": "PAKET KELUAR DARI SURABAYA [SURABAYA MARGOMULYO]",
-                          "location": ""
-                        },
-                        {
-                          "date": "2024-01-15 18:59:00",
-                          "desc": "PAKET TELAH DI INPUT (MANIFESTED) DI SURABAYA [SURABAYA MARGOMULYO]",
-                          "location": ""
-                        }
-                      ]',
-                    'delivery_service' => 'OKE',
-                    'delivery_address' => fake()->address(),
-                    'reciever_name' => fake()->name(),
-                    'reciever_phone' => fake()->phoneNumber(),
-                    'delivery_province_id' => '11',
-                    'delivery_province' => 'Jawa Timur',
-                    'delivery_city_id' => '444',
-                    'delivery_city' => 'Kota Surabaya',
-                    'delivery_postal_code' => '66666',
-                    'delivery_cost' => 20000,
-                    'user_id' => $userId,
-                    'store_id' => $newProduct->store->id,
-                    'transaction_id' => $createdTransaction->id,
-                    'order_number' => $serialOrder . $newProduct->store->id . $createdTransaction->id,
-                    'created_at' => Carbon::now()->subDays(5),
-                    'paid_at' => Carbon::now()->subDays(4),
-                    'accepted_at' => Carbon::now()->subDays(3),
-                    'shipped_at' => Carbon::now()->subDays(2),
-                    'delivered_at' => Carbon::now()->subDays(1),
-                    'completed_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                ]);
+                foreach ($selectedUserIds as $userId) {
+                    $createdOrderDate = Carbon::create($newProduct->created_at)
+                        ->addMonths($i)
+                        ->addDays(random_int(2, 10))
+                        ->setSeconds(Carbon::now()->second)
+                        ->setMilliseconds(Carbon::now()->millisecond);
 
-                $createdOrderItem = OrderItem::create([
-                    'quantity' => $quantity,
-                    'product_id' => $newProduct->id,
-                    'product_variant_id' => $selectedVar->id,
-                    'order_id' => $createdOrder->id,
-                ]);
+                    $selectedCity = fake()->randomElement($listCities);
 
-                $rating = random_int(3, 5);
-                $createdReview = Review::create([
-                    'rating' => $rating,
-                    'coment' => fake()->realText(),
-                    'user_id' => $userId,
-                    'product_id' => $newProduct->id,
-                    'product_variant_id' => $selectedVar->id,
-                    'order_item_id' => $createdOrderItem->id,
-                ]);
-                array_push($ratings, $rating);
+                    // echo $index + 1
+                    //     . " of "
+                    //     . count($createdProducts)
+                    //     . " "
+                    //     . $newProduct->name
+                    //     . " "
+                    //     . $userId
+                    //     . " "
+                    //     . $createdOrderDate
+                    //     . " "
+                    //     . $selectedCity['city_name']
+                    //     . "\n";
+
+                    $no = $index + 1;
+                    $productCount = count($createdProducts);
+
+                    echo "{$no} of {$productCount} {$newProduct->name} -> {$userId} {$createdOrderDate} {$selectedCity['city_name']} \n";
+
+                    $selectedVar = fake()->randomElement($prodVars);
+                    $quantity = random_int(1, 3);
+                    $orderTotal = ((float) $selectedVar->price * $quantity) + 20000;
+
+                    $serialOrder = $createdOrderDate->format("Ymd")
+                        . Carbon::createMidnightDate(
+                            $createdOrderDate->year,
+                            $createdOrderDate->month,
+                            $createdOrderDate->day
+                        )->diffInMilliseconds($createdOrderDate);
+
+                    $createdTransaction = Transaction::create([
+                        'total' => $orderTotal,
+                        'serial_order' => $serialOrder,
+                        'transaction_id' => fake()->uuid(),
+                        'payment_status' => 'settlement',
+                        'status_code' => 200,
+                        'status_message' => 'Success, pembayaran berhasil',
+                        'payment_type' => fake()->randomElement(['bank_transfer', 'echannel', 'gopay', 'qris', 'cstore']),
+                        'user_id' => $userId,
+                        'created_at' => $createdOrderDate,
+                        'updated_at' => $createdOrderDate
+                    ]);
+                    $createdOrder = Order::create([
+                        'total' => $orderTotal,
+                        'order_status' => 'COMPLETED',
+                        'shipping_status' => "DELIVERED",
+                        'shipping_tracking_number' => fake()->isbn10(),
+                        'shipping_courier' => 'jne',
+                        'shipping_history' => '[
+                            {
+                              "date": "2024-01-17 10:42:00",
+                              "desc": "PAKET DITERIMA OLEH [BU WASIH - (KEL) KELUARGA SERUMAH]",
+                              "location": ""
+                            },
+                            {
+                              "date": "2024-01-17 08:18:00",
+                              "desc": "PAKET DIBAWA [SIGESIT - M IRFAN ARIF]",
+                              "location": ""
+                            },
+                            {
+                              "date": "2024-01-17 08:16:00",
+                              "desc": "PAKET TELAH DI TERIMA DI MOJOKERTO [DAWAR]",
+                              "location": ""
+                            },
+                            {
+                              "date": "2024-01-16 20:33:00",
+                              "desc": "PAKET KELUAR DARI SIDOARJO [SURABAYA SORTATION]",
+                              "location": ""
+                            },
+                            {
+                              "date": "2024-01-16 04:39:00",
+                              "desc": "PAKET TELAH DI TERIMA DI SIDOARJO [SURABAYA SORTATION]",
+                              "location": ""
+                            },
+                            {
+                              "date": "2024-01-16 03:38:00",
+                              "desc": "PAKET KELUAR DARI SURABAYA [SURABAYA MARGOMULYO]",
+                              "location": ""
+                            },
+                            {
+                              "date": "2024-01-15 18:59:00",
+                              "desc": "PAKET TELAH DI INPUT (MANIFESTED) DI SURABAYA [SURABAYA MARGOMULYO]",
+                              "location": ""
+                            }
+                          ]',
+                        'delivery_service' => 'OKE',
+                        'delivery_address' => fake()->address(),
+                        'reciever_name' => fake()->name(),
+                        'reciever_phone' => fake()->phoneNumber(),
+                        'delivery_province_id' => $selectedCity['province_id'],
+                        'delivery_province' => $selectedCity['province'],
+                        'delivery_city_id' => $selectedCity['city_id'],
+                        'delivery_city' => $selectedCity['city_name'],
+                        'delivery_postal_code' => $selectedCity['postal_code'],
+                        'delivery_cost' => 20000,
+                        'user_id' => $userId,
+                        'store_id' => $newProduct->store->id,
+                        'transaction_id' => $createdTransaction->id,
+                        'order_number' => $serialOrder . $newProduct->store->id . $createdTransaction->id,
+                        'created_at' => $createdOrderDate,
+                        'updated_at' => Carbon::create($createdOrderDate)->addDays(5),
+                        'paid_at' => Carbon::create($createdOrderDate)->addDays(1),
+                        'accepted_at' => Carbon::create($createdOrderDate)->addDays(2),
+                        'shipped_at' => Carbon::create($createdOrderDate)->addDays(3),
+                        'delivered_at' => Carbon::create($createdOrderDate)->addDays(4),
+                        'completed_at' => Carbon::create($createdOrderDate)->addDays(5),
+                    ]);
+
+                    $createdOrderItem = OrderItem::create([
+                        'quantity' => $quantity,
+                        'product_id' => $newProduct->id,
+                        'product_variant_id' => $selectedVar->id,
+                        'order_id' => $createdOrder->id,
+                        'created_at' => $createdOrderDate,
+                        'updated_at' => $createdOrderDate
+                    ]);
+
+                    $rating = random_int(3, 5);
+                    $createdReview = Review::create([
+                        'rating' => $rating,
+                        'coment' => fake()->realText(),
+                        'user_id' => $userId,
+                        'product_id' => $newProduct->id,
+                        'product_variant_id' => $selectedVar->id,
+                        'order_item_id' => $createdOrderItem->id,
+                        'created_at' => Carbon::create($createdOrderDate)->addDays(5),
+                        'updated_at' => Carbon::create($createdOrderDate)->addDays(5)
+                    ]);
+                    array_push($ratings, $rating);
+                }
             }
 
             $resultStok = 0;
@@ -762,10 +827,5 @@ class DatabaseSeeder extends Seeder {
             ]);
         }
 
-        $listProvince = $this->createProvince();
-
-        foreach ($listProvince as $province) {
-            $this->createCities($province['province_id']);
-        }
     }
 }

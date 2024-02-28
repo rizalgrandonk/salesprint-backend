@@ -43,6 +43,25 @@ Route::group([
 });
 
 Route::group([
+    "prefix" => "dashboard",
+    'middleware' => 'api',
+], function () {
+    Route::group([
+        'middleware' => ['auth.jwt:seller'],
+    ], function () {
+        Route::get('/store_sales', [Controllers\DashboardController::class, "store_sales"]);
+        Route::get('/store_sales_summary', [Controllers\DashboardController::class, "store_sales_summary"]);
+        Route::get('/store_order_summary', [Controllers\DashboardController::class, "store_order_summary"]);
+        Route::get('/store_rating_summary', [Controllers\DashboardController::class, "store_rating_summary"]);
+        Route::get('/store_order_status_count', [Controllers\DashboardController::class, "store_order_status_count"]);
+        Route::get('/store_order_top_province', [Controllers\DashboardController::class, "store_order_top_province"]);
+        Route::get('/store_order_top_products', [Controllers\DashboardController::class, "store_order_top_products"]);
+        Route::get('/store_order_top_customers', [Controllers\DashboardController::class, "store_order_top_customers"]);
+        Route::get('/store_order_top_methods', [Controllers\DashboardController::class, "store_order_top_methods"]);
+    });
+});
+
+Route::group([
     "prefix" => "categories"
 ], function () {
     Route::group([

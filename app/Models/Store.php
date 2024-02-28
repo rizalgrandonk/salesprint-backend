@@ -79,6 +79,10 @@ class Store extends BaseModel {
 		return $this->hasMany(StoreCategory::class);
 	}
 
+	public function orders() {
+		return $this->hasMany(Order::class);
+	}
+
 	public function order_items() {
 		return $this->hasManyThrough(OrderItem::class, Product::class);
 	}

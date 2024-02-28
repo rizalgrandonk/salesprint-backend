@@ -50,7 +50,8 @@ class Product extends BaseModel {
 		'average_rating' => 'float',
 		'category_id' => 'string',
 		'store_id' => 'string',
-		'store_category_id' => 'string'
+		'store_category_id' => 'string',
+		'order_count' => 'int'
 	];
 
 	protected $fillable = [
@@ -85,6 +86,9 @@ class Product extends BaseModel {
 
 	public function order_items() {
 		return $this->hasMany(OrderItem::class);
+	}
+	public function orders() {
+		return $this->hasManyThrough(Order::class, OrderItem::class);
 	}
 
 	public function product_images() {
