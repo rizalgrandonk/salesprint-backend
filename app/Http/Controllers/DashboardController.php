@@ -46,8 +46,8 @@ class DashboardController extends Controller {
         'year' => $items->first()->year,
         'data' => $items->map(function ($item) {
           return [
-            'period' => $item->period,
-            'total' => $item->total,
+            'period' => (int) $item->period,
+            'total' => (int) $item->total,
           ];
         })->all(),
       ];

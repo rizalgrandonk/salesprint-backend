@@ -133,6 +133,18 @@ class Product extends BaseModel {
 		return $dotProduct / ($magnitudeA * $magnitudeB);
 	}
 
+	function calculateJaccardSimilarity($setA, $setB) {
+		$intersectionSize = count(array_intersect($setA, $setB));
+		$unionSize = count(array_unique(array_merge($setA, $setB)));
+
+		// Avoid division by zero
+		if ($unionSize == 0) {
+			return 0;
+		}
+
+		return $intersectionSize / $unionSize;
+	}
+
 	function calculateSimilarity($userItemMatrix) {
 		$similarityMatrix = [];
 		$users = array_keys($userItemMatrix);
