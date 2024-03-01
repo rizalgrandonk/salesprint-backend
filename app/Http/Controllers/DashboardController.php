@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Store;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -286,6 +288,131 @@ class DashboardController extends Controller {
         },
       ])
       ->orderBy('total_orders', 'desc')
+      ->limit(5)
+      ->get();
+
+
+    return $this->responseSuccess($topProducts);
+  }
+
+  // ? ADMIN
+  public function admin_stores_count(Request $request) {
+    $count = Store::count();
+
+    if ($count === null) {
+      return $this->responseFailed(
+        "Failed get stores count",
+        404,
+        "Failed get stores count"
+      );
+    }
+
+    return $this->responseSuccess([
+      'count' => $count
+    ]);
+  }
+  public function admin_products_count(Request $request) {
+    $count = Product::count();
+
+    if ($count === null) {
+      return $this->responseFailed(
+        "Failed get products count",
+        404,
+        "Failed get products count"
+      );
+    }
+
+    return $this->responseSuccess([
+      'count' => $count
+    ]);
+  }
+
+  public function admin_users_count(Request $request) {
+    $count = User::count();
+
+    if ($count === null) {
+      return $this->responseFailed(
+        "Failed get users count",
+        404,
+        "Failed get users count"
+      );
+    }
+
+    return $this->responseSuccess([
+      'count' => $count
+    ]);
+  }
+
+  public function admin_categories_count(Request $request) {
+    $count = Category::count();
+
+    if ($count === null) {
+      return $this->responseFailed(
+        "Failed get categories count",
+        404,
+        "Failed get categories count"
+      );
+    }
+
+    return $this->responseSuccess([
+      'count' => $count
+    ]);
+  }
+
+  public function admin_order_top_products(Request $request) {
+
+    $topProducts = Product::with(['product_images'])
+      ->withCount([
+        'order_items as total_orders' => function ($query) {
+          $query->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->select(\DB::raw('SUM(orders.total)'));
+        },
+        'order_items as order_count' => function ($query) {
+          $query->select(\DB::raw('sum(quantity)'));
+        },
+      ])
+      ->orderBy('total_orders', 'desc')
+      ->limit(5)
+      ->get();
+
+
+    return $this->responseSuccess($topProducts);
+  }
+
+  public function admin_order_top_stores(Request $request) {
+
+    $topProducts = Store::withCount([
+      'orders as total_orders' => function ($query) {
+        $query->select(\DB::raw('sum(total)'));
+      },
+      'orders as order_count' => function ($query) {
+        $query->select(\DB::raw('count(*)'));
+      },
+    ])
+      ->orderBy('total_orders', 'desc')
+      ->limit(5)
+      ->get();
+
+
+    return $this->responseSuccess($topProducts);
+  }
+  public function admin_review_top_products(Request $request) {
+
+    $topProducts = Product::with(['product_images'])
+      ->withCount(['reviews'])
+      ->orderBy('reviews_count', 'desc')
+      ->limit(5)
+      ->get();
+
+
+    return $this->responseSuccess($topProducts);
+  }
+
+  public function admin_review_top_stores(Request $request) {
+
+    $topProducts = Store::withCount(['reviews'])
+      ->withAvg('reviews', 'rating')
+      ->orderBy('reviews_count', 'desc')
       ->limit(5)
       ->get();
 

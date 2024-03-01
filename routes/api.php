@@ -59,6 +59,19 @@ Route::group([
         Route::get('/store_order_top_customers', [Controllers\DashboardController::class, "store_order_top_customers"]);
         Route::get('/store_order_top_methods', [Controllers\DashboardController::class, "store_order_top_methods"]);
     });
+
+    Route::group([
+        'middleware' => ['auth.jwt:admin'],
+    ], function () {
+        Route::get('/admin_stores_count', [Controllers\DashboardController::class, "admin_stores_count"]);
+        Route::get('/admin_products_count', [Controllers\DashboardController::class, "admin_products_count"]);
+        Route::get('/admin_users_count', [Controllers\DashboardController::class, "admin_users_count"]);
+        Route::get('/admin_categories_count', [Controllers\DashboardController::class, "admin_categories_count"]);
+        Route::get('/admin_order_top_products', [Controllers\DashboardController::class, "admin_order_top_products"]);
+        Route::get('/admin_order_top_stores', [Controllers\DashboardController::class, "admin_order_top_stores"]);
+        Route::get('/admin_review_top_products', [Controllers\DashboardController::class, "admin_review_top_products"]);
+        Route::get('/admin_review_top_stores', [Controllers\DashboardController::class, "admin_review_top_stores"]);
+    });
 });
 
 Route::group([
