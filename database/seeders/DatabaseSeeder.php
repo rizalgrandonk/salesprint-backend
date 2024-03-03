@@ -542,7 +542,7 @@ class DatabaseSeeder extends Seeder {
     }
 
     function createProvince() {
-        $res = Http::withHeaders([
+        $res = Http::retry(3, 1000)->withHeaders([
             'key' => env('RAJAONGKIR_API_KEY', ''),
         ])->get(
                 env(
@@ -572,7 +572,7 @@ class DatabaseSeeder extends Seeder {
     }
 
     function createCities(string $provinceId) {
-        $res = Http::withHeaders([
+        $res = Http::retry(3, 1000)->withHeaders([
             'key' => env('RAJAONGKIR_API_KEY', ''),
         ])->get(
                 env(
@@ -607,7 +607,7 @@ class DatabaseSeeder extends Seeder {
     public function run(): void {
         $listProvince = $this->createProvince();
 
-        echo "Success insert province list";
+        echo "Success insert province list \n";
 
         $listCities = [];
         foreach ($listProvince as $province) {
@@ -677,9 +677,14 @@ class DatabaseSeeder extends Seeder {
                 foreach ($selectedUserIds as $userId) {
                     $createdOrderDate = Carbon::create($newProduct->created_at)
                         ->addMonths($i)
-                        ->addDays(random_int(2, 10))
                         ->setSeconds(Carbon::now()->second)
                         ->setMilliseconds(Carbon::now()->millisecond);
+
+                    if ($createdOrderDate->isSameMonth(Carbon::now())) {
+                        $createdOrderDate->addDays(random_int(1, Carbon::now()->day));
+                    } else {
+                        $createdOrderDate->addDays(random_int(1, 20));
+                    }
 
                     $selectedCity = fake()->randomElement($listCities);
 

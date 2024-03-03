@@ -212,7 +212,7 @@ Route::group([
 
         Route::post('/accept_order', [Controllers\OrderController::class, "accept_order"]);
         Route::post('/ship_order', [Controllers\OrderController::class, "ship_order"]);
-        Route::post('/delivered_order', [Controllers\OrderController::class, "delivered_order"]);
+        // Route::post('/delivered_order', [Controllers\OrderController::class, "delivered_order"]);
         Route::post('/cancel_order', [Controllers\OrderController::class, "cancel_order"]);
     });
 

@@ -83,9 +83,12 @@ class DashboardController extends Controller {
       ->orderBy('month')
       ->get();
 
+    info($monthlyData);
+
     // Calculate the difference between current month and last month
     $currentMonthTotal = $monthlyData->where('month', $currentDate->month)->sum('total');
-    $lastMonthTotal = $monthlyData->where('month', $currentDate->subMonth()->month)->sum('total');
+    $lastMonthTotal = $monthlyData->where('month', $currentDate->month - 1)->sum('total');
+
     $difference = $currentMonthTotal - $lastMonthTotal;
 
     // Calculate the percentage difference
@@ -125,7 +128,7 @@ class DashboardController extends Controller {
 
     // Calculate the difference between current month and last month
     $currentMonthTotal = $monthlyData->where('month', $currentDate->month)->sum('count');
-    $lastMonthTotal = $monthlyData->where('month', $currentDate->subMonth()->month)->sum('count');
+    $lastMonthTotal = $monthlyData->where('month', $currentDate->month - 1)->sum('count');
     $difference = $currentMonthTotal - $lastMonthTotal;
 
     // Calculate the percentage difference
@@ -157,7 +160,7 @@ class DashboardController extends Controller {
       ->where('stores.id', $store->id)
       ->whereRaw(
         'YEAR(reviews.created_at) * 12 + MONTH(reviews.created_at) < ?',
-        [$currentDate->year * 12 + $currentDate->subMonth()->month]
+        [$currentDate->year * 12 + $currentDate->month - 1]
       )
       ->groupBy('store_name')
       ->first()->average_rating;

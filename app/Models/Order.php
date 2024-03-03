@@ -9,6 +9,8 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 
 /**
  * Class Order
@@ -16,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $id
  * @property float $total
  * @property string $order_status
+ * @property string $order_number
  * @property string $shipping_status
  * @property string $cancel_reason
  * @property string $shipping_tracking_number
@@ -89,6 +92,78 @@ class Order extends BaseModel {
 		'store_id',
 		'transaction_id'
 	];
+
+	protected static function getTrackInfo(Order $order) {
+		$cacheKey = "track_{$order->order_number}_{$order->shipping_tracking_number}";
+
+		$dataCache = Cache::get($cacheKey);
+		if (
+			$dataCache &&
+			isset($dataCache) &&
+			isset($dataCache['detail']) &&
+			isset($dataCache['detail']['receiver']) &&
+			isset($dataCache['summary']) &&
+			isset($dataCache['summary']['status'])
+		) {
+			return $dataCache;
+		}
+
+		$res = Http::get(
+			env(
+				'BINDERBITE_BASE_URL',
+				'http://localhost:8800/api'
+			) . '/track',
+			[
+				'api_key' => env('BINDERBITE_API_KEY', ''),
+				'awb' => $order->shipping_tracking_number
+			]
+		);
+
+		if ($res->failed()) {
+			return null;
+		}
+
+		$data = $res->json();
+
+		if (
+			!$data ||
+			!isset($data) ||
+			!isset($data['detail']) ||
+			!isset($data['detail']['receiver']) ||
+			!isset($data['summary']) ||
+			!isset($data['summary']['status'])
+		) {
+			return null;
+		}
+
+		Cache::put($cacheKey, $data, now()->addMinutes(10));
+
+		return $data;
+	}
+
+	/**
+	 * The "booted" method of the model.
+	 */
+	protected static function booted(): void {
+		static::retrieved(function (Order $order) {
+			if ($order->order_status !== 'SHIPPED') {
+				return;
+			}
+
+			$trackInfo = Order::getTrackInfo($order);
+			info("trackInfo_{$order->order_number}", $trackInfo);
+			if ($trackInfo['summary']['status'] !== 'DELIVERED') {
+				return;
+			}
+
+			$order->update([
+				'order_status' => 'DELIVERED',
+				'shipping_status' => 'DELIVERED',
+				'recieve_deadline' => Carbon::now()->addDays(2),
+				'delivered_at' => isset ($trackInfo['summary']['date']) ? Carbon::createFromFormat('Y-m-d h:i:s', $trackInfo['summary']['date']) : Carbon::now()
+			]);
+		});
+	}
 
 	public function user() {
 		return $this->belongsTo(User::class);

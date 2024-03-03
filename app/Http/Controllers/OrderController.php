@@ -12,6 +12,7 @@ use App\Models\Store;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 const TRANSACTION_ORDER_STATUS_MAP = [
     'settlement' => 'PAID',
@@ -471,7 +472,30 @@ class OrderController extends Controller {
             return $this->responseFailed("Invalid status order, not PROCESSED", 404, "Invalid status order");
         }
 
-        // TODO Check with API if order is shipped
+        $res = Http::get(
+            env(
+                'BINDERBITE_BASE_URL',
+                'http://localhost:8800/api'
+            ) . '/track',
+            [
+                'api_key' => env('BINDERBITE_API_KEY', ''),
+                'awb' => $validatedData['shipping_tracking_number']
+            ]
+        );
+
+        if ($res->failed()) {
+            return $this->responseFailed("Not Found", 500, "Error request");
+        }
+
+        $data = $res->json();
+
+        if (!$data || !isset($data['detail']) || !isset($data['detail']['receiver'])) {
+            return $this->responseFailed("Data tidak ditemukan", 400, "Data tidak ditemukan");
+        }
+
+        if (strtolower(trim($data['detail']['receiver'])) !== strtolower(trim($order->reciever_name))) {
+            return $this->responseFailed("Nama Penerima Tidak Cocok", 500, "Nama Penerima Tidak Cocok");
+        }
 
         $order->update([
             'order_status' => 'SHIPPED',
