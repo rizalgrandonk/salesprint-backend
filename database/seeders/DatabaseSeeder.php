@@ -614,7 +614,7 @@ class DatabaseSeeder extends Seeder {
             $createdCities = $this->createCities($province['province_id']);
             array_push($listCities, ...$createdCities);
 
-            echo "Success insert cities list for province {$province['province_id']} {$province['province']}";
+            echo "Success insert cities list for province {$province['province_id']} {$province['province']} \n";
         }
 
         $createdUserIdByRole = $this->createUsers();
@@ -682,19 +682,6 @@ class DatabaseSeeder extends Seeder {
                         ->setMilliseconds(Carbon::now()->millisecond);
 
                     $selectedCity = fake()->randomElement($listCities);
-
-                    // echo $index + 1
-                    //     . " of "
-                    //     . count($createdProducts)
-                    //     . " "
-                    //     . $newProduct->name
-                    //     . " "
-                    //     . $userId
-                    //     . " "
-                    //     . $createdOrderDate
-                    //     . " "
-                    //     . $selectedCity['city_name']
-                    //     . "\n";
 
                     $no = $index + 1;
                     $productCount = count($createdProducts);
