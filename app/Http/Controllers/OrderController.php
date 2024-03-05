@@ -472,19 +472,23 @@ class OrderController extends Controller {
             return $this->responseFailed("Invalid status order, not PROCESSED", 404, "Invalid status order");
         }
 
-        $res = Http::get(
-            env(
-                'BINDERBITE_BASE_URL',
-                'http://localhost:8800/api'
-            ) . '/track',
-            [
-                'api_key' => env('BINDERBITE_API_KEY', ''),
-                'awb' => $validatedData['shipping_tracking_number']
-            ]
-        );
+        try {
+            $res = Http::get(
+                env(
+                    'BINDERBITE_BASE_URL',
+                    'http://localhost:8800/api'
+                ) . '/track',
+                [
+                    'api_key' => env('BINDERBITE_API_KEY', ''),
+                    'awb' => $validatedData['shipping_tracking_number']
+                ]
+            );
+        } catch (\Throwable $th) {
+            return $this->responseFailed("Nomor resi tidak valid", 500, "Error request");
+        }
 
         if ($res->failed()) {
-            return $this->responseFailed("Not Found", 500, "Error request");
+            return $this->responseFailed("Nomor resi tidak valid", $res->status() ?? 500, "Error request");
         }
 
         $data = $res->json();
