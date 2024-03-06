@@ -686,7 +686,7 @@ class DatabaseSeeder extends Seeder {
                     if ($createdOrderDate->isSameMonth(Carbon::now())) {
                         $createdOrderDate->addDays(random_int(
                             0,
-                            (Carbon::now()->day - $createdOrderDate->day) - 1
+                            min(0, (Carbon::now()->day - $createdOrderDate->day) - 1)
                         ));
                     } else {
                         $createdOrderDate->addDays(random_int(1, 20));
