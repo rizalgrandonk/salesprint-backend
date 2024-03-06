@@ -316,8 +316,9 @@ class DatabaseSeeder extends Seeder {
         return $createdIds;
     }
 
-    function createStores(array $userIds): array {
+    function createStores(array $userIds, array $listCities): array {
         $imgCat = fake()->randomElements($this->productImageOptions, 2);
+
         $store_categories = [
             [
                 'name' => 'Produk Baru',
@@ -335,12 +336,12 @@ class DatabaseSeeder extends Seeder {
             'name' => 'Grandonk Merch',
             'slug' => Str::slug('Grandonk Merch'),
             'phone_number' => '0812345678987',
-            'address' => 'Jakarta Pusat',
-            'province_id' => '6',
-            'province' => 'DKI Jakarta',
-            'city_id' => '152',
-            'city' => 'Jakarta Pusat',
-            'postal_code' => '66666',
+            'address' => fake()->streetAddress(),
+            'province_id' => $listCities[143]['province_id'],
+            'province' => $listCities[143]['province'],
+            'city_id' => $listCities[143]['city_id'],
+            'city' => $listCities[143]['city_name'],
+            'postal_code' => $listCities[143]['postal_code'],
             'status' => 'approved',
             'image' => fake()->randomElement($this->storeImageOptions),
             'store_description' => fake()->paragraph(random_int(3, 5)),
@@ -351,12 +352,12 @@ class DatabaseSeeder extends Seeder {
             'name' => 'Upscale Store',
             'slug' => Str::slug('Upscale Store'),
             'phone_number' => '0898787653412',
-            'address' => 'Jakarta Selatan',
-            'province_id' => '6',
-            'province' => 'DKI Jakarta',
-            'city_id' => '153',
-            'city' => 'Jakarta Selatan',
-            'postal_code' => '66666',
+            'address' => fake()->streetAddress(),
+            'province_id' => $listCities[158]['province_id'],
+            'province' => $listCities[158]['province'],
+            'city_id' => $listCities[158]['city_id'],
+            'city' => $listCities[158]['city_name'],
+            'postal_code' => $listCities[158]['postal_code'],
             'status' => 'approved',
             'image' => fake()->randomElement($this->storeImageOptions),
             'store_description' => fake()->paragraph(random_int(3, 5)),
@@ -386,16 +387,18 @@ class DatabaseSeeder extends Seeder {
                 . ' '
                 . fake()->randomNumber(2, true);
 
+            $selectedCity = fake()->randomElement($listCities);
+
             $createdStore = \App\Models\Store::create([
                 'name' => $name,
                 'slug' => Str::slug($name),
                 'phone_number' => fake()->phoneNumber(),
                 'address' => fake()->address(),
-                'province_id' => '6',
-                'province' => 'DKI Jakarta',
-                'city_id' => '153',
-                'city' => 'Jakarta Selatan',
-                'postal_code' => '66666',
+                'province_id' => $selectedCity['province_id'],
+                'province' => $selectedCity['province'],
+                'city_id' => $selectedCity['city_id'],
+                'city' => $selectedCity['city_name'],
+                'postal_code' => $selectedCity['postal_code'],
                 'status' => fake()->randomElement(['on_review', 'approved', 'rejected']),
                 'image' => fake()->randomElement($this->storeImageOptions),
                 'store_description' => fake()->paragraph(random_int(3, 5)),
@@ -619,7 +622,7 @@ class DatabaseSeeder extends Seeder {
 
         $createdUserIdByRole = $this->createUsers();
         $createdCategoryIds = $this->createCategories();
-        $createdStoreIds = $this->createStores($createdUserIdByRole['seller']);
+        $createdStoreIds = $this->createStores($createdUserIdByRole['seller'], $listCities);
         $createdVarTypeMap = $this->createVariantTypes();
 
         $createdProducts = [];
@@ -681,7 +684,10 @@ class DatabaseSeeder extends Seeder {
                         ->setMilliseconds(Carbon::now()->millisecond);
 
                     if ($createdOrderDate->isSameMonth(Carbon::now())) {
-                        $createdOrderDate->addDays(random_int(1, Carbon::now()->day));
+                        $createdOrderDate->addDays(random_int(
+                            0,
+                            (Carbon::now()->day - $createdOrderDate->day) - 1
+                        ));
                     } else {
                         $createdOrderDate->addDays(random_int(1, 20));
                     }
