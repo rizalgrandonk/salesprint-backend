@@ -165,7 +165,7 @@ class DatabaseSeeder extends Seeder {
             $createdUser = \App\Models\User::create([
                 'name' => $fakeName,
                 'email' => strtolower($fakeUserName) . '@gmail.com',
-                'username' => strtolower($fakeName),
+                'username' => strtolower($fakeUserName),
                 'role' => 'user',
                 'password' => bcrypt('66666666'),
                 'remember_token' => Str::random(10),
