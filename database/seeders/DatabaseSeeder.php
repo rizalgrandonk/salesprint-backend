@@ -722,7 +722,8 @@ class DatabaseSeeder extends Seeder {
                         'created_at' => $createdOrderDate,
                         'updated_at' => $createdOrderDate
                     ]);
-                    $createdOrder = Order::create([
+
+                    $newOrderData = [
                         'total' => $orderTotal,
                         'order_status' => 'COMPLETED',
                         'shipping_status' => "DELIVERED",
@@ -786,7 +787,11 @@ class DatabaseSeeder extends Seeder {
                         'shipped_at' => Carbon::create($createdOrderDate)->addDays(3),
                         'delivered_at' => Carbon::create($createdOrderDate)->addDays(4),
                         'completed_at' => Carbon::create($createdOrderDate)->addDays(5),
-                    ]);
+                    ];
+
+                    $createdOrder = Order::withoutEvents(function () use ($newOrderData) {
+                        return Order::create($newOrderData);
+                    });
 
                     $createdOrderItem = OrderItem::create([
                         'quantity' => $quantity,
