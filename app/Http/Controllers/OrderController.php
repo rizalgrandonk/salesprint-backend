@@ -357,10 +357,14 @@ class OrderController extends Controller {
         if (isset($validatedData['payment_status'])) {
             $orderStatus = TRANSACTION_ORDER_STATUS_MAP[$validatedData['payment_status']];
 
-            $transaction->orders()->update([
+            $updateData = [
                 'order_status' => $orderStatus,
                 'cancel_reason' => $orderStatus === "CANCELED" ? $validatedData['status_message'] : null
-            ]);
+            ];
+
+            $transaction->orders->each(function ($order) use ($updateData) {
+                $order->update($updateData);
+            });
         }
 
         return $this->responseSuccess($transaction);
@@ -404,12 +408,23 @@ class OrderController extends Controller {
 
         $orderStatus = TRANSACTION_ORDER_STATUS_MAP[$payment_status];
 
-        $orderTransaction->orders()->update([
+        // $orderTransaction->orders()->update([
+        //     'order_status' => $orderStatus,
+        //     'cancel_reason' => $orderStatus === "CANCELED" ? TRANSACTION_STATUS_MESSAGE_MAP[$payment_status] : null,
+        //     'accept_deadline' => $orderStatus === 'PAID' ? Carbon::now()->addDays(2) : null,
+        //     'paid_at' => $orderStatus === 'PAID' ? Carbon::now() : null
+        // ]);
+
+        $updateData = [
             'order_status' => $orderStatus,
             'cancel_reason' => $orderStatus === "CANCELED" ? TRANSACTION_STATUS_MESSAGE_MAP[$payment_status] : null,
             'accept_deadline' => $orderStatus === 'PAID' ? Carbon::now()->addDays(2) : null,
             'paid_at' => $orderStatus === 'PAID' ? Carbon::now() : null
-        ]);
+        ];
+
+        $orderTransaction->orders->each(function ($order) use ($updateData) {
+            $order->update($updateData);
+        });
 
         return $this->responseSuccess([
             'serial_order' => $serial_order,

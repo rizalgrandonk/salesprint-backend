@@ -6,6 +6,7 @@
 
 namespace App\Models;
 
+use App\Notifications\OrderUpdate;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -41,6 +42,7 @@ use Illuminate\Support\Facades\Http;
  * @property Carbon|null $updated_at
  * 
  * @property User $user
+ * @property Store $store
  * @property Collection|OrderItem[] $order_items
  *
  * @package App\Models
@@ -162,6 +164,20 @@ class Order extends BaseModel {
 				'recieve_deadline' => Carbon::now()->addDays(2),
 				'delivered_at' => isset ($trackInfo['summary']['date']) ? Carbon::createFromFormat('Y-m-d h:i:s', $trackInfo['summary']['date']) : Carbon::now()
 			]);
+		});
+
+		static::created(function (Order $order) {
+			$order->user->notifyNow(new OrderUpdate($order));
+			$order->store->user->notifyNow(new OrderUpdate($order));
+		});
+
+		static::updated(function (Order $order) {
+			$dateNow = Carbon::now()->toFormattedDateString();
+			info("Updated {$dateNow} {$order->order_status}", $order->getChanges());
+			if ($order->wasChanged('order_status')) {
+				$order->user->notifyNow(new OrderUpdate($order));
+				$order->store->user->notifyNow(new OrderUpdate($order));
+			}
 		});
 	}
 

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Models\User;
+use App\Notifications\OrderUpdate;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Requests\RegisterRequest;
@@ -12,7 +14,7 @@ class AuthController extends Controller {
     public function register(RegisterRequest $request) {
         $validatedData = $request->validated();
 
-        $newUser =  User::create([
+        $newUser = User::create([
             'image' => env("DEFAULT_USER_IMAGE", ""),
             'role' => 'user',
             ...$validatedData,
@@ -47,6 +49,12 @@ class AuthController extends Controller {
      * @return \Illuminate\Http\JsonResponse
      */
     public function me() {
+        // $user = User::find(auth()->user()->id);
+        // $order = Order::where('order_number', '2024030610856431115297')->first();
+        // $user->notifyNow(new OrderUpdate($order));
+        // $order->user->notifyNow(new OrderUpdate($order));
+        // $order->store->user->notifyNow(new OrderUpdate($order));
+
         return $this->responseSuccess(auth()->user());
     }
 

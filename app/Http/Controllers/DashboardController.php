@@ -83,8 +83,6 @@ class DashboardController extends Controller {
       ->orderBy('month')
       ->get();
 
-    info($monthlyData);
-
     // Calculate the difference between current month and last month
     $currentMonthTotal = $monthlyData->where('month', $currentDate->month)->sum('total');
     $lastMonthTotal = $monthlyData->where('month', $currentDate->month - 1)->sum('total');

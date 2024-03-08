@@ -173,8 +173,8 @@ class Product extends BaseModel {
 			})
 			->toArray();
 
-		info("userItemMatrix " . $targetUser);
-		info($userItemMatrix);
+		// info("userItemMatrix " . $targetUser);
+		// info($userItemMatrix);
 
 		$similarityMatrix = $this->calculateSimilarity($userItemMatrix);
 
@@ -193,8 +193,8 @@ class Product extends BaseModel {
 		// info($userSimilarities);
 
 		$nearestNeighbors = array_keys($userSimilarities);
-		info("nearestNeighbors" . $targetUser);
-		info($nearestNeighbors);
+		// info("nearestNeighbors" . $targetUser);
+		// info($nearestNeighbors);
 
 		$recommendations = [];
 		$reviewed = [];
@@ -274,7 +274,7 @@ class Product extends BaseModel {
 			}
 		);
 
-		info($userId, $ids);
+		// info($userId, $ids);
 
 		return $query->whereIn('id', $ids)
 			->orderByRaw("FIELD(id, " . implode(',', $ids) . ")");

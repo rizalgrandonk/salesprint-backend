@@ -43,6 +43,15 @@ Route::group([
 });
 
 Route::group([
+    'prefix' => 'notifications',
+    'middleware' => ['api', 'auth.jwt']
+], function () {
+    Route::get('/', [Controllers\NotificationController::class, "index"]);
+    Route::get('/count', [Controllers\NotificationController::class, "count"]);
+    Route::get('/mark_read', [Controllers\NotificationController::class, "mark_read"]);
+});
+
+Route::group([
     "prefix" => "dashboard",
     'middleware' => 'api',
 ], function () {
