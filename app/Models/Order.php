@@ -40,6 +40,16 @@ use Illuminate\Support\Facades\Http;
  * @property string $transaction_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property Carbon|null $accept_deadline
+ * @property Carbon|null $shipping_deadline
+ * @property Carbon|null $deliver_deadline
+ * @property Carbon|null $recieve_deadline
+ * @property Carbon|null $paid_at
+ * @property Carbon|null $accepted_at
+ * @property Carbon|null $shipped_at
+ * @property Carbon|null $delivered_at
+ * @property Carbon|null $completed_at
+ * @property Carbon|null $canceled_at
  * 
  * @property User $user
  * @property Store $store
@@ -110,37 +120,41 @@ class Order extends BaseModel {
 			return $dataCache;
 		}
 
-		$res = Http::get(
-			env(
-				'BINDERBITE_BASE_URL',
-				'http://localhost:8800/api'
-			) . '/track',
-			[
-				'api_key' => env('BINDERBITE_API_KEY', ''),
-				'awb' => $order->shipping_tracking_number
-			]
-		);
+		try {
+			$res = Http::get(
+				env(
+					'BINDERBITE_BASE_URL',
+					'http://localhost:8800/api'
+				) . '/track',
+				[
+					'api_key' => env('BINDERBITE_API_KEY', ''),
+					'awb' => $order->shipping_tracking_number
+				]
+			);
 
-		if ($res->failed()) {
+			if ($res->failed()) {
+				return null;
+			}
+
+			$data = $res->json();
+
+			if (
+				!$data ||
+				!isset($data) ||
+				!isset($data['detail']) ||
+				!isset($data['detail']['receiver']) ||
+				!isset($data['summary']) ||
+				!isset($data['summary']['status'])
+			) {
+				return null;
+			}
+
+			Cache::put($cacheKey, $data, now()->addMinutes(10));
+
+			return $data;
+		} catch (\Throwable $th) {
 			return null;
 		}
-
-		$data = $res->json();
-
-		if (
-			!$data ||
-			!isset($data) ||
-			!isset($data['detail']) ||
-			!isset($data['detail']['receiver']) ||
-			!isset($data['summary']) ||
-			!isset($data['summary']['status'])
-		) {
-			return null;
-		}
-
-		Cache::put($cacheKey, $data, now()->addMinutes(10));
-
-		return $data;
 	}
 
 	/**
@@ -148,22 +162,66 @@ class Order extends BaseModel {
 	 */
 	protected static function booted(): void {
 		static::retrieved(function (Order $order) {
-			if ($order->order_status !== 'SHIPPED') {
+			if ($order->order_status === 'SHIPPED') {
+				$trackInfo = Order::getTrackInfo($order);
+				info("trackInfo_{$order->order_number}");
+				info($trackInfo);
+				if (
+					!$trackInfo ||
+					!isset ($trackInfo) ||
+					!isset ($trackInfo['detail']) ||
+					!isset ($trackInfo['detail']['receiver']) ||
+					!isset ($trackInfo['summary']) ||
+					!isset ($trackInfo['summary']['status']) ||
+					$trackInfo['summary']['status'] !== 'DELIVERED'
+				) {
+					return;
+				}
+
+				$order->update([
+					'order_status' => 'DELIVERED',
+					'shipping_status' => 'DELIVERED',
+					'recieve_deadline' => Carbon::now()->addDays(2),
+					'delivered_at' => isset ($trackInfo['summary']['date']) ? Carbon::createFromFormat('Y-m-d h:i:s', $trackInfo['summary']['date']) : Carbon::now()
+				]);
 				return;
 			}
 
-			$trackInfo = Order::getTrackInfo($order);
-			info("trackInfo_{$order->order_number}", $trackInfo);
-			if ($trackInfo['summary']['status'] !== 'DELIVERED') {
+			if (
+				$order->order_status === "PAID" &&
+				$order->accept_deadline &&
+				$order->accept_deadline < Carbon::now()
+			) {
+				$order->update([
+					'order_status' => 'CANCELED',
+					'canceled_at' => Carbon::now(),
+					'cancel_reason' => 'Lewat batas penerimaan pesanan'
+				]);
 				return;
 			}
-
-			$order->update([
-				'order_status' => 'DELIVERED',
-				'shipping_status' => 'DELIVERED',
-				'recieve_deadline' => Carbon::now()->addDays(2),
-				'delivered_at' => isset ($trackInfo['summary']['date']) ? Carbon::createFromFormat('Y-m-d h:i:s', $trackInfo['summary']['date']) : Carbon::now()
-			]);
+			if (
+				$order->order_status === "PROCESSED" &&
+				$order->shipping_deadline &&
+				$order->shipping_deadline < Carbon::now()
+			) {
+				$order->update([
+					'order_status' => 'CANCELED',
+					'canceled_at' => Carbon::now(),
+					'cancel_reason' => 'Lewat batas pengiriman pesanan'
+				]);
+				return;
+			}
+			if (
+				$order->order_status === "DELIVERED" &&
+				$order->recieve_deadline &&
+				$order->recieve_deadline < Carbon::now()
+			) {
+				$order->update([
+					'order_status' => 'COMPLETED',
+					'completed_at' => Carbon::now(),
+				]);
+				return;
+			}
 		});
 
 		static::created(function (Order $order) {
