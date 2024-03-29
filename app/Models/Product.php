@@ -173,8 +173,12 @@ class Product extends BaseModel {
 			})
 			->toArray();
 
-		// info("userItemMatrix " . $targetUser);
-		// info($userItemMatrix);
+		if (!isset($userItemMatrix[$targetUser])) {
+			return null;
+		}
+
+		info("userItemMatrix " . $targetUser);
+		info($userItemMatrix);
 
 		$similarityMatrix = $this->calculateSimilarity($userItemMatrix);
 
@@ -273,6 +277,10 @@ class Product extends BaseModel {
 				return $this->generateRecommendations($userId);
 			}
 		);
+
+		if (!$ids) {
+			return $query->orderBy('average_rating', 'desc');
+		}
 
 		// info($userId, $ids);
 
