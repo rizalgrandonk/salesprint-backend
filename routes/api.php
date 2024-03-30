@@ -259,14 +259,19 @@ Route::group([
         );
     });
 
-    // ? PROTECTED (SELLER, ADMIN)
     Route::group([
-        'middleware' => ['api', 'auth.jwt:seller,admin',],
+        'middleware' => ['api', 'auth.jwt:user',],
     ], function () {
         Route::post(
             '/',
             [Controllers\StoreController::class, "store"]
         );
+    });
+
+    // ? PROTECTED (SELLER, ADMIN)
+    Route::group([
+        'middleware' => ['api', 'auth.jwt:seller,admin',],
+    ], function () {
         Route::post(
             '/{slug}',
             [Controllers\StoreController::class, "update"]
