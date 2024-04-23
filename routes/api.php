@@ -43,6 +43,31 @@ Route::group([
 });
 
 Route::group([
+    "prefix" => "users"
+], function () {
+    // Route::group([
+    //     'middleware' => 'api',
+    // ], function () {
+    //     Route::get('/', [Controllers\CategoryController::class, "index"]);
+    //     Route::get('/{slug}', [Controllers\CategoryController::class, "show"]);
+    //     Route::get(
+    //         '/{category_slug}/products',
+    //         [Controllers\ProductController::class, "category_products"]
+    //     );
+    // });
+
+    // ? PROTECTED
+    Route::group([
+        'middleware' => ['api', 'auth.jwt'],
+    ], function () {
+        Route::post(
+            '/{id}',
+            [Controllers\UserController::class, "update"]
+        );
+    });
+});
+
+Route::group([
     'prefix' => 'notifications',
     'middleware' => ['api', 'auth.jwt']
 ], function () {
