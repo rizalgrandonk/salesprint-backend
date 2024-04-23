@@ -46,13 +46,6 @@ class VariantTypeController extends Controller {
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(VariantType $variantType) {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(UpdateVariantTypeRequest $request, string $id) {

@@ -576,7 +576,7 @@ class ProductController extends Controller {
         return $this->responseSuccess(['id' => $product->id], 200, "Data deleted");
     }
 
-    function upload_create_image(string $productId, $image, $isMainImage = false) {
+    public function upload_create_image(string $productId, $image, $isMainImage = false) {
         if (!$image) {
             return null;
         }
