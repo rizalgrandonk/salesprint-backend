@@ -9,7 +9,9 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Province;
 use App\Models\Review;
+use App\Models\Store;
 use App\Models\Transaction;
+use App\Models\Withdraw;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Http;
@@ -332,7 +334,7 @@ class DatabaseSeeder extends Seeder {
             ],
         ];
 
-        $store_1 = \App\Models\Store::create([
+        $store_1 = Store::create([
             'name' => 'Grandonk Merch',
             'slug' => Str::slug('Grandonk Merch'),
             'phone_number' => '0812345678987',
@@ -345,10 +347,11 @@ class DatabaseSeeder extends Seeder {
             'status' => 'approved',
             'image' => fake()->randomElement($this->storeImageOptions),
             'store_description' => fake()->paragraph(random_int(3, 5)),
-            'user_id' => \App\Models\User::where('email', 'grandonkseller@gmail.com')->first()->id
+            'user_id' => \App\Models\User::where('email', 'grandonkseller@gmail.com')->first()->id,
+            'total_balance' => 0
         ]);
 
-        $store_2 = \App\Models\Store::create([
+        $store_2 = Store::create([
             'name' => 'Upscale Store',
             'slug' => Str::slug('Upscale Store'),
             'phone_number' => '0898787653412',
@@ -361,7 +364,8 @@ class DatabaseSeeder extends Seeder {
             'status' => 'approved',
             'image' => fake()->randomElement($this->storeImageOptions),
             'store_description' => fake()->paragraph(random_int(3, 5)),
-            'user_id' => \App\Models\User::where('email', 'seller@gmail.com')->first()->id
+            'user_id' => \App\Models\User::where('email', 'seller@gmail.com')->first()->id,
+            'total_balance' => 0
         ]);
 
         $store_1->store_categories()->createMany($store_categories);
@@ -389,7 +393,7 @@ class DatabaseSeeder extends Seeder {
 
             $selectedCity = fake()->randomElement($listCities);
 
-            $createdStore = \App\Models\Store::create([
+            $createdStore = Store::create([
                 'name' => $name,
                 'slug' => Str::slug($name),
                 'phone_number' => fake()->phoneNumber(),
@@ -402,7 +406,8 @@ class DatabaseSeeder extends Seeder {
                 'status' => fake()->randomElement(['on_review', 'approved', 'rejected']),
                 'image' => fake()->randomElement($this->storeImageOptions),
                 'store_description' => fake()->paragraph(random_int(3, 5)),
-                'user_id' => $userId
+                'user_id' => $userId,
+                'total_balance' => 0
             ]);
 
             $createdStore->store_categories()->createMany($store_categories);
@@ -472,7 +477,7 @@ class DatabaseSeeder extends Seeder {
         foreach ($prodNames as $name) {
             $seledctedCatId = $categoryId;
             $seledctedStoreId = fake()->randomElement($storeIds);
-            $selectedStore = \App\Models\Store::where("id", $seledctedStoreId)->first();
+            $selectedStore = Store::where("id", $seledctedStoreId)->first();
 
             $createDate = Carbon::create(2021, 1, random_int(1, 5), random_int(1, 24), 0, 0);
 
@@ -631,6 +636,14 @@ class DatabaseSeeder extends Seeder {
 
             array_push($createdProducts, ...$newProds);
         }
+        /**
+         *   storeId_month_year => revenue
+         */
+        $storeMonthlyRev = [];
+        /**
+         *   storeId_month_year => orderIds
+         */
+        $storeMonthlyOrderIds = [];
 
         foreach ($createdProducts as $index => $newProduct) {
             $prodOpts = [];
@@ -684,10 +697,9 @@ class DatabaseSeeder extends Seeder {
                         ->setMilliseconds(Carbon::now()->millisecond);
 
                     if ($createdOrderDate->isSameMonth(Carbon::now())) {
-                        $createdOrderDate->addDays(random_int(
-                            0,
-                            min(0, (Carbon::now()->day - $createdOrderDate->day) - 1)
-                        ));
+                        $createdOrderDate->setDay(
+                            min(Carbon::now()->day, ($createdOrderDate->day + random_int(1, 20)))
+                        );
                     } else {
                         $createdOrderDate->addDays(random_int(1, 20));
                     }
@@ -776,6 +788,7 @@ class DatabaseSeeder extends Seeder {
                         'delivery_city' => $selectedCity['city_name'],
                         'delivery_postal_code' => $selectedCity['postal_code'],
                         'delivery_cost' => 20000,
+                        'is_withdrew' => !($createdOrderDate->isSameMonth(Carbon::now())),
                         'user_id' => $userId,
                         'store_id' => $newProduct->store->id,
                         'transaction_id' => $createdTransaction->id,
@@ -814,6 +827,33 @@ class DatabaseSeeder extends Seeder {
                         'updated_at' => Carbon::create($createdOrderDate)->addDays(5)
                     ]);
                     array_push($ratings, $rating);
+
+                    if ($createdOrderDate->isSameMonth(Carbon::now())) {
+                        Store::where('id', $newProduct->store->id)
+                            ->increment(
+                                'total_balance', $orderTotal
+                            );
+                    } else {
+                        if (isset(
+                            $storeMonthlyRev
+                            ["{$newProduct->store->id}_{$createdOrderDate->month}_{$createdOrderDate->year}"]
+                        )) {
+                            $storeMonthlyRev
+                            ["{$newProduct->store->id}_{$createdOrderDate->month}_{$createdOrderDate->year}"] += $orderTotal;
+
+                            array_push(
+                                $storeMonthlyOrderIds
+                                ["{$newProduct->store->id}_{$createdOrderDate->month}_{$createdOrderDate->year}"],
+                                $createdOrder->id
+                            );
+                        } else {
+                            $storeMonthlyRev
+                            ["{$newProduct->store->id}_{$createdOrderDate->month}_{$createdOrderDate->year}"] = $orderTotal;
+
+                            $storeMonthlyOrderIds
+                            ["{$newProduct->store->id}_{$createdOrderDate->month}_{$createdOrderDate->year}"] = [$createdOrder->id];
+                        }
+                    }
                 }
             }
 
@@ -828,6 +868,30 @@ class DatabaseSeeder extends Seeder {
                 'stok' => $resultStok,
                 'average_rating' => $resultAverageRating
             ]);
+        }
+
+        foreach ($storeMonthlyRev as $key => $monthlyRev) {
+            list($storeId, $month, $year) = explode('_', $key);
+            $orderIds = $storeMonthlyOrderIds[$key];
+            $countOrders = count($orderIds);
+
+            $withdrawDate = Carbon::createFromDate($year, $month)->endOfMonth();
+
+            echo "Withdraw Store {$storeId} -> {$withdrawDate}, order count {$countOrders} \n";
+
+            $createdWithdraw = Withdraw::create([
+                'total_amount' => $monthlyRev,
+                'bank_code' => "014",
+                'bank_name' => "BANK BCA",
+                'bank_account_number' => fake()->creditCardNumber(),
+                'bank_account_name' => fake()->name(),
+                'status' => 'PAID',
+                'store_id' => $storeId,
+                'created_at' => $withdrawDate,
+                'updated_at' => $withdrawDate,
+            ]);
+
+            Order::whereIn('id', $orderIds)->update(['withdraw_id' => $createdWithdraw->id]);
         }
 
     }

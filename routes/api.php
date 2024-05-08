@@ -259,6 +259,17 @@ Route::group([
 });
 
 Route::group([
+    "prefix" => "withdraws",
+    'middleware' => ['api']
+], function () {
+    Route::group([
+        'middleware' => ['auth.jwt:seller'],
+    ], function () {
+        Route::post('/create_store_withdraw', [Controllers\WithdrawController::class, "create_store_withdraw"]);
+    });
+});
+
+Route::group([
     "prefix" => "reviews",
     'middleware' => ['api']
 ], function () {
@@ -448,6 +459,10 @@ Route::group([
         Route::get(
             '/orders/store_orders',
             [Controllers\OrderController::class, "paginated_store_orders"]
+        );
+        Route::get(
+            '/withdraws/store_withdraws',
+            [Controllers\WithdrawController::class, "paginated_store_withdraws"]
         );
     });
 });

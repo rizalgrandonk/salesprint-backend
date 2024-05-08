@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $province_id
  * @property string $postal_code
  * @property string $status
+ * @property float $total_balance
  * @property string|null $image
  * @property string|null $store_description
  * @property string $user_id
@@ -31,6 +32,7 @@ use Illuminate\Database\Eloquent\Model;
  * 
  * @property User $user
  * @property Collection|Product[] $products
+ * @property Collection|Order[] $orders
  * @property Collection|StoreBanner[] $store_banners
  * @property Collection|StoreCategory[] $store_categories
  *
@@ -44,7 +46,8 @@ class Store extends BaseModel {
 		'city_id' => 'string',
 		'province_id' => 'string',
 		'user_id' => 'string',
-		'reviews_avg_rating' => 'float'
+		'reviews_avg_rating' => 'float',
+		'total_balance' => 'float'
 	];
 
 	protected $fillable = [
@@ -60,6 +63,7 @@ class Store extends BaseModel {
 		'status',
 		'image',
 		'store_description',
+		'total_balance',
 		'user_id'
 	];
 

@@ -45,9 +45,11 @@ return new class extends Migration {
             $table->string('delivery_postal_code');
             $table->string('delivery_service');
             $table->float('delivery_cost', 10, 2);
+            $table->boolean('is_withdrew');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('store_id')->nullable();
             $table->unsignedBigInteger('transaction_id')->nullable();
+            $table->unsignedBigInteger('withdraw_id')->nullable();
 
             $table->foreign('user_id')
                 ->nullable()
@@ -61,6 +63,10 @@ return new class extends Migration {
             $table->foreign('transaction_id')
                 ->references('id')
                 ->on('transactions')
+                ->nullOnDelete();
+            $table->foreign('withdraw_id')
+                ->references('id')
+                ->on('withdraws')
                 ->nullOnDelete();
 
             $table->timestamps();

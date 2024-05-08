@@ -23,6 +23,7 @@ return new class extends Migration {
             $table->enum('status', ['approved', 'on_review', 'rejected']);
             $table->string('image')->nullable();
             $table->longText('store_description')->nullable();
+            $table->float('total_balance', 15, 2);
             $table->unsignedBigInteger('user_id');
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

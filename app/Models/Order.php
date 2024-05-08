@@ -35,9 +35,11 @@ use Illuminate\Support\Facades\Http;
  * @property string $delivery_address
  * @property string $delivery_service
  * @property float $delivery_cost
+ * @property boolean $is_withdrew
  * @property string $user_id
  * @property string $store_id
  * @property string $transaction_id
+ * @property string $withdraw_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $accept_deadline
@@ -66,6 +68,7 @@ class Order extends BaseModel {
 		'transaction_id' => 'string',
 		'delivery_cost' => 'float',
 		'shipping_history' => 'array',
+		'is_withdrew' => 'boolean',
 		'user_id' => 'string',
 		'store_id' => 'string',
 	];
@@ -100,9 +103,11 @@ class Order extends BaseModel {
 		'delivery_address',
 		'delivery_service',
 		'delivery_cost',
+		'is_withdrew',
 		'user_id',
 		'store_id',
-		'transaction_id'
+		'transaction_id',
+		'withdraw_id'
 	];
 
 	protected static function getTrackInfo(Order $order) {
@@ -247,6 +252,9 @@ class Order extends BaseModel {
 	}
 	public function transaction() {
 		return $this->belongsTo(Transaction::class);
+	}
+	public function withdraw() {
+		return $this->belongsTo(Withdraw::class);
 	}
 
 	public function order_items() {
