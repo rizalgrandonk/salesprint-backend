@@ -309,7 +309,8 @@ class OrderController extends Controller {
                 'user_id' => auth()->user()->id,
                 'store_id' => $order['store']->id,
                 'transaction_id' => $createdTransaction->id,
-                'order_number' => $serialOrder . $order['store']->id . $createdTransaction->id
+                'order_number' => $serialOrder . $order['store']->id . $createdTransaction->id,
+                "is_withdrew" => false
             ]);
 
             $order_items = [];

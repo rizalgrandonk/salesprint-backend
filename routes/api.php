@@ -283,6 +283,21 @@ Route::group([
 });
 
 Route::group([
+    "prefix" => "withdraws",
+    'middleware' => ['api']
+], function () {
+    Route::group([
+        'middleware' => ['auth.jwt:admin'],
+    ], function () {
+
+        Route::post(
+            '/pay_withdraw/{withdraw_id}',
+            [Controllers\WithdrawController::class, "pay_withdraw"]
+        );
+    });
+});
+
+Route::group([
     "prefix" => "stores"
 ], function () {
     // ? PROTECTED
@@ -463,6 +478,13 @@ Route::group([
         Route::get(
             '/withdraws/store_withdraws',
             [Controllers\WithdrawController::class, "paginated_store_withdraws"]
+        );
+    });
+
+    Route::group(['middleware' => 'auth.jwt:admin'], function () {
+        Route::get(
+            '/withdraws',
+            [Controllers\WithdrawController::class, "paginated"]
         );
     });
 });

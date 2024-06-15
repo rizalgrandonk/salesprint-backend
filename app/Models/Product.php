@@ -10,6 +10,7 @@ use Cache;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache as FacadesCache;
 
 // use Illuminate\Support\Facades\DB;
 
@@ -112,19 +113,25 @@ class Product extends BaseModel {
 		$magnitudeA = 0;
 		$magnitudeB = 0;
 
+		// ? Menghitung dot product A.B
 		foreach ($setA as $item => $rating) {
 			if (isset($setB[$item])) {
 				$dotProduct += $rating * $setB[$item];
 			}
-			$magnitudeA += pow($rating, 2);
 		}
 
+		// ? Menghitung magnitude A
+		foreach ($setA as $rating) {
+			$magnitudeA += pow($rating, 2);
+		}
+		$magnitudeA = sqrt($magnitudeA);
+
+		// ? Menghitung magnitude B
 		foreach ($setB as $rating) {
 			$magnitudeB += pow($rating, 2);
 		}
-
-		$magnitudeA = sqrt($magnitudeA);
 		$magnitudeB = sqrt($magnitudeB);
+
 
 		if ($magnitudeA == 0 || $magnitudeB == 0) {
 			return 0;
@@ -134,8 +141,10 @@ class Product extends BaseModel {
 	}
 
 	function calculateJaccardSimilarity($setA, $setB) {
-		$intersectionSize = count(array_intersect($setA, $setB));
-		$unionSize = count(array_unique(array_merge($setA, $setB)));
+		$itemsA = array_keys($setA);
+		$itemsB = array_keys($setB);
+		$intersectionSize = count(array_intersect($itemsA, $itemsB));
+		$unionSize = count(array_unique(array_merge($itemsA, $itemsB)));
 
 		// Avoid division by zero
 		if ($unionSize == 0) {
@@ -154,7 +163,8 @@ class Product extends BaseModel {
 
 			foreach ($users as $userB) {
 				if ($userA !== $userB) {
-					$similarity = $this->calculateCosineSimilarity($userItemMatrix[$userA], $userItemMatrix[$userB]);
+					// $similarity = $this->calculateCosineSimilarity($userItemMatrix[$userA], $userItemMatrix[$userB]);
+					$similarity = $this->calculateJaccardSimilarity($userItemMatrix[$userA], $userItemMatrix[$userB]);
 					$similarityMatrix[$userA][$userB] = $similarity;
 				}
 			}
@@ -182,8 +192,8 @@ class Product extends BaseModel {
 
 		$similarityMatrix = $this->calculateSimilarity($userItemMatrix);
 
-		// info("similarityMatrix");
-		// info($similarityMatrix);
+		info("similarityMatrix" . $targetUser);
+		info($similarityMatrix);
 
 		$userSimilarities = $similarityMatrix[$targetUser];
 		uasort($userSimilarities, function ($a, $b) {
@@ -193,8 +203,8 @@ class Product extends BaseModel {
 			return ($a > $b) ? -1 : 1;
 		});
 
-		// info("userSimilarities");
-		// info($userSimilarities);
+		info("userSimilarities");
+		info($userSimilarities);
 
 		$nearestNeighbors = array_keys($userSimilarities);
 		// info("nearestNeighbors" . $targetUser);
@@ -270,7 +280,7 @@ class Product extends BaseModel {
 
 		// info(Cache::get($cacheKey));
 
-		$ids = Cache::remember(
+		$ids = FacadesCache::remember(
 			$cacheKey,
 			now()->addMinutes(2),
 			function () use ($userId) {

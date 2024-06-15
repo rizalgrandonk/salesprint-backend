@@ -112,6 +112,7 @@ class DatabaseSeeder extends Seeder {
             'remember_token' => Str::random(10),
             'phone_number' => '08123239483123',
             'image' => fake()->randomElement($this->userImageOptions),
+            'email_verified_at' => Carbon::now()
         ]);
         $user2 = \App\Models\User::create([
             'name' => 'Grandonk User',
@@ -122,6 +123,7 @@ class DatabaseSeeder extends Seeder {
             'remember_token' => Str::random(10),
             'phone_number' => '08242301323123',
             'image' => fake()->randomElement($this->userImageOptions),
+            'email_verified_at' => Carbon::now()
         ]);
         $user3 = \App\Models\User::create([
             'name' => 'Seller',
@@ -132,6 +134,7 @@ class DatabaseSeeder extends Seeder {
             'remember_token' => Str::random(10),
             'phone_number' => '08154536315424',
             'image' => fake()->randomElement($this->userImageOptions),
+            'email_verified_at' => Carbon::now()
         ]);
         $user4 = \App\Models\User::create([
             'name' => 'Grandonk Seller',
@@ -142,6 +145,7 @@ class DatabaseSeeder extends Seeder {
             'remember_token' => Str::random(10),
             'phone_number' => '08123191347123',
             'image' => fake()->randomElement($this->userImageOptions),
+            'email_verified_at' => Carbon::now()
         ]);
         $user5 = \App\Models\User::create([
             'name' => 'Admin',
@@ -152,6 +156,18 @@ class DatabaseSeeder extends Seeder {
             'remember_token' => Str::random(10),
             'phone_number' => '08123171321243',
             'image' => fake()->randomElement($this->userImageOptions),
+            'email_verified_at' => Carbon::now()
+        ]);
+        $user5 = \App\Models\User::create([
+            'name' => 'Admin Grandonk',
+            'email' => 'grandonk457@gmail.com',
+            'username' => 'admingrandonk666',
+            'role' => 'admin',
+            'password' => bcrypt('66666666'),
+            'remember_token' => Str::random(10),
+            'phone_number' => '081515358028',
+            'image' => fake()->randomElement($this->userImageOptions),
+            'email_verified_at' => Carbon::now()
         ]);
 
         $result = [
@@ -173,6 +189,7 @@ class DatabaseSeeder extends Seeder {
                 'remember_token' => Str::random(10),
                 'phone_number' => fake()->phoneNumber(),
                 'image' => fake()->randomElement($this->userImageOptions),
+                'email_verified_at' => Carbon::now()
             ]);
             array_push($result['user'], $createdUser->id);
         }
@@ -189,6 +206,7 @@ class DatabaseSeeder extends Seeder {
                 'remember_token' => Str::random(10),
                 'phone_number' => fake()->phoneNumber(),
                 'image' => fake()->randomElement($this->userImageOptions),
+                'email_verified_at' => Carbon::now()
             ]);
             array_push($result['seller'], $createdUser->id);
         }
@@ -886,6 +904,7 @@ class DatabaseSeeder extends Seeder {
                 'bank_account_number' => fake()->creditCardNumber(),
                 'bank_account_name' => fake()->name(),
                 'status' => 'PAID',
+                'receipt' => fake()->randomElement($this->productImageOptions),
                 'store_id' => $storeId,
                 'created_at' => $withdrawDate,
                 'updated_at' => $withdrawDate,
