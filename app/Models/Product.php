@@ -154,7 +154,7 @@ class Product extends BaseModel {
 		return $intersectionSize / $unionSize;
 	}
 
-	function calculateSimilarity($userItemMatrix) {
+	function calculateSimilarity($userItemMatrix, $alg = 'cosine') {
 		$similarityMatrix = [];
 		$users = array_keys($userItemMatrix);
 
@@ -163,8 +163,12 @@ class Product extends BaseModel {
 
 			foreach ($users as $userB) {
 				if ($userA !== $userB) {
-					// $similarity = $this->calculateCosineSimilarity($userItemMatrix[$userA], $userItemMatrix[$userB]);
-					$similarity = $this->calculateJaccardSimilarity($userItemMatrix[$userA], $userItemMatrix[$userB]);
+					$similarity = 0;
+					if ($alg === 'jaccard') {
+						$similarity = $this->calculateJaccardSimilarity($userItemMatrix[$userA], $userItemMatrix[$userB]);
+					} else {
+						$similarity = $this->calculateCosineSimilarity($userItemMatrix[$userA], $userItemMatrix[$userB]);
+					}
 					$similarityMatrix[$userA][$userB] = $similarity;
 				}
 			}
@@ -173,7 +177,7 @@ class Product extends BaseModel {
 		return $similarityMatrix;
 	}
 
-	function generateRecommendations($targetUser) {
+	function generateRecommendations($targetUser, $alg) {
 		$userItemMatrix = Review::select('user_id', 'product_id', 'rating')
 			->groupBy('user_id', 'product_id', 'rating') // Include all selected columns in GROUP BY
 			->get()
@@ -187,12 +191,12 @@ class Product extends BaseModel {
 			return null;
 		}
 
-		info("userItemMatrix " . $targetUser);
+		info("userItemMatrix, target user => " . $targetUser);
 		info($userItemMatrix);
 
-		$similarityMatrix = $this->calculateSimilarity($userItemMatrix);
+		$similarityMatrix = $this->calculateSimilarity($userItemMatrix, $alg);
 
-		info("similarityMatrix" . $targetUser);
+		info("similarityMatrix {$alg} target user => " . $targetUser);
 		info($similarityMatrix);
 
 		$userSimilarities = $similarityMatrix[$targetUser];
@@ -203,7 +207,7 @@ class Product extends BaseModel {
 			return ($a > $b) ? -1 : 1;
 		});
 
-		info("userSimilarities");
+		info("userSimilarities {$alg} target user => " . $targetUser);
 		info($userSimilarities);
 
 		$nearestNeighbors = array_keys($userSimilarities);
@@ -230,15 +234,20 @@ class Product extends BaseModel {
 		// 	return $b['predicted_rating'] <=> $a['predicted_rating'];
 		// });
 
-		return [...$recommendations, ...$reviewed];
+		$recomendationResult = [...$recommendations, ...$reviewed];
+
+		info("recomendationResult {$alg} target user => " . $targetUser);
+		info($recomendationResult);
+
+		return $recomendationResult;
 	}
 
 	/**
 	 * Scope a query to only include records with a certain status.
 	 *
 	 * @param \Illuminate\Database\Eloquent\Builder $query
-	 * @param array<string mixed> param
-	 * @param string userId
+	 * @param array<string mixed> $param
+	 * @param string $userId
 	 * @return \Illuminate\Database\Eloquent\Builder
 	 */
 	public function scopeGetRecomendation($query, $param, $userId = null) {
@@ -276,15 +285,19 @@ class Product extends BaseModel {
 			return $query->orderBy('average_rating', 'desc');
 		}
 
-		$cacheKey = 'recomendation_' . $userId;
+		$alg = isset($param['alg']) && $param['alg'] === 'jaccard'
+			? 'jaccard'
+			: 'cosine';
+
+		$cacheKey = "recomendation_{$alg}_{$userId}";
 
 		// info(Cache::get($cacheKey));
 
 		$ids = FacadesCache::remember(
 			$cacheKey,
 			now()->addMinutes(2),
-			function () use ($userId) {
-				return $this->generateRecommendations($userId);
+			function () use ($userId, $alg) {
+				return $this->generateRecommendations($userId, $alg);
 			}
 		);
 
