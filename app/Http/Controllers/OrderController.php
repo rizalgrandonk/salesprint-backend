@@ -332,6 +332,13 @@ class OrderController extends Controller {
 
         $createdTransaction->orders = $orders;
 
+        foreach ($orderList as $order) {
+            foreach ($order['order_items'] as $item) {
+                $item['product_variant']->decrement("stok", $item['quantity']);
+                $item['product']->decrement("stok", $item['quantity']);
+            }
+        }
+
         return $this->responseSuccess([
             'token' => $snapToken,
             'transaction' => $createdTransaction
@@ -577,6 +584,7 @@ class OrderController extends Controller {
 
         $order = Order::where('store_id', $store->id)
             ->where('order_number', $validatedData['order_number'])
+            ->with(["order_items.product", "order_items.product_variant"])
             ->first();
         if (!$order) {
             return $this->responseFailed("Order Not Found", 404, "Order not found");
@@ -591,6 +599,11 @@ class OrderController extends Controller {
             'cancel_reason' => $validatedData['cancel_reason'],
             'canceled_at' => Carbon::now(),
         ]);
+
+        foreach ($order->order_items as $order_item) {
+            $order_item->product_variant->increment("stok", $order_item->quantity);
+            $order_item->product->increment("stok", $order_item->quantity);
+        }
 
         return $this->responseSuccess($order);
     }
@@ -627,6 +640,7 @@ class OrderController extends Controller {
 
         $order = Order::where('user_id', auth()->user()->id)
             ->where('order_number', $validatedData['order_number'])
+            ->with(["order_items.product", "order_items.product_variant"])
             ->first();
         if (!$order) {
             return $this->responseFailed("Order Not Found", 404, "Order not found");
@@ -644,6 +658,11 @@ class OrderController extends Controller {
             'canceled_at' => Carbon::now(),
             'cancel_reason' => $validatedData['cancel_reason'],
         ]);
+
+        foreach ($order->order_items as $order_item) {
+            $order_item->product_variant->increment("stok", $order_item->quantity);
+            $order_item->product->increment("stok", $order_item->quantity);
+        }
 
         return $this->responseSuccess($order);
     }
