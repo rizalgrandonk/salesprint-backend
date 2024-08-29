@@ -132,6 +132,13 @@ class Product extends BaseModel {
 		}
 		$magnitudeB = sqrt($magnitudeB);
 
+		// USER A => P1 -> 3, P2 -> 5, P3 -> 4
+		// USER B => P2 -> 4, P3 -> 5, P4 -> 3, P5 -> 3
+		// dot = (3x0) + (5x4) + (4x5) = 40
+		// mA = sqrt( pow(3) + pow(5) + pow(4) ) = 7.1
+		// mB = sqrt( pow(4) + pow(5) + pow(3) + pow(3) ) = 7.6
+		// C = 40 / (7.1 x 7.6) = 0.74
+
 
 		if ($magnitudeA == 0 || $magnitudeB == 0) {
 			return 0;
@@ -146,7 +153,12 @@ class Product extends BaseModel {
 		$intersectionSize = count(array_intersect($itemsA, $itemsB));
 		$unionSize = count(array_unique(array_merge($itemsA, $itemsB)));
 
-		// Avoid division by zero
+		// USER A => P1, P2, P3
+		// USER B => P2, P3, P4, P5
+		// Intersec = P2, P3 (2)
+		// Union = P1, P2, P3, P4, P5 (5)
+		// J = 0.4
+
 		if ($unionSize == 0) {
 			return 0;
 		}

@@ -88,7 +88,10 @@ class WithdrawController extends Controller {
             return $this->responseFailed("Not Found", 404, "Store not found");
         }
 
-        $orders = Order::where('store_id', $store->id)->where('withdraw_id', null)->get();
+        $orders = Order::where('store_id', $store->id)
+            ->where('withdraw_id', null)
+            ->where('order_status', 'COMPLETED')
+            ->get();
 
         if (!$orders || $orders->count() <= 0) {
             return $this->responseFailed("Not Found", 404, "Order not found");

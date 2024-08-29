@@ -240,6 +240,13 @@ class Order extends BaseModel {
 			if ($order->wasChanged('order_status')) {
 				$order->user->notifyNow(new OrderUpdate($order));
 				$order->store->user->notifyNow(new OrderUpdate($order));
+
+				if ($order->order_status === 'COMPLETED') {
+					Store::where('id', $order->store->id)
+						->increment(
+								'total_balance', $order->total
+						);
+				}
 			}
 		});
 	}
