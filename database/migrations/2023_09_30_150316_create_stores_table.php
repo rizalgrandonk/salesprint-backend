@@ -19,6 +19,8 @@ return new class extends Migration {
             $table->string('city_id');
             $table->string('province');
             $table->string('province_id');
+            $table->string('district_id');
+            $table->string('district_name');
             $table->string('postal_code');
             $table->enum('status', ['approved', 'on_review', 'rejected']);
             $table->string('image')->nullable();

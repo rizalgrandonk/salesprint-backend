@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 use App\Models\City;
+use App\Models\District;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Province;
@@ -336,7 +337,7 @@ class DatabaseSeeder extends Seeder {
         return $createdIds;
     }
 
-    function createStores(array $userIds, array $listCities): array {
+    function createStores(array $userIds, array $listDistricts): array {
         $imgCat = fake()->randomElements($this->productImageOptions, 2);
 
         $store_categories = [
@@ -357,11 +358,13 @@ class DatabaseSeeder extends Seeder {
             'slug' => Str::slug('Grandonk Merch'),
             'phone_number' => '0812345678987',
             'address' => fake()->streetAddress(),
-            'province_id' => $listCities[143]['province_id'],
-            'province' => $listCities[143]['province'],
-            'city_id' => $listCities[143]['city_id'],
-            'city' => $listCities[143]['city_name'],
-            'postal_code' => $listCities[143]['postal_code'],
+            'province_id' => $listDistricts[3833]['province_id'],
+            'province' => $listDistricts[3833]['province'],
+            'city_id' => $listDistricts[3833]['city_id'],
+            'city' => $listDistricts[3833]['city_name'],
+            'district_id' => $listDistricts[3833]['district_id'],
+            'district' => $listDistricts[3833]['district_name'],
+            'postal_code' => '',
             'status' => 'approved',
             'image' => fake()->randomElement($this->storeImageOptions),
             'store_description' => fake()->paragraph(random_int(3, 5)),
@@ -374,11 +377,13 @@ class DatabaseSeeder extends Seeder {
             'slug' => Str::slug('Upscale Store'),
             'phone_number' => '0898787653412',
             'address' => fake()->streetAddress(),
-            'province_id' => $listCities[158]['province_id'],
-            'province' => $listCities[158]['province'],
-            'city_id' => $listCities[158]['city_id'],
-            'city' => $listCities[158]['city_name'],
-            'postal_code' => $listCities[158]['postal_code'],
+            'province_id' => $listDistricts[5880]['province_id'],
+            'province' => $listDistricts[5880]['province'],
+            'city_id' => $listDistricts[5880]['city_id'],
+            'city' => $listDistricts[5880]['city_name'],
+            'district_id' => $listDistricts[5880]['district_id'],
+            'district' => $listDistricts[5880]['district_name'],
+            'postal_code' => '',
             'status' => 'approved',
             'image' => fake()->randomElement($this->storeImageOptions),
             'store_description' => fake()->paragraph(random_int(3, 5)),
@@ -409,18 +414,20 @@ class DatabaseSeeder extends Seeder {
                 . ' '
                 . fake()->randomNumber(2, true);
 
-            $selectedCity = fake()->randomElement($listCities);
+            $selectedDistrict = fake()->randomElement($listDistricts);
 
             $createdStore = Store::create([
                 'name' => $name,
                 'slug' => Str::slug($name),
                 'phone_number' => fake()->phoneNumber(),
                 'address' => fake()->address(),
-                'province_id' => $selectedCity['province_id'],
-                'province' => $selectedCity['province'],
-                'city_id' => $selectedCity['city_id'],
-                'city' => $selectedCity['city_name'],
-                'postal_code' => $selectedCity['postal_code'],
+                'province_id' => $selectedDistrict['province_id'],
+                'province' => $selectedDistrict['province'],
+                'city_id' => $selectedDistrict['city_id'],
+                'city' => $selectedDistrict['city_name'],
+                'district_id' => $selectedDistrict['district_id'],
+                'district_name' => $selectedDistrict['district_name'],
+                'postal_code' => '',
                 'status' => fake()->randomElement(['on_review', 'approved', 'rejected']),
                 'image' => fake()->randomElement($this->storeImageOptions),
                 'store_description' => fake()->paragraph(random_int(3, 5)),
@@ -569,12 +576,12 @@ class DatabaseSeeder extends Seeder {
 
     function createProvince() {
         $res = Http::retry(3, 1000)->withHeaders([
-            'key' => env('RAJAONGKIR_API_KEY', ''),
+            'key' => env('Key', ''),
         ])->get(
                 env(
                     'RAJAONGKIR_BASE_URL',
-                    'https://api.rajaongkir.com/starter'
-                ) . '/province'
+                    'https://rajaongkir.komerce.id/api/v1'
+                ) . '/destination/province'
             );
 
         if ($res->failed()) {
@@ -582,11 +589,12 @@ class DatabaseSeeder extends Seeder {
         }
 
         $data = $res->json();
-        $listProvince = $data['rajaongkir']['results'];
+        $listProvince = $data['data'];
 
         $dataToInsert = array_map(function ($prov) {
             return [
-                ...$prov,
+                'province' => $prov['name'],
+                'province_id' => $prov['id'],
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -597,17 +605,14 @@ class DatabaseSeeder extends Seeder {
         return $listProvince;
     }
 
-    function createCities(string $provinceId) {
+    function createCities(array $province) {
         $res = Http::retry(3, 1000)->withHeaders([
-            'key' => env('RAJAONGKIR_API_KEY', ''),
+            'key' => env('Key', ''),
         ])->get(
                 env(
                     'RAJAONGKIR_BASE_URL',
-                    'https://api.rajaongkir.com/starter'
-                ) . '/city',
-                [
-                    'province' => $provinceId
-                ]
+                    'https://rajaongkir.komerce.id/api/v1'
+                ) . '/destination/city/' . $province['province_id']
             );
 
         if ($res->failed()) {
@@ -615,11 +620,14 @@ class DatabaseSeeder extends Seeder {
         }
 
         $data = $res->json();
-        $listCity = $data['rajaongkir']['results'];
+        $listCity = $data['data'];
 
-        $dataToInsert = array_map(function ($city) {
+        $dataToInsert = array_map(function ($city) use ($province) {
             return [
-                ...$city,
+                'province_id' => $province['province_id'],
+                'province' => $province['province'],
+                'city_id' => $city['id'],
+                'city_name' => $city['name'],
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -630,22 +638,109 @@ class DatabaseSeeder extends Seeder {
         return $listCity;
     }
 
-    public function run(): void {
-        $listProvince = $this->createProvince();
+    function createDistricts(array $city) {
+        $res = Http::retry(3, 1000)->withHeaders([
+            'key' => env('Key', ''),
+        ])->get(
+                env(
+                    'RAJAONGKIR_BASE_URL',
+                    'https://rajaongkir.komerce.id/api/v1'
+                ) . '/destination/district/' . $city['city_id']
+            );
 
-        echo "Success insert province list \n";
-
-        $listCities = [];
-        foreach ($listProvince as $province) {
-            $createdCities = $this->createCities($province['province_id']);
-            array_push($listCities, ...$createdCities);
-
-            echo "Success insert cities list for province {$province['province_id']} {$province['province']} \n";
+        if ($res->failed()) {
+            throw $res->error();
         }
+
+        $data = $res->json();
+        $listDistrict = $data['data'];
+
+        $dataToInsert = array_map(function ($district) use ($city) {
+            return [
+                'province_id' => $city['province_id'],
+                'province' => $city['province'],
+                'city_id' => $city['id'],
+                'city_name' => $city['name'],
+                'district_id' => $district['id'],
+                'district_name' => $district['name'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }, $listDistrict);
+
+        District::insert($dataToInsert);
+
+        return $listDistrict;
+    }
+
+    public function run(): void {
+        // $listProvince = $this->createProvince();
+        $listProvince = [
+            [
+                'province_id' => 18,
+                'province' => 'JAWA TIMUR'
+            ]
+            ];
+
+        // echo "Success insert province list \n";
+
+        $listCities = [
+            [
+                'province_id' => 18,
+                'province' => 'JAWA TIMUR',
+                'city_id' => 577,
+                'city_name' => 'SURABAYA'
+            ],
+            [
+                'province_id' => 18,
+                'province' => 'JAWA TIMUR',
+                'city_id' => 388,
+                'city_name' => 'MOJOKERTO'
+            ],
+        ];
+        // foreach ($listProvince as $province) {
+        //     $createdCities = $this->createCities($province);
+        //     array_push($listCities, ...$createdCities);
+
+        //     echo "Success insert cities list for province {$province['province_id']} {$province['province']} \n";
+        // }
+
+        $listDistricts = [
+            [
+                'province_id' => 18,
+                'province' => 'JAWA TIMUR',
+                'city_id' => 577,
+                'city_name' => 'SURABAYA',
+                'district_id' => 5890,
+                'district_name' => 'RUNGKUT'
+            ],
+            [
+                'province_id' => 18,
+                'province' => 'JAWA TIMUR',
+                'city_id' => 577,
+                'city_name' => 'SURABAYA',
+                'district_id' => 5880,
+                'district_name' => 'GUBENG'
+            ],
+            [
+                'province_id' => 10,
+                'province' => 'DKI JAKARTA',
+                'city_id' => 136,
+                'city_name' => 'JAKARTA SELATAN',
+                'district_id' => 1337,
+                'district_name' => 'SETIA BUDI'
+            ],
+        ];
+        // foreach ($listCities as $city) {
+        //     $createdDistricts = $this->createDistricts($city);
+        //     array_push($listDistricts, ...$createdDistricts);
+
+        //     echo "Success insert districts list for city {$city['city_id']} {$city['city_name']} \n";
+        // }
 
         $createdUserIdByRole = $this->createUsers();
         $createdCategoryIds = $this->createCategories();
-        $createdStoreIds = $this->createStores($createdUserIdByRole['seller'], $listCities);
+        $createdStoreIds = $this->createStores($createdUserIdByRole['seller'], $listDistricts);
         $createdVarTypeMap = $this->createVariantTypes();
 
         $createdProducts = [];
@@ -722,12 +817,12 @@ class DatabaseSeeder extends Seeder {
                         $createdOrderDate->addDays(random_int(1, 20));
                     }
 
-                    $selectedCity = fake()->randomElement($listCities);
+                    $selectedDistrict = fake()->randomElement($listDistricts);
 
                     $no = $index + 1;
                     $productCount = count($createdProducts);
 
-                    echo "{$no} of {$productCount} {$newProduct->name} -> {$userId} {$createdOrderDate} {$selectedCity['city_name']} \n";
+                    echo "{$no} of {$productCount} {$newProduct->name} -> {$userId} {$createdOrderDate} {$selectedDistrict['city_name']} \n";
 
                     $selectedVar = fake()->randomElement($prodVars);
                     $quantity = random_int(1, 3);
@@ -800,11 +895,13 @@ class DatabaseSeeder extends Seeder {
                         'delivery_address' => fake()->address(),
                         'reciever_name' => fake()->name(),
                         'reciever_phone' => fake()->phoneNumber(),
-                        'delivery_province_id' => $selectedCity['province_id'],
-                        'delivery_province' => $selectedCity['province'],
-                        'delivery_city_id' => $selectedCity['city_id'],
-                        'delivery_city' => $selectedCity['city_name'],
-                        'delivery_postal_code' => $selectedCity['postal_code'],
+                        'delivery_province_id' => $selectedDistrict['province_id'],
+                        'delivery_province' => $selectedDistrict['province'],
+                        'delivery_city_id' => $selectedDistrict['city_id'],
+                        'delivery_city' => $selectedDistrict['city_name'],
+                        'delivery_district_id' => $selectedDistrict['district_id'],
+                        'delivery_district' => $selectedDistrict['district_name'],
+                        'delivery_postal_code' => '12345',
                         'delivery_cost' => 20000,
                         'is_withdrew' => !($createdOrderDate->isSameMonth(Carbon::now())),
                         'user_id' => $userId,

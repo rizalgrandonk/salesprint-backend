@@ -210,6 +210,11 @@ Route::group([
             [Controllers\LogisticController::class, "get_cities"]
         );
 
+        Route::get(
+            '/get_districts',
+            [Controllers\LogisticController::class, "get_districts"]
+        );
+
         Route::post(
             '/cost',
             [Controllers\LogisticController::class, "cost"]

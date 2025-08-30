@@ -4,8 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class City extends BaseModel {
-    protected $table = 'cities';
+class District extends BaseModel {
+    protected $table = 'districts';
 
     protected $casts = [
         'id' => 'string',
@@ -16,5 +16,7 @@ class City extends BaseModel {
         'province',
         'city_id',
         'city_name',
+        'district_id',
+        'district_name',
     ];
 }

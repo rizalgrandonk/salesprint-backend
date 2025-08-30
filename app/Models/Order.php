@@ -99,6 +99,8 @@ class Order extends BaseModel {
 		'delivery_province',
 		'delivery_city_id',
 		'delivery_city',
+		'delivery_district_id',
+		'delivery_district_name',
 		'delivery_postal_code',
 		'delivery_address',
 		'delivery_service',

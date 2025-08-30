@@ -9,12 +9,14 @@ return new class extends Migration {
      * Run the migrations.
      */
     public function up(): void {
-        Schema::create('cities', function (Blueprint $table) {
+        Schema::create('districts', function (Blueprint $table) {
             $table->id();
             $table->string('province_id');
             $table->string('province');
             $table->string('city_id');
             $table->string('city_name');
+            $table->string('district_id');
+            $table->string('district_name');
             $table->timestamps();
         });
     }
@@ -23,6 +25,6 @@ return new class extends Migration {
      * Reverse the migrations.
      */
     public function down(): void {
-        Schema::dropIfExists('cities');
+        Schema::dropIfExists('districts');
     }
 };

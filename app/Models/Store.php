@@ -60,6 +60,8 @@ class Store extends BaseModel {
 		'province',
 		'province_id',
 		'postal_code',
+		'district_id',
+		'district_name',
 		'status',
 		'image',
 		'store_description',
