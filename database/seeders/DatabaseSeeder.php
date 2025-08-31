@@ -833,7 +833,8 @@ class DatabaseSeeder extends Seeder {
                             $createdOrderDate->year,
                             $createdOrderDate->month,
                             $createdOrderDate->day
-                        )->diffInMilliseconds($createdOrderDate);
+                        )->diffInMilliseconds($createdOrderDate)
+                        . random_int(10, 99);
 
                     $createdTransaction = Transaction::create([
                         'total' => $orderTotal,
