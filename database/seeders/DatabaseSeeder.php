@@ -358,12 +358,12 @@ class DatabaseSeeder extends Seeder {
             'slug' => Str::slug('Grandonk Merch'),
             'phone_number' => '0812345678987',
             'address' => fake()->streetAddress(),
-            'province_id' => $listDistricts[3833]['province_id'],
-            'province' => $listDistricts[3833]['province'],
-            'city_id' => $listDistricts[3833]['city_id'],
-            'city' => $listDistricts[3833]['city_name'],
-            'district_id' => $listDistricts[3833]['district_id'],
-            'district' => $listDistricts[3833]['district_name'],
+            'province_id' => $listDistricts[0]['province_id'],
+            'province' => $listDistricts[0]['province'],
+            'city_id' => $listDistricts[0]['city_id'],
+            'city' => $listDistricts[0]['city_name'],
+            'district_id' => $listDistricts[0]['district_id'],
+            'district_name' => $listDistricts[0]['district_name'],
             'postal_code' => '',
             'status' => 'approved',
             'image' => fake()->randomElement($this->storeImageOptions),
@@ -377,12 +377,12 @@ class DatabaseSeeder extends Seeder {
             'slug' => Str::slug('Upscale Store'),
             'phone_number' => '0898787653412',
             'address' => fake()->streetAddress(),
-            'province_id' => $listDistricts[5880]['province_id'],
-            'province' => $listDistricts[5880]['province'],
-            'city_id' => $listDistricts[5880]['city_id'],
-            'city' => $listDistricts[5880]['city_name'],
-            'district_id' => $listDistricts[5880]['district_id'],
-            'district' => $listDistricts[5880]['district_name'],
+            'province_id' => $listDistricts[1]['province_id'],
+            'province' => $listDistricts[1]['province'],
+            'city_id' => $listDistricts[1]['city_id'],
+            'city' => $listDistricts[1]['city_name'],
+            'district_id' => $listDistricts[1]['district_id'],
+            'district_name' => $listDistricts[1]['district_name'],
             'postal_code' => '',
             'status' => 'approved',
             'image' => fake()->randomElement($this->storeImageOptions),
@@ -702,7 +702,7 @@ class DatabaseSeeder extends Seeder {
         //     $createdCities = $this->createCities($province);
         //     array_push($listCities, ...$createdCities);
 
-        //     echo "Success insert cities list for province {$province['province_id']} {$province['province']} \n";
+            // echo "Success insert cities list for province {$province['province_id']} {$province['province']} \n";
         // }
 
         $listDistricts = [

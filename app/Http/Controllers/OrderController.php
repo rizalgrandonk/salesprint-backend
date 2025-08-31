@@ -244,6 +244,8 @@ class OrderController extends Controller {
                     $validatedData['shipping_detail']['delivery_address'],
                 "city" =>
                     $validatedData['shipping_detail']['delivery_city'],
+                "district" =>
+                    $validatedData['shipping_detail']['delivery_district'],
                 "postal_code" =>
                     $validatedData['shipping_detail']['delivery_postal_code'],
                 "country_code" => "IDN"
@@ -303,6 +305,10 @@ class OrderController extends Controller {
                     $validatedData['shipping_detail']['delivery_city_id'],
                 'delivery_city' =>
                     $validatedData['shipping_detail']['delivery_city'],
+                'delivery_district_id' =>
+                    $validatedData['shipping_detail']['delivery_district_id'],
+                'delivery_district' =>
+                    $validatedData['shipping_detail']['delivery_district'],
                 'delivery_postal_code' =>
                     $validatedData['shipping_detail']['delivery_postal_code'],
                 'delivery_cost' => $order['shipping']['delivery_cost'],

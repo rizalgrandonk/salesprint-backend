@@ -196,9 +196,14 @@ Route::group([
     Route::group([
         'middleware' => 'api',
     ], function () {
-        Route::get('/province', [Controllers\ProvinceController::class, "index"]);
+        Route::get('/province', [Controllers\LogisticController::class, "get_province"]);
 
-        Route::get('/city', [Controllers\CityController::class, "index"]);
+        Route::get('/city', [Controllers\LogisticController::class, "get_cities"]);
+
+        Route::get(
+            '/district',
+            [Controllers\LogisticController::class, "get_districts"]
+        );
 
         Route::get(
             '/get_province',

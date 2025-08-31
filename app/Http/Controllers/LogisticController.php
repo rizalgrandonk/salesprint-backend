@@ -12,7 +12,7 @@ class LogisticController extends Controller {
    */
   public function get_province() {
     $res = Http::retry(3, 1000)->withHeaders([
-            'key' => env('Key', ''),
+            'key' => env('RAJAONGKIR_API_KEY', ''),
         ])->get(
                 env(
                     'RAJAONGKIR_BASE_URL',
@@ -37,7 +37,7 @@ class LogisticController extends Controller {
     }
 
     $res = Http::retry(3, 1000)->withHeaders([
-            'key' => env('Key', ''),
+            'key' => env('RAJAONGKIR_API_KEY', ''),
         ])->get(
                 env(
                     'RAJAONGKIR_BASE_URL',
@@ -64,7 +64,7 @@ class LogisticController extends Controller {
     }
 
     $res = Http::retry(3, 1000)->withHeaders([
-            'key' => env('Key', ''),
+            'key' => env('RAJAONGKIR_API_KEY', ''),
         ])->get(
                 env(
                     'RAJAONGKIR_BASE_URL',
@@ -91,7 +91,7 @@ class LogisticController extends Controller {
     ]);
 
     $res = Http::withHeaders([
-      'key' => env('Key', ''),
+      'key' => env('RAJAONGKIR_API_KEY', ''),
     ])
       ->post(
         env(

@@ -40,10 +40,10 @@ return new class extends Migration {
             $table->string('delivery_address');
             $table->string('delivery_province_id');
             $table->string('delivery_city_id');
+            $table->string('delivery_district_id');
             $table->string('delivery_province');
             $table->string('delivery_city');
-            $table->string('delivery_district_id');
-            $table->string('delivery_district_name');
+            $table->string('delivery_district');
             $table->string('delivery_postal_code');
             $table->string('delivery_service');
             $table->float('delivery_cost', 10, 2);
